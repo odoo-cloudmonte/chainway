@@ -1,0 +1,159 @@
+<odoo>
+    <template id="warranty_form_template" name="Warranty Check">
+    <t t-call="website.layout">
+        <div class="container py-5">
+
+            <div class="row justify-content-center">
+                <div class="col-lg-6 col-md-8">
+
+                    <div class="card shadow-lg border-0 rounded-4">
+                        <div class="card-body p-5">
+
+                            <!-- Title -->
+                            <div class="text-center mb-4">
+                                <h2 class="fw-bold">Warranty Check</h2>
+                                <p class="text-muted mb-0">
+                                    Enter your device serial number or IMEI to check warranty status
+                                </p>
+                            </div>
+
+                            <!-- Form -->
+                            <form action="/warranty-result" method="post">
+                                <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+
+                                <!-- Input -->
+                                <div class="mb-4">
+                                    <label class="form-label fw-semibold">
+                                        Serial Number / IMEI
+                                    </label>
+                                    <input type="text"
+                                           name="search_sn"
+                                           class="form-control form-control-lg rounded-3"
+                                           placeholder="e.g. 1234567890 / IMEI"
+                                           required="1"/>
+                                </div>
+
+                                <!-- Button -->
+                                <div class="d-grid">
+                                    <button type="submit"
+                                            class="btn btn-primary btn-lg rounded-3">
+                                        Check Warranty
+                                    </button>
+                                </div>
+                            </form>
+
+                        </div>
+                    </div>
+
+                    <!-- Optional help text -->
+                    <div class="text-center mt-3">
+                        <small class="text-muted">
+                            You can find the serial number on your device or packaging.
+                        </small>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </t>
+</template>
+
+    <template id="warranty_result_template" name="Warranty Result">
+    <t t-call="website.layout">
+        <div class="container py-5">
+
+            <div class="row justify-content-center">
+                <div class="col-lg-6 col-md-8">
+
+                    <div class="card shadow-lg border-0 rounded-4">
+                        <div class="card-body p-5">
+
+                            <!-- Title -->
+                            <div class="text-center mb-4">
+                                <h2 class="fw-bold">Warranty Result</h2>
+                            </div>
+
+                            <!-- If Found -->
+                            <t t-if="found">
+
+                                <!-- Status Badge -->
+                                <div class="text-center mb-4">
+                                    <t t-if="status == 'In Warranty'">
+                                        <span class="badge bg-success fs-6 px-4 py-2 rounded-pill">
+                                            In Warranty
+                                        </span>
+                                    </t>
+                                    <t t-elif="status == 'Expired'">
+                                        <span class="badge bg-danger fs-6 px-4 py-2 rounded-pill">
+                                            Expired
+                                        </span>
+                                    </t>
+                                    <t t-else="">
+                                        <span class="badge bg-secondary fs-6 px-4 py-2 rounded-pill">
+                                            <t t-esc="status"/>
+                                        </span>
+                                    </t>
+                                </div>
+
+                                <!-- Device Info -->
+                                <div class="border rounded-3 p-3 bg-light">
+                                    <div class="row mb-2">
+                                        <div class="col-6 text-muted">Device SN</div>
+                                        <div class="col-6 fw-semibold text-end">
+                                            <t t-esc="device.device_sn"/>
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-2">
+                                        <div class="col-6 text-muted">Model</div>
+                                        <div class="col-6 fw-semibold text-end">
+                                            <t t-esc="device.model"/>
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-2">
+                                        <div class="col-6 text-muted">Warranty Start</div>
+                                        <div class="col-6 text-end">
+                                            <t t-esc="device.warranty_wef"/>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-6 text-muted">Warranty End</div>
+                                        <div class="col-6 text-end">
+                                            <t t-esc="device.warranty_upto"/>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </t>
+
+                            <!-- If Not Found -->
+                            <t t-else="">
+                                <div class="text-center">
+                                    <div class="alert alert-danger rounded-3">
+                                        <t t-esc="status"/>
+                                    </div>
+                                </div>
+                            </t>
+
+                            <!-- Back Button -->
+                            <div class="d-grid mt-4">
+                                <a href="/warranty-check"
+                                   class="btn btn-outline-secondary btn-lg rounded-3">
+                                    Check Another Device
+                                </a>
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </t>
+</template>
+
+</odoo>

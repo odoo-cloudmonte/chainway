@@ -1,0 +1,508 @@
+<odoo>
+    <template id="portal_helpdesk_form" name="Helpdesk Form">
+        <t t-call="portal.portal_layout">
+
+            <style>
+                /* Professional Color Scheme */
+                :root {
+                    --primary-color: #2c3e50;
+                    --accent-color: #3498db;
+                    --success-color: #27ae60;
+                    --danger-color: #e74c3c;
+                    --light-bg: #ecf0f1;
+                    --border-color: #bdc3c7;
+                }
+
+                /* General Styling */
+                body {
+                    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                    background-color: #f8f9fa;
+                }
+
+                .helpdesk-container {
+                    max-width: 900px;
+                    margin: 0 auto;
+                    padding: 40px 20px;
+                }
+
+                /* Header Section */
+                .helpdesk-header {
+                    background: linear-gradient(135deg, var(--primary-color) 0%, var(--accent-color) 100%);
+                    color: white;
+                    padding: 40px;
+                    border-radius: 12px;
+                    margin-bottom: 40px;
+                    box-shadow: 0 4px 15px rgba(44, 62, 80, 0.15);
+                    text-align: center;
+                }
+
+                .helpdesk-header h1 {
+                    font-size: 2.5rem;
+                    font-weight: 700;
+                    margin-bottom: 10px;
+                    letter-spacing: -0.5px;
+                }
+
+                .helpdesk-header p {
+                    font-size: 1rem;
+                    opacity: 0.95;
+                    margin: 0;
+                }
+
+                /* Card Styling */
+                .section-card {
+                    background: white;
+                    border: none;
+                    border-radius: 10px;
+                    margin-bottom: 30px;
+                    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+                    overflow: hidden;
+                    transition: box-shadow 0.3s ease;
+                }
+
+                .section-card:hover {
+                    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+                }
+
+                .section-card-header {
+                    background: linear-gradient(90deg, var(--primary-color) 0%, rgba(52, 152, 219, 0.1) 100%);
+                    padding: 18px 25px;
+                    border-bottom: 2px solid var(--accent-color);
+                    font-size: 1.1rem;
+                    font-weight: 600;
+                    color: white;
+                    display: flex;
+                    align-items: center;
+                    gap: 10px;
+                }
+
+                .section-card-header::before {
+                    content: '';
+                    width: 4px;
+                    height: 24px;
+                    background-color: var(--accent-color);
+                    border-radius: 2px;
+                }
+
+                .section-card-body {
+                    padding: 30px;
+                    background-color: var(--light-bg);
+                }
+
+                /* Form Controls */
+                .form-control, .form-select {
+                    border: 1.5px solid #ddd;
+                    border-radius: 8px;
+                    padding: 12px 15px;
+                    font-size: 0.95rem;
+                    transition: all 0.3s ease;
+                    background-color: white;
+                }
+
+                .form-control:focus, .form-select:focus {
+                    border-color: var(--accent-color);
+                    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+                    outline: none;
+                }
+
+                .form-label {
+                    font-size: 0.95rem;
+                    font-weight: 600;
+                    color: var(--primary-color);
+                    margin-bottom: 8px;
+                    display: block;
+                }
+
+                /* Textarea Styling */
+                textarea.form-control {
+                    resize: vertical;
+                    min-height: 120px;
+                    font-family: inherit;
+                }
+
+                /* Input Row Spacing */
+                .input-row {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 12px;
+                }
+
+                /* Table Styling */
+                .device-table-wrapper {
+                    overflow-x: auto;
+                }
+
+                .device-table {
+                    width: 100%;
+                    border-collapse: collapse;
+                }
+
+                .device-table thead {
+                    background-color: var(--light-bg);
+                }
+
+                .device-table th {
+                    padding: 16px;
+                    text-align: left;
+                    font-weight: 700;
+                    color: var(--primary-color);
+                    font-size: 0.95rem;
+                    border-bottom: 2px solid var(--border-color);
+                }
+
+                .device-table td {
+                    padding: 16px;
+                    border-bottom: 1px solid #eee;
+                }
+
+                .device-table tbody tr:hover {
+                    background-color: #f9f9f9;
+                }
+
+                .device-table tbody tr:last-child td {
+                    border-bottom: none;
+                }
+
+                /* Button Styling */
+                .btn {
+                    border-radius: 8px;
+                    padding: 10px 20px;
+                    font-weight: 600;
+                    font-size: 0.95rem;
+                    transition: all 0.3s ease;
+                    border: none;
+                    cursor: pointer;
+                }
+
+                .btn-primary {
+                    background-color: var(--accent-color);
+                    color: white;
+                }
+
+                .btn-primary:hover {
+                    background-color: #2980b9;
+                    box-shadow: 0 4px 12px rgba(52, 152, 219, 0.4);
+                    transform: translateY(-2px);
+                }
+
+                .btn-outline-primary {
+                    border: 1.5px solid var(--accent-color);
+                    color: var(--accent-color);
+                    background-color: transparent;
+                }
+
+                .btn-outline-primary:hover {
+                    background-color: var(--accent-color);
+                    color: white;
+                    box-shadow: 0 2px 8px rgba(52, 152, 219, 0.3);
+                }
+
+                .btn-sm {
+                    padding: 8px 12px;
+                    font-size: 0.85rem;
+                }
+
+                .btn-outline-danger {
+                    border: 1.5px solid var(--danger-color);
+                    color: var(--danger-color);
+                    background-color: transparent;
+                    width: 40px;
+                    height: 40px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    padding: 0;
+                }
+
+                .btn-outline-danger:hover {
+                    background-color: var(--danger-color);
+                    color: white;
+                }
+
+                /* Footer Buttons */
+                .form-footer {
+                    display: flex;
+                    justify-content: flex-end;
+                    gap: 15px;
+                    margin-top: 40px;
+                    padding-top: 30px;
+                    border-top: 2px solid var(--light-bg);
+                }
+
+                /* Add Device Button Section */
+                .add-device-section {
+                    padding: 25px;
+                    background-color: var(--light-bg);
+                    border-top: 1px solid #ddd;
+                    display: flex;
+                    justify-content: flex-end;
+                    gap: 10px;
+                }
+
+                /* Responsive Design */
+                @media (max-width: 768px) {
+                    .helpdesk-container {
+                        padding: 20px 15px;
+                    }
+
+                    .helpdesk-header {
+                        padding: 30px 20px;
+                    }
+
+                    .helpdesk-header h1 {
+                        font-size: 1.8rem;
+                    }
+
+                    .section-card-body {
+                        padding: 20px;
+                    }
+
+                    .form-footer {
+                        flex-direction: column;
+                    }
+
+                    .form-footer button {
+                        width: 100%;
+                    }
+
+                    .device-table th, .device-table td {
+                        padding: 12px 8px;
+                        font-size: 0.85rem;
+                    }
+                }
+
+                /* Animation */
+                @keyframes slideIn {
+                    from {
+                        opacity: 0;
+                        transform: translateY(10px);
+                    }
+                    to {
+                        opacity: 1;
+                        transform: translateY(0);
+                    }
+                }
+
+                .device_row {
+                    animation: slideIn 0.3s ease;
+                }
+            </style>
+
+            <div class="helpdesk-container">
+
+                <!-- Header -->
+                <div class="helpdesk-header">
+                    <h1>Support Ticket</h1>
+                    <p>Create a new support request - Our team will respond within 24 hours</p>
+                </div>
+
+                <form action="/my/helpdesk/submit" method="post" enctype="multipart/form-data">
+                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+
+                    <!-- Company Information Section -->
+                    <div class="section-card">
+                        <div class="section-card-header">
+                            Company Information
+                        </div>
+                        <div class="section-card-body">
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
+
+                                <div class="input-row">
+                                    <label class="form-label">Company Name *</label>
+                                    <input type="text" name="company_name" class="form-control" 
+                                           placeholder="Enter company name" required="True"/>
+                                </div>
+
+                                <div class="input-row">
+                                    <label class="form-label">City *</label>
+                                    <input type="text" name="city" class="form-control" 
+                                           placeholder="Enter city" required="True"/>
+                                </div>
+
+                                <div class="input-row">
+                                    <label class="form-label">Store Location</label>
+                                    <input type="text" name="store_location" class="form-control" 
+                                           placeholder="Enter store location"/>
+                                </div>
+
+                                <div style="grid-column: 1 / -1;" class="input-row">
+                                    <label class="form-label">Company Address *</label>
+                                    <textarea name="company_address" class="form-control" 
+                                              placeholder="Enter full company address" required="True"></textarea>
+                                </div>
+
+                                <!-- <div class="input-row">
+                                    <label class="form-label">Store Location</label>
+                                    <input type="text" name="store_location" class="form-control" 
+                                           placeholder="Enter store location"/>
+                                </div> -->
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Contact Information Section -->
+                    <div class="section-card">
+                        <div class="section-card-header">
+                            Contact Information
+                        </div>
+                        <div class="section-card-body">
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
+
+                                <div class="input-row">
+                                    <label class="form-label">Contact Person *</label>
+                                    <input type="text" name="contact_person" class="form-control" 
+                                           placeholder="Enter contact person name" required="True"/>
+                                </div>
+
+                                <div class="input-row">
+                                    <label class="form-label">Email Address *</label>
+                                    <input type="email" name="email" class="form-control" 
+                                           placeholder="example@company.com" required="True"/>
+                                </div>
+
+                                <div class="input-row">
+                                    <label class="form-label">Contact Number *</label>
+                                    <input type="tel" name="contact_number" class="form-control" 
+                                           placeholder="Enter phone number" required="True"/>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Issue Details Section -->
+                    <div class="section-card">
+                        <div class="section-card-header">
+                            Issue Details
+                        </div>
+                        <div class="section-card-body">
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; grid-template-columns: 1fr 1fr; background-color: var(--light-bg);">
+
+                                <div class="input-row">
+                                    <label class="form-label">Problem Type *</label>
+                                    <select name="problem_type" class="form-select" required="True">
+                                        <option value="">-- Select Problem Type --</option>
+                                        <option value="hardware">Hardware Issue</option>
+                                        <option value="software">Software Issue</option>
+                                        <option value="network">Network Issue</option>
+                                        <option value="billing">Billing &amp; Account</option>
+                                        <option value="other">Other</option>
+                                    </select>
+                                </div>
+
+                                <div class="input-row">
+                                    <label class="form-label">Attachment</label>
+                                    <input type="file" name="attachment" class="form-control" 
+                                           accept=".pdf,.doc,.docx,.jpg,.png,.txt"/>
+                                </div>
+
+                                <div style="grid-column: 1 / -1;" class="input-row">
+                                    <label class="form-label">Problem Description *</label>
+                                    <textarea name="description" class="form-control" 
+                                              placeholder="Describe the issue in detail. Include any error messages, when the problem started, and steps you've already tried..."
+                                              required="True"></textarea>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Device Details Section -->
+                    <div class="section-card">
+                        <div class="section-card-header">
+                            Device Details
+                        </div>
+                        <div class="device-table-wrapper">
+                            <table class="device-table" id="device_table">
+                                <thead>
+                                    <tr>
+                                        <th>Model Number</th>
+                                        <th>Serial Number</th>
+                                        <th>Description</th>
+                                        <th style="width: 60px; text-align: center;">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="device_row">
+                                        <td><input name="model_number[]" class="form-control" placeholder="e.g., MODEL-001"/></td>
+                                        <td><input name="serial_number[]" class="form-control" placeholder="e.g., SN-12345678"/></td>
+                                        <td><input name="description[]" class="form-control" placeholder="Device description"/></td>
+                                        <td style="text-align: center;">
+                                            <button type="button" class="btn btn-sm btn-outline-danger remove_row" title="Remove this device">
+                                                ✕
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="add-device-section">
+                            <button type="button" class="btn btn-outline-primary" id="add_row">
+                                + Add Another Device
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Form Footer -->
+                    <div class="form-footer">
+                        <button type="reset" class="btn btn-outline-primary" style="background-color: white; color: var(--primary-color);">
+                            Clear Form
+                        </button>
+                        <button type="submit" class="btn btn-primary" style="padding: 12px 40px;">
+                            Submit Ticket
+                        </button>
+                    </div>
+
+                </form>
+            </div>
+
+        </t>
+
+        <!-- JavaScript for dynamic rows -->
+        <script type="text/javascript">
+            document.addEventListener("DOMContentLoaded", function () {
+
+                const tableBody = document.querySelector("#device_table tbody");
+                const addBtn = document.getElementById("add_row");
+
+                // Add row
+                addBtn.addEventListener("click", function (e) {
+                    e.preventDefault();
+
+                    let row = document.createElement("tr");
+                    row.className = "device_row";
+
+                    row.innerHTML = `
+                        <td><input name="model_number[]" class="form-control" placeholder="e.g., MODEL-001"/></td>
+                        <td><input name="serial_number[]" class="form-control" placeholder="e.g., SN-12345678"/></td>
+                        <td><input name="description[]" class="form-control" placeholder="Device description"/></td>
+                        <td style="text-align: center;">
+                            <button type="button" class="btn btn-sm btn-outline-danger remove_row" title="Remove this device">
+                                ✕
+                            </button>
+                        </td>
+                    `;
+
+                    tableBody.appendChild(row);
+                });
+
+                // Remove row
+                tableBody.addEventListener("click", function (e) {
+                    if (e.target.classList.contains("remove_row") || e.target.closest(".remove_row")) {
+                        e.preventDefault();
+                        let row = e.target.closest("tr");
+
+                        if (tableBody.querySelectorAll("tr").length &gt; 1) {
+                            row.remove();
+                        } else {
+                            alert("Please keep at least one device entry.");
+                        }
+                    }
+                });
+
+            });
+        </script>
+
+    </template>
+</odoo>

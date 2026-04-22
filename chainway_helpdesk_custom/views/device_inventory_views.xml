@@ -1,0 +1,118 @@
+<odoo>
+
+    <!-- Tree View -->
+    <record id="view_device_inventory_tree" model="ir.ui.view">
+        <field name="name">device.inventory.tree</field>
+        <field name="model">device.inventory</field>
+        <field name="arch" type="xml">
+            <list>
+                <header>
+                    <button name="%(action_device_import_wizard)d"
+                            type="action"
+                            string="Import"
+                            class="btn-primary"
+                            display="always"/>
+                </header>
+                <field name="device_sn"/>
+                <field name="type"/>
+                <field name="imei1"/>
+                <field name="model"/>
+                <field name="end_user_name"/>
+                <field name="location"/>
+                <field name="delivery_date"/>
+            </list>
+        </field>
+    </record>
+
+    
+
+    <!-- Form View -->
+    <record id="view_device_inventory_form" model="ir.ui.view">
+    <field name="name">device.inventory.form</field>
+    <field name="model">device.inventory</field>
+    <field name="arch" type="xml">
+        <form string="Device Inventory">
+            <sheet>
+                <group>
+                    <group>
+                        <field name="end_user_name"/>
+                        <field name="device_sn"/>
+                        <!-- accessories_sn removed -->
+                        <field name="type"/>
+                        <field name="model"/>
+                        <field name="description"/>
+                    </group>
+
+                    <group>
+                        <field name="imei1"/>
+                        <field name="imei2"/>
+                        <field name="bt_mac"/>
+                        <field name="wifi_mac"/>
+                        <field name="sw_version"/>
+                    </group>
+
+                    <!-- ✅ POD Image in main view -->
+                    <group>
+                        <field name="pod_copy" widget="image" class="oe_avatar"/>
+                    </group>
+                </group>
+
+                <notebook>
+
+                    <page string="Configuration">
+                        <group>
+                            <field name="configuration_in"/>
+                            <field name="configuration_out"/>
+                        </group>
+                    </page>
+
+                    <page string="Warranty">
+                        <group>
+                            <field name="warranty_wef"/>
+                            <field name="warranty_category"/>
+                            <field name="warranty_upto"/>
+                        </group>
+                    </page>
+
+                    <page string="Purchase Info">
+                        <group>
+                            <field name="po_no"/>
+                            <field name="po_date"/>
+                            <field name="invoice_no"/>
+                            <field name="invoice_date"/>
+                        </group>
+                    </page>
+
+                    <page string="Delivery">
+                        <group>
+                            <field name="location"/>
+                            <field name="location_code"/>
+                            <field name="delivery_location"/>
+                            <field name="delivery_date"/>
+                        </group>
+                    </page>
+
+                    <page string="Shipping">
+                        <group>
+                            <field name="shipping_address_po"/>
+                            <field name="shipping_address_invoice"/>
+                            <field name="courier_name"/>
+                            <field name="tracking_id"/>
+                        </group>
+                    </page>
+
+                    <!-- ❌ Removed Attachments tab since image is now in main view -->
+
+                    <page string="Other">
+                        <field name="chainway_reference"/>
+                        <field name="remark"/>
+                    </page>
+
+                </notebook>
+            </sheet>
+            <chatter/>
+        </form>
+    </field>
+</record>
+
+</odoo>

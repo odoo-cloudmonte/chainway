@@ -1,0 +1,398 @@
+<odoo>
+    <template id="portal_device_list" name="My Devices">
+        <t t-call="portal.portal_layout">
+
+            <!-- Inline styles for design -->
+            <style>
+                /* ── Google Fonts ── */
+                @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&amp;family=Syne:wght@700;800&amp;display=swap');
+
+                /* ── CSS Variables ── */
+                :root {
+                    --bg:        #F4F6FA;
+                    --surface:   #FFFFFF;
+                    --border:    #E2E8F2;
+                    --accent:    #2563EB;
+                    --accent-lt: #EFF4FF;
+                    --text-hd:   #0F172A;
+                    --text-body: #334155;
+                    --text-mute: #94A3B8;
+                    --success:   #16A34A;
+                    --radius:    12px;
+                    --shadow:    0 4px 24px rgba(15,23,42,.07);
+                }
+
+                /* ── Page wrapper ── */
+                .dv-page {
+                    min-height: 100vh;
+                    
+                    padding: 48px 24px 80px;
+                    font-family: 'DM Sans', sans-serif;
+                    color: var(--text-body);
+                }
+
+                /* ── Header block ── */
+                .dv-header {
+                    display: flex;
+                    align-items: flex-end;
+                    justify-content: space-between;
+                    flex-wrap: wrap;
+                    gap: 12px;
+                    margin-bottom: 32px;
+                }
+                .dv-header-left h1 {
+                    font-family: 'Syne', sans-serif;
+                    font-weight: 800;
+                    font-size: 2rem;
+                    color: var(--text-hd);
+                    letter-spacing: -0.5px;
+                    margin: 0 0 4px;
+                    line-height: 1.1;
+                }
+                .dv-header-left h1 span {
+                    color: var(--accent);
+                }
+                .dv-header-left p {
+                    font-size: .875rem;
+                    color: var(--text-mute);
+                    margin: 0;
+                }
+                .dv-badge {
+                    display: inline-flex;
+                    align-items: center;
+                    gap: 6px;
+                    background: var(--accent-lt);
+                    color: var(--accent);
+                    font-size: .78rem;
+                    font-weight: 600;
+                    padding: 6px 14px;
+                    border-radius: 999px;
+                    letter-spacing: .3px;
+                }
+                .dv-badge::before {
+                    content: '';
+                    width: 7px; height: 7px;
+                    background: var(--accent);
+                    border-radius: 50%;
+                    animation: pulse 1.8s infinite;
+                }
+                @keyframes pulse {
+                    0%,100%{ opacity:1; transform:scale(1); }
+                    50%     { opacity:.4; transform:scale(1.4); }
+                }
+
+                /* ── Card / table wrapper ── */
+                .dv-card {
+                    background: var(--surface);
+                    border: 1px solid var(--border);
+                    border-radius: var(--radius);
+                    box-shadow: var(--shadow);
+                    overflow: hidden;
+                }
+
+                /* ── Scrollable table area ── */
+                .dv-table-scroll {
+                    overflow-x: auto;
+                    -webkit-overflow-scrolling: touch;
+                }
+
+                /* ── Table ── */
+                .dv-table {
+                    width: 100%;
+                    border-collapse: collapse;
+                    font-size: .83rem;
+                    white-space: nowrap;
+                }
+                .dv-table thead tr {
+                    background: var(--text-hd);
+                }
+                .dv-table thead th {
+                    color: #CBD5E1;
+                    font-weight: 600;
+                    font-size: .72rem;
+                    letter-spacing: .8px;
+                    text-transform: uppercase;
+                    padding: 14px 16px;
+                    text-align: left;
+                    border: none;
+                }
+                .dv-table thead th:first-child { border-radius: 0; }
+
+                /* ── Body rows ── */
+                .dv-table tbody tr {
+                    border-bottom: 1px solid var(--border);
+                    transition: background .15s;
+                }
+                .dv-table tbody tr:last-child { border-bottom: none; }
+                .dv-table tbody tr:hover { background: #F8FAFF; }
+
+                .dv-table td {
+                    padding: 13px 16px;
+                    color: var(--text-body);
+                    vertical-align: middle;
+                }
+
+                /* Sr. No pill */
+                .dv-table td:first-child {
+                    color: var(--text-mute);
+                    font-weight: 600;
+                    font-size: .78rem;
+                }
+
+                /* Field pills for key identifiers */
+                .dv-pill {
+                    display: inline-block;
+                    background: var(--accent-lt);
+                    color: var(--accent);
+                    font-weight: 600;
+                    font-size: .75rem;
+                    padding: 3px 9px;
+                    border-radius: 6px;
+                    letter-spacing: .2px;
+                }
+
+                /* Muted dash */
+                .dv-dash {
+                    color: var(--text-mute);
+                    font-size: .85rem;
+                }
+
+                /* ── Download button ── */
+                .dv-btn-dl {
+                    display: inline-flex;
+                    align-items: center;
+                    gap: 5px;
+                    background: var(--accent);
+                    color: #fff !important;
+                    font-size: .75rem;
+                    font-weight: 600;
+                    padding: 5px 12px;
+                    border-radius: 7px;
+                    text-decoration: none !important;
+                    transition: background .2s, transform .15s, box-shadow .2s;
+                    box-shadow: 0 2px 8px rgba(37,99,235,.25);
+                }
+                .dv-btn-dl:hover {
+                    background: #1D4ED8;
+                    transform: translateY(-1px);
+                    box-shadow: 0 4px 14px rgba(37,99,235,.35);
+                }
+                .dv-btn-dl svg {
+                    flex-shrink: 0;
+                }
+
+                /* ── Empty state ── */
+                .dv-empty {
+                    padding: 64px 24px;
+                    text-align: center;
+                }
+                .dv-empty-icon {
+                    width: 56px; height: 56px;
+                    background: var(--accent-lt);
+                    border-radius: 14px;
+                    display: flex; align-items: center; justify-content: center;
+                    margin: 0 auto 16px;
+                }
+                .dv-empty p {
+                    color: var(--text-mute);
+                    font-size: .9rem;
+                    margin: 0;
+                }
+                .dv-empty strong {
+                    display: block;
+                    font-size: 1rem;
+                    color: var(--text-hd);
+                    font-weight: 600;
+                    margin-bottom: 4px;
+                }
+
+                /* ── Footer row count ── */
+                .dv-footer {
+                    padding: 12px 20px;
+                    background: #FAFBFD;
+                    border-top: 1px solid var(--border);
+                    font-size: .78rem;
+                    color: var(--text-mute);
+                }
+            </style>
+
+            <div class="dv-page">
+                <div class="container-fluid" style="max-width:1600px;margin:0 auto;">
+
+                    <!-- ── Page Header ── -->
+                    <div class="dv-header">
+                        <div class="dv-header-left">
+                            <h1>My <span>Devices</span></h1>
+                            <p>Track delivery status, serial numbers, and proof of delivery for all assigned devices.</p>
+                        </div>
+                        <div class="dv-badge">Live Inventory</div>
+                    </div>
+
+                    <!-- ── Table Card ── -->
+                    <div class="dv-card">
+                        <div class="dv-table-scroll">
+                            <table class="dv-table">
+
+                                <!-- HEADER -->
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Vendor Name</th>
+                                        <th>PO Date</th>
+                                        <th>PO No.</th>
+                                        <th>Invoice No.</th>
+                                        <th>Invoice Date</th>
+                                        <th>Store Name</th>
+                                        <th>Store Code</th>
+                                        <th>Ship. Address (PO)</th>
+                                        <th>Ship. Address (Invoice)</th>
+                                        <th>Delivery Location</th>
+                                        <th>Serial Number</th>
+                                        <th>Description</th>
+                                        <th>Courier</th>
+                                        <th>Tracking ID</th>
+                                        <th>Delivery Date</th>
+                                        <th>POD</th>
+                                    </tr>
+                                </thead>
+
+                                <!-- BODY -->
+                                <tbody>
+                                    <t t-if="devices">
+                                        <t t-foreach="devices" t-as="d" t-foreach-index="i">
+                                            <tr>
+                                                <!-- Sr. No -->
+                                                <td><t t-esc="(i or 0) + 1"/></td>
+
+                                                <!-- Vendor -->
+                                                <td style="font-weight:500;color:#0F172A;">
+                                                    <t t-esc="d.end_user_name.name or '-'"/>
+                                                </td>
+
+                                                <!-- PO Date -->
+                                                <td><t t-esc="d.po_date or '-'"/></td>
+
+                                                <!-- PO No — highlighted -->
+                                                <td>
+                                                    <t t-if="d.po_no">
+                                                        <span class="dv-pill"><t t-esc="d.po_no"/></span>
+                                                    </t>
+                                                    <t t-else=""><span class="dv-dash">—</span></t>
+                                                </td>
+
+                                                <!-- Invoice No — highlighted -->
+                                                <td>
+                                                    <t t-if="d.invoice_no">
+                                                        <span class="dv-pill"><t t-esc="d.invoice_no"/></span>
+                                                    </t>
+                                                    <t t-else=""><span class="dv-dash">—</span></t>
+                                                </td>
+
+                                                <!-- Invoice Date -->
+                                                <td><t t-esc="d.invoice_date or '-'"/></td>
+
+                                                <!-- Store Name -->
+                                                <td style="font-weight:500;">
+                                                    <t t-esc="d.location or '-'"/>
+                                                </td>
+
+                                                <!-- Store Code -->
+                                                <td><t t-esc="d.location_code or '-'"/></td>
+
+                                                <!-- Shipping Address PO -->
+                                                <td style="white-space:normal;max-width:160px;line-height:1.45;">
+                                                    <t t-esc="d.shipping_address_po or '-'"/>
+                                                </td>
+
+                                                <!-- Shipping Address Invoice -->
+                                                <td style="white-space:normal;max-width:160px;line-height:1.45;">
+                                                    <t t-esc="d.shipping_address_invoice or '-'"/>
+                                                </td>
+
+                                                <!-- Delivery Location -->
+                                                <td><t t-esc="d.delivery_location or '-'"/></td>
+
+                                                <!-- Serial Number -->
+                                                <td style="font-family:monospace;font-size:.8rem;letter-spacing:.3px;">
+                                                    <t t-esc="d.device_sn or '-'"/>
+                                                </td>
+
+                                                <!-- Description -->
+                                                <td style="white-space:normal;max-width:180px;line-height:1.45;">
+                                                    <t t-esc="d.description or '-'"/>
+                                                </td>
+
+                                                <!-- Courier -->
+                                                <td><t t-esc="d.courier_name or '-'"/></td>
+
+                                                <!-- Tracking ID -->
+                                                <td style="font-family:monospace;font-size:.8rem;">
+                                                    <t t-esc="d.tracking_id or '-'"/>
+                                                </td>
+
+                                                <!-- Delivery Date -->
+                                                <td style="font-weight:500;color:#16A34A;">
+                                                    <t t-esc="d.delivery_date or '-'"/>
+                                                </td>
+
+                                                <!-- POD Download -->
+                                                <td>
+                                                    <t t-if="d.pod_copy">
+                                                        <a t-att-href="'/web/content?model=device.inventory&amp;id=%s&amp;field=pod_copy&amp;download=true' % d.id"
+                                                           class="dv-btn-dl">
+                                                            <!-- Download icon -->
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                                                <polyline points="7 10 12 15 17 10"/>
+                                                                <line x1="12" y1="15" x2="12" y2="3"/>
+                                                            </svg>
+                                                            POD
+                                                        </a>
+                                                    </t>
+                                                    <t t-else="">
+                                                        <span class="dv-dash">—</span>
+                                                    </t>
+                                                </td>
+
+                                            </tr>
+                                        </t>
+                                    </t>
+
+                                    <!-- Empty state -->
+                                    <t t-else="">
+                                        <tr>
+                                            <td colspan="17" style="padding:0;border:none;">
+                                                <div class="dv-empty">
+                                                    <div class="dv-empty-icon">
+                                                        <!-- Box / device icon -->
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                                            <rect x="2" y="7" width="20" height="14" rx="2"/>
+                                                            <path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/>
+                                                            <line x1="12" y1="12" x2="12" y2="16"/>
+                                                            <line x1="10" y1="14" x2="14" y2="14"/>
+                                                        </svg>
+                                                    </div>
+                                                    <strong>No devices found</strong>
+                                                    <p>There are currently no devices assigned to your account.</p>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </t>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Footer row count -->
+                        <t t-if="devices">
+                            <div class="dv-footer">
+                                Showing <strong><t t-esc="len(devices)"/></strong> device<t t-if="len(devices) != 1">s</t>
+                            </div>
+                        </t>
+                    </div>
+
+                </div>
+            </div>
+
+        </t>
+    </template>
+</odoo>

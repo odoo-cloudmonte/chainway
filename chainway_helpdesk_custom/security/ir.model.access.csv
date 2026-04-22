@@ -1,0 +1,6 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_device_inventory_user,device.inventory.user,model_device_inventory,base.group_user,1,1,1,1
+access_device_inventory_admin,device.inventory.admin,model_device_inventory,base.group_system,1,1,1,1
+access_helpdesk_sr_manager,helpdesk_sr_manager,model_helpdesk_sr,,1,1,1,1
+access_helpdesk_sr_user,helpdesk.sr user,model_helpdesk_sr,base.group_user,1,1,1,1
+access_device_import_wizard,device_import_wizard,model_device_import_wizard,,1,1,1,1

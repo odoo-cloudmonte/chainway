@@ -1,0 +1,46 @@
+<odoo>
+
+    <record id="view_ticket_helpdesk_form_inherit_devices" model="ir.ui.view">
+        <field name="name">ticket.helpdesk.form.inherit.devices</field>
+        <field name="model">ticket.helpdesk</field>
+        <field name="inherit_id" ref="odoo_website_helpdesk.ticket_helpdesk_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//notebook" position="inside">
+
+                <page string="Devices">
+
+                    <field name="sr_ids">
+                        <list editable="bottom">
+                            <field name="device_sn"/>
+                            <field name="model_mo"/>
+                            <field name="description"/>
+                        </list>
+                    </field>
+
+                </page>
+
+            </xpath>
+            <xpath expr="//notebook" position="inside">
+
+                <page string="Company Details">
+                    <group>
+                        <group>
+                            <field name="company_name"/>
+                            <field name="company_address"/>
+                        </group>
+                        <group>
+                            <field name="contact"/>
+                            <field name="store"/>
+                        </group>
+
+                    </group>
+                    
+                    
+                </page>
+
+            </xpath>
+
+        </field>
+    </record>
+
+</odoo>
