@@ -154,7 +154,14 @@ class DeviceInventory(models.Model):
     #         'target': 'self',
     #     }
 
-
+    def action_open_import_wizard(self):
+        return {
+            'type': 'ir.actions.act_window',
+            'name': 'Import Devices',
+            'res_model': 'device.import.wizard',
+            'view_mode': 'form',
+            'target': 'new',
+        }
 
 
     def action_export_devices(self):

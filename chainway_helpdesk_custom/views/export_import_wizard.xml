@@ -1,56 +1,57 @@
 <odoo>
-    <!-- <record id="view_device_import_wizard" model="ir.ui.view">
-    <field name="name">device.import.wizard.form</field>
-    <field name="model">device.import.wizard</field>
-    <field name="arch" type="xml">
-        <form string="Import Devices">
-            <group>
-                <field name="file"/>
-            </group>
-            <footer>
-                <button name="action_import" type="object"
-                        string="Import" class="btn-primary"/>
-                <button string="Cancel" class="btn-secondary"
-                        special="cancel"/>
-            </footer>
-        </form>
-    </field>
-</record> -->
-<!-- <record id="action_device_import_wizard" model="ir.actions.act_window">
-    <field name="name">Import Devices</field>
-    <field name="res_model">device.import.wizard</field>
-    <field name="view_mode">form</field>
-    <field name="target">new</field>
-</record> -->
+    <record id="view_device_import_wizard" model="ir.ui.view">
+        <field name="name">device.import.wizard.form</field>
+        <field name="model">device.import.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Import Devices">
+                <group>
+                    <field name="file"/>
+                </group>
+                <footer>
+                    <button name="action_import" type="object"
+                            string="Import" class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary"
+                            special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+    <record id="action_device_import_wizard" model="ir.actions.act_window">
+        <field name="name">Import Devices</field>
+        <field name="res_model">device.import.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
 
-<record id="action_export_devices_server" model="ir.actions.server">
-    <field name="name">Export Devices (Excel)</field>
-    <field name="model_id" ref="model_device_inventory"/>
-    <field name="binding_model_id" ref="model_device_inventory"/>
-    <field name="binding_view_types">list</field>
-    <field name="state">code</field>
-    <field name="code">
-action = records.action_export_devices()
-    </field>
-</record>
+    <record id="action_export_devices_server" model="ir.actions.server">
+        <field name="name">Export Devices (Excel)</field>
+        <field name="model_id" ref="model_device_inventory"/>
+        <field name="binding_model_id" ref="model_device_inventory"/>
+        <field name="binding_view_types">list</field>
+        <field name="state">code</field>
+        <field name="code">
+            action = records.action_export_devices()
+        </field>
+    </record>
 
-    <!-- <record id="action_import_devices_server" model="ir.actions.server">
+    <record id="action_import_devices_server" model="ir.actions.server">
         <field name="name">Import Devices</field>
 
-       
+        <!-- IMPORTANT -->
         <field name="model_id" ref="model_device_inventory"/>
         <field name="binding_model_id" ref="model_device_inventory"/>
 
+        <!-- This makes it appear in ⚙️ / Action menu -->
         <field name="binding_view_types">list</field>
 
         <field name="state">code</field>
         <field name="code">
-    action = {
-        "type": "ir.actions.act_window",
-        "res_model": "device.import.wizard",
-        "view_mode": "form",
-        "target": "new"
-    }
+            action = {
+            "type": "ir.actions.act_window",
+            "res_model": "device.import.wizard",
+            "view_mode": "form",
+            "target": "new"
+            }
         </field>
-    </record> -->
+    </record>
 </odoo>
