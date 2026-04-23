@@ -34,14 +34,13 @@ action = records.action_export_devices()
     </field>
 </record>
 
-    <record id="action_import_devices_server" model="ir.actions.server">
+    <!-- <record id="action_import_devices_server" model="ir.actions.server">
         <field name="name">Import Devices</field>
 
-        <!-- IMPORTANT -->
+       
         <field name="model_id" ref="model_device_inventory"/>
         <field name="binding_model_id" ref="model_device_inventory"/>
 
-        <!-- This makes it appear in ⚙️ / Action menu -->
         <field name="binding_view_types">list</field>
 
         <field name="state">code</field>
@@ -53,5 +52,5 @@ action = records.action_export_devices()
         "target": "new"
     }
         </field>
-    </record>
+    </record> -->
 </odoo>
