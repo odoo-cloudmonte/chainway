@@ -6,13 +6,13 @@
         <field name="model">device.inventory</field>
         <field name="arch" type="xml">
             <list>
-                <header>
+                <!-- <header>
                     <button name="%(action_device_import_wizard)d"
                             type="action"
                             string="Import"
                             class="btn-primary"
                             display="always"/>
-                </header>
+                </header> -->
                 <field name="device_sn"/>
                 <field name="type"/>
                 <field name="imei1"/>

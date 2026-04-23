@@ -34,24 +34,24 @@ action = records.action_export_devices()
     </field>
 </record>
 
-<record id="action_import_devices_server" model="ir.actions.server">
-    <field name="name">Import Devices</field>
+    <record id="action_import_devices_server" model="ir.actions.server">
+        <field name="name">Import Devices</field>
 
-    <!-- IMPORTANT -->
-    <field name="model_id" ref="model_device_inventory"/>
-    <field name="binding_model_id" ref="model_device_inventory"/>
+        <!-- IMPORTANT -->
+        <field name="model_id" ref="model_device_inventory"/>
+        <field name="binding_model_id" ref="model_device_inventory"/>
 
-    <!-- This makes it appear in ⚙️ / Action menu -->
-    <field name="binding_view_types">list</field>
+        <!-- This makes it appear in ⚙️ / Action menu -->
+        <field name="binding_view_types">list</field>
 
-    <field name="state">code</field>
-    <field name="code">
-action = {
-    "type": "ir.actions.act_window",
-    "res_model": "device.import.wizard",
-    "view_mode": "form",
-    "target": "new"
-}
-    </field>
-</record>
+        <field name="state">code</field>
+        <field name="code">
+    action = {
+        "type": "ir.actions.act_window",
+        "res_model": "device.import.wizard",
+        "view_mode": "form",
+        "target": "new"
+    }
+        </field>
+    </record>
 </odoo>
