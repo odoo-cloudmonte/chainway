@@ -16,12 +16,12 @@
         </form>
     </field>
 </record>
-<record id="action_device_import_wizard" model="ir.actions.act_window">
+<!-- <record id="action_device_import_wizard" model="ir.actions.act_window">
     <field name="name">Import Devices</field>
     <field name="res_model">device.import.wizard</field>
     <field name="view_mode">form</field>
     <field name="target">new</field>
-</record>
+</record> -->
 
 <record id="action_export_devices_server" model="ir.actions.server">
     <field name="name">Export Devices (Excel)</field>
