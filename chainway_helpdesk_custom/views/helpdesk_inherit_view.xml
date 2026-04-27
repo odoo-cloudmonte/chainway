@@ -43,4 +43,45 @@
         </field>
     </record>
 
+    <record id="ticket_helpdesk_view_list_inherit_color" model="ir.ui.view">
+    <field name="name">ticket.helpdesk.view.list.inherit.color</field>
+    <field name="model">ticket.helpdesk</field>
+    <field name="inherit_id" ref="odoo_website_helpdesk.ticket_helpdesk_view_list"/>
+    <field name="arch" type="xml">
+
+        <!-- Add fields (required for decoration) -->
+        <xpath expr="//list" position="inside">
+            <field name="is_overdue" optional="True"/>
+            <field name="is_closed" optional="True"/>
+            <field name="is_on_time" optional="True"/>
+        </xpath>
+
+        <!-- Apply colors -->
+        <xpath expr="//list" position="attributes">
+            <!-- 🔴 Overdue -->
+            <attribute name="decoration-danger">is_overdue</attribute>
+
+            <!-- 🟢 Completed -->
+            <attribute name="decoration-success">is_closed</attribute>
+
+            <!-- 🟡 On time -->
+            <attribute name="decoration-warning">is_on_time</attribute>
+        </xpath>
+
+    </field>
+</record>
+
+    
+    <template id="hide_passkey_login_css" inherit_id="web.login_layout">
+        <xpath expr="." position="inside">
+            <style>
+                .passkey_login_link {
+                    display: none !important;
+                }
+                .o_login_auth{
+                    display: none !important;
+                }
+            </style>
+        </xpath>
+    </template>
 </odoo>

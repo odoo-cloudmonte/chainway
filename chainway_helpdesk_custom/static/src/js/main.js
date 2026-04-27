@@ -1,31 +1,35 @@
+import { rpc } from "@web/core/network/rpc";
 
-    document.addEventListener("DOMContentLoaded", function () {
+function showPopup(count) {
+    if (count > 0) {
+        const popup = document.createElement("div");
 
-        const tableBody = document.querySelector("#device_table tbody");
-        const addBtn = document.getElementById("add_row");
+        popup.innerHTML = `⚠ You have ${count} overdue ticket(s)`;
+        popup.style.position = "fixed";
+        popup.style.top = "20px";
+        popup.style.right = "20px";
+        popup.style.background = "#FEF2F2";
+        popup.style.border = "1px solid #FCA5A5";
+        popup.style.padding = "12px 16px";
+        popup.style.borderRadius = "10px";
+        popup.style.zIndex = "99999";
+        popup.style.color = "#991B1B";
+        popup.style.boxShadow = "0 4px 20px rgba(0,0,0,0.15)";
 
-        // Add new row
-        addBtn.addEventListener("click", function () {
-            let newRow = document.createElement("tr");
+        document.body.appendChild(popup);
 
-            newRow.innerHTML = `
-                <td><input name="model_number[]" class="form-control"/></td>
-                <td><input name="serial_number[]" class="form-control"/></td>
-                <td><input name="description[]" class="form-control"/></td>
-                <td><button type="button" class="btn btn-danger remove_row">X</button></td>
-            `;
+        setTimeout(() => popup.remove(), 5000);
+    }
+}
 
-            tableBody.appendChild(newRow);
-        });
-
-        // Remove row (event delegation)
-        tableBody.addEventListener("click", function (e) {
-            if (e.target.classList.contains("remove_row")) {
-                let row = e.target.closest("tr");
-                if (tableBody.children.length > 1) {
-                    row.remove();
-                }
-            }
-        });
-
+export async function checkTickets() {
+    const count = await rpc("/web/dataset/call_kw", {
+        model: "ticket.helpdesk",
+        method: "search_count",
+        args: [[["is_overdue", "=", true]]],
+        kwargs: {},
     });
+
+    showPopup(count);
+}
+

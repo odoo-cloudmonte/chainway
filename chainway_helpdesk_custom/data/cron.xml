@@ -1,0 +1,13 @@
+<odoo>
+    <record id="ir_cron_ticket_overdue_check" model="ir.cron">
+        <field name="name">Ticket Overdue Check</field>
+        <field name="model_id" ref="model_ticket_helpdesk"/>
+        <field name="state">code</field>
+        <field name="code">model.cron_update_ticket_states()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <field name="active">True</field>
+    </record>
+
+    
+</odoo>

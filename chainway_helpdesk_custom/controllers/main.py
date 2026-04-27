@@ -1,8 +1,9 @@
 import base64
+import io
 
 from odoo import http
 from odoo.http import request
-from datetime import date
+from datetime import date, datetime
 
 class WarrantyController(http.Controller):
 
@@ -105,7 +106,7 @@ class WarrantyController(http.Controller):
         #         })
         
         
-        ticket = request.env['ticket.helpdesk'].create({
+        ticket = request.env['ticket.helpdesk'].sudo().create({
             'customer_id':request.env.user.partner_id.id,
             'company_name': post.get('company_name'),
             'company_address':post.get('company_address'),
@@ -129,7 +130,7 @@ class WarrantyController(http.Controller):
                     'name': file.filename,
                     'datas': base64.b64encode(file.read()),
                     'res_model': 'ticket.helpdesk',
-                    'res_id': ticket.id,   # 🔥 LINK HERE
+                    'res_id': ticket.id,
                     'type': 'binary',
                 })
 
@@ -147,14 +148,151 @@ class WarrantyController(http.Controller):
             ('end_user_name', '=', partner.id)
         ])
 
-        if request.env.user.show_device_ui:
+        return request.render(
+            'chainway_helpdesk_custom.portal_device_list',
+            {
+                'devices': devices
+            }
+        )
 
-            return request.render(
-                'chainway_helpdesk_custom.portal_device_list',
-                {
-                    'devices': devices
-                }
-            )
+        # if request.env.user.show_device_ui:
+
+        #     return request.render(
+        #         'chainway_helpdesk_custom.portal_device_list',
+        #         {
+        #             'devices': devices
+        #         }
+        #     )
         
-        return request.redirect('/my/tickets')
+        # return request.redirect('/my/tickets')
+
+    @http.route('/my/devices/download_excel', auth='user', type='http')
+    def download_device_excel(self, **kw):
+        """Generate and download device data as Excel file"""
+        try:
+            import openpyxl
+            from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
+        except ImportError:
+            return request.not_found()
         
+        # Get devices for current user
+        device_env = request.env['device.inventory']
+        devices = device_env.sudo().search([
+            ('end_user_name', '=', request.env.user.partner_id.id)
+        ])
+        
+        # Create workbook
+        workbook = openpyxl.Workbook()
+        worksheet = workbook.active
+        worksheet.title = "Devices"
+        
+        # Define styles
+        header_fill = PatternFill(start_color="0F172A", end_color="0F172A", fill_type="solid")
+        header_font = Font(bold=True, color="FFFFFF", size=11)
+        header_alignment = Alignment(horizontal="center", vertical="center", wrap_text=True)
+        
+        border_style = Border(
+            left=Side(style='thin'),
+            right=Side(style='thin'),
+            top=Side(style='thin'),
+            bottom=Side(style='thin')
+        )
+        
+        cell_alignment = Alignment(horizontal="left", vertical="center", wrap_text=True)
+        
+        # Define columns
+        columns = [
+            ('Sr. No', 8),
+            ('Vendor Name', 25),
+            ('PO Date', 15),
+            ('PO No.', 15),
+            ('Invoice No.', 15),
+            ('Invoice Date', 15),
+            ('Store Name', 20),
+            ('Store Code', 15),
+            ('Ship. Address (PO)', 25),
+            ('Ship. Address (Invoice)', 25),
+            ('Delivery Location', 20),
+            ('Serial Number', 20),
+            ('Description', 25),
+            ('Courier', 15),
+            ('Tracking ID', 20),
+            ('Delivery Date', 15),
+            ('POD Status', 12),
+        ]
+        
+        # Write headers
+        for col_idx, (header_text, width) in enumerate(columns, 1):
+            cell = worksheet.cell(row=1, column=col_idx)
+            cell.value = header_text
+            cell.fill = header_fill
+            cell.font = header_font
+            cell.alignment = header_alignment
+            cell.border = border_style
+            worksheet.column_dimensions[openpyxl.utils.get_column_letter(col_idx)].width = width
+        
+        # Write data rows
+        for row_idx, device in enumerate(devices, 2):
+            row_data = [
+                row_idx - 1,  # Sr. No
+                device.end_user_name.name if device.end_user_name else '-',
+                str(device.po_date) if device.po_date else '-',
+                device.po_no if device.po_no else '-',
+                device.invoice_no if device.invoice_no else '-',
+                str(device.invoice_date) if device.invoice_date else '-',
+                device.location if device.location else '-',
+                device.location_code if device.location_code else '-',
+                device.shipping_address_po if device.shipping_address_po else '-',
+                device.shipping_address_invoice if device.shipping_address_invoice else '-',
+                device.delivery_location if device.delivery_location else '-',
+                device.device_sn if device.device_sn else '-',
+                device.description if device.description else '-',
+                device.courier_name if device.courier_name else '-',
+                device.tracking_id if device.tracking_id else '-',
+                str(device.delivery_date) if device.delivery_date else '-',
+                'Yes' if device.pod_copy else 'No',
+            ]
+            
+            for col_idx, value in enumerate(row_data, 1):
+                cell = worksheet.cell(row=row_idx, column=col_idx)
+                cell.value = value
+                cell.alignment = cell_alignment
+                cell.border = border_style
+        
+        # Freeze header row
+        worksheet.freeze_panes = "A2"
+        
+        # Generate file
+        output = io.BytesIO()
+        workbook.save(output)
+        output.seek(0)
+        
+        # Return file
+        timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+        filename = f"Devices_{timestamp}.xlsx"
+        
+        return request.make_response(
+            output.getvalue(),
+            headers=[
+                ('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'),
+                ('Content-Disposition', f'attachment; filename="{filename}"'),
+                ('Content-Length', len(output.getvalue())),
+            ]
+        )
+        
+
+from odoo import http
+from odoo.http import request
+from odoo.addons.web.controllers.home import Home
+
+class PortalLoginRedirect(Home):
+
+    def _login_redirect(self, uid, redirect=None):
+        user = request.env['res.users'].sudo().browse(uid)
+
+        # If portal user → redirect to homepage
+        if user.has_group('base.group_portal'):
+            return '/'
+
+        # default behavior
+        return super()._login_redirect(uid, redirect=redirect)
