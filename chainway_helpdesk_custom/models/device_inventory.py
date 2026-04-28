@@ -10,13 +10,15 @@ class DeviceInventory(models.Model):
     _name = 'device.inventory'
     _description = 'Device Inventory'
     _inherit = ['mail.thread', 'mail.activity.mixin']
+
     
 
     device_sn = fields.Char(string="Device SN")
     accessories_sn = fields.Char(string="Accessories SN")
     type = fields.Selection([
         ('device', 'Device'),
-        ('accessory', 'Accessory')
+        ('accessory', 'Accessory'),
+        ('accessories','Accessories')
     ], string="Type")
 
     bt_mac = fields.Char(string="BT MAC")
@@ -35,6 +37,7 @@ class DeviceInventory(models.Model):
     warranty_category = fields.Selection([
         ('standard', 'Standard'),
         ('extended', 'Extended'),
+        ('comprehesive','Comprehesive Warranty'),
         ('none', 'None')
     ], string="Category Of Warranty")
 
