@@ -7,10 +7,17 @@
         <field name="arch" type="xml">
             <list>
                 <header>
+                    
+
                     <button name="action_open_import_wizard"
                             type="object"
                             string="Import"
                             class="btn-primary"
+                            display="always"/>
+                    <button name="action_download_template"
+                            type="object"
+                            string="Import Format"
+                            class="btn-secondary"
                             display="always"/>
                 </header>
 
@@ -19,12 +26,27 @@
                 <field name="imei1"/>
                 <field name="model"/>
                 <field name="end_user_name"/>
-                <field name="location"/>
-                <field name="delivery_date"/>
+                <field name="delivery_date" optional="true"/>
+                <field name="configuration_in" optional="true"/>
+                <field name="configuration_out" optional="true"/>
+                <field name="po_no" optional="true"/>
+                <field name="po_date" optional="true"/>
+                <field name="invoice_no" optional="true"/>
+                <field name="invoice_date" optional="true"/>
+                <field name="warranty_wef" optional="true"/>
+                <field name="warranty_category" optional="true"/>
+                <field name="warranty_upto" optional="true"/>
+                <field name="location" optional="true"/>
+                <field name="location_code" optional="true"/>
+                <field name="delivery_location" optional="true"/>
+                <field name="delivery_date" optional="true"/>
+                <field name="shipping_address_po" optional="true"/>
+                <field name="shipping_address_invoice" optional="true"/>
+                <field name="courier_name" optional="true"/>
+                <field name="tracking_id" optional="true"/>
             </list>
         </field>
-    </record>
-
+    </record>                                      
 
     <!-- Form View -->
     <record id="view_device_inventory_form" model="ir.ui.view">

@@ -383,10 +383,9 @@
                                     <label class="form-label">Problem Type *</label>
                                     <select name="problem_type" class="form-select" required="True">
                                         <option value="">-- Select Problem Type --</option>
-                                        <option value="hardware">Hardware Issue</option>
-                                        <option value="software">Software Issue</option>
-                                        <option value="network">Network Issue</option>
-                                        <option value="billing">Billing &amp; Account</option>
+                                        <option value="Hardware">Hardware Issue</option>
+                                        <option value="Software">Software Issue</option>
+                                        <option value="Damage">Damage</option>
                                         <option value="other">Other</option>
                                     </select>
                                 </div>

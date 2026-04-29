@@ -11,7 +11,30 @@ class ResUsers(models.Model):
     # @api.onchange('show_device_ui')
     # def _onchange_show_device_ui(self):
     #     group = self.env.ref('chainway_helpdesk_custom.group_device_user')
-    #     if self.show_device_ui:
-    #         self.groups_id |= group
-    #     else:
-    #         self.groups_id -= group
+
+    #     for user in self:
+    #         if user.show_device_ui:
+    #             user.group_ids |= group
+    #         else:
+    #             user.group_ids -= group
+
+
+    @api.onchange('show_device_ui')
+    def _onchange_show_device_ui(self):
+        group = self.env.ref('chainway_helpdesk_custom.group_device_user')
+
+        for user in self:
+            current_groups = user.group_ids.ids
+
+            if user.show_device_ui:
+                # add group
+                if group.id not in current_groups:
+                    user.group_ids = [(6, 0, current_groups + [group.id])]
+            else:
+                # remove group
+                if group.id in current_groups:
+                    new_groups = [gid for gid in current_groups if gid != group.id]
+                    user.group_ids = [(6, 0, new_groups)]
+
+
+    

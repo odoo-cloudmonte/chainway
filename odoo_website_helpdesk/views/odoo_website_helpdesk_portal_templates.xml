@@ -289,11 +289,11 @@
                 <table class="portal-table">
                     <thead>
                         <tr>
-                            <th style="width: 15%;">Ticket ID</th>
+                            <th style="width: 20%;">Ticket ID</th>
                             <th style="width: 35%;">Subject</th>
-                            <th style="width: 20%;">Created</th>
+                            <th style="width: 30%;">Created</th>
                             <th style="width: 15%;">Status</th>
-                            <th style="width: 15%;">Priority</th>
+                            <!-- <th style="width: 15%;">Priority</th> -->
                         </tr>
                     </thead>
                     <tbody>
@@ -319,12 +319,12 @@
                                         <t t-esc="ticket.stage_id.name"/>
                                     </span>
                                 </td>
-                                <td>
+                                <!-- <td>
                                     <span class="priority-indicator" t-attf-class="priority-indicator {{ 'high' if ticket.priority == '3' else 'medium' if ticket.priority == '2' else 'low' }}">
                                         <i class="fa fa-circle" style="font-size: 0.6rem;"></i>
                                         <t t-esc="ticket.priority"/>
                                     </span>
-                                </td>
+                                </td> -->
                             </tr>
                         </t>
                     </tbody>
@@ -578,11 +578,11 @@
                 <div>
                     <h1 t-esc="details['display_name']"/>
                 </div>
-                <div class="actions">
+                <!-- <div class="actions">
                     <a class="btn-download" t-attf-href="/my/tickets/download/{{details.id}}" target="_blank">
                         <i class="fa fa-download"></i> Download
                     </a>
-                </div>
+                </div> -->
             </div>
 
             <div class="details-container">
@@ -604,10 +604,10 @@
                                 <span class="info-label">Subject</span>
                                 <span class="info-value" t-esc="details['subject']"/>
                             </div>
-                            <div class="info-item">
+                            <!-- <div class="info-item">
                                 <span class="info-label">Priority</span>
                                 <span class="info-value" t-esc="details['priority']"/>
-                            </div>
+                            </div> -->
                         </div>
                     </div>
 
@@ -617,11 +617,17 @@
                         <div class="info-grid">
                             <div class="info-item">
                                 <span class="info-label">Created Date</span>
-                                <span class="info-value" t-esc="details['create_date']"/>
+                                <!-- <span class="info-value" t-esc="details['create_date']"/> -->
+                                 <span t-field="details.create_date"
+                                        t-options="{'widget': 'date'}"
+                                        class="info-value"/>
                             </div>
                             <div class="info-item">
                                 <span class="info-label">Last Update</span>
-                                <span class="info-value" t-esc="details['last_update_date']"/>
+                                <!-- <span class="info-value" t-esc="details['last_update_date']"/> -->
+                                 <span t-field="details.last_update_date"
+                                        t-options="{'widget': 'date'}"
+                                        class="info-value"/>
                             </div>
                             <div class="info-item">
                                 <span class="info-label">Status</span>
@@ -629,7 +635,10 @@
                             </div>
                             <div class="info-item">
                                 <span class="info-label">Replied Date</span>
-                                <span class="info-value" t-esc="details['replied_date']"/>
+                                <!-- <span class="info-value" t-esc="details['replied_date']"/> -->
+                                 <span t-field="details.replied_date"
+                                        t-options="{'widget': 'date'}"
+                                        class="info-value"/>
                             </div>
                         </div>
                     </div>
@@ -647,7 +656,7 @@
                     <div class="sidebar-card">
                         <div class="sidebar-card-header">Status</div>
                         <div class="sidebar-card-content">
-                            <span class="status-badge" t-esc="details['stage_id'].name"/>
+                            <b><span class="status-badge" t-esc="details['stage_id'].name"/></b>
                         </div>
                     </div>
 
@@ -665,10 +674,11 @@
                                         <i class="fa fa-envelope"></i>
                                         <a t-attf-href="mailto:{{details['customer_id'].email}}" t-esc="details['customer_id'].email"/>
                                     </p>
-                                    <p>
+                                    
+                                    <!-- <p>
                                         <i class="fa fa-phone"></i>
                                         <t t-esc="details['customer_id'].phone"/>
-                                    </p>
+                                    </p> -->
                                 </div>
                             </div>
                         </div>
@@ -701,11 +711,11 @@
                 <table class="portal-table">
                     <thead>
                         <tr>
-                            <th style="width: 15%;">Ticket ID</th>
+                            <th style="width: 20%;">Ticket ID</th>
                             <th style="width: 35%;">Subject</th>
-                            <th style="width: 20%;">Created</th>
+                            <th style="width: 30%;">Created</th>
                             <th style="width: 15%;">Status</th>
-                            <th style="width: 15%;">Priority</th>
+                            <!-- <th style="width: 15%;">Priority</th> -->
                         </tr>
                     </thead>
                     <tbody>
@@ -742,12 +752,12 @@
                                             <t t-esc="ticket.stage_id.name"/>
                                         </span>
                                     </td>
-                                    <td>
+                                    <!-- <td>
                                         <span class="priority-indicator" t-attf-class="priority-indicator {{ 'high' if ticket.priority == '3' else 'medium' if ticket.priority == '2' else 'low' }}">
                                             <i class="fa fa-circle" style="font-size: 0.6rem;"></i>
                                             <t t-esc="ticket.priority"/>
                                         </span>
-                                    </td>
+                                    </td> -->
                                 </tr>
                             </t>
                         </t>

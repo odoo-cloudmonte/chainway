@@ -105,7 +105,7 @@ class WarrantyController(http.Controller):
         #             'description': desc,
         #         })
         
-        
+        stage = request.env['ticket.stage'].sudo().search([('name', '=', 'New')], limit=1)
         ticket = request.env['ticket.helpdesk'].sudo().create({
             'customer_id':request.env.user.partner_id.id,
             'company_name': post.get('company_name'),
@@ -118,6 +118,7 @@ class WarrantyController(http.Controller):
             'email': post.get('email'),
             'phone': post.get('contact_number'),
             'sr_ids': sr_lines,
+            'stage_id':stage.id,
         })
 
         
@@ -140,8 +141,11 @@ class WarrantyController(http.Controller):
     @http.route(['/my/devices'], type='http', auth="user", website=True)
     def my_devices(self, **kwargs):
 
+        user = request.env.user
 
-
+        if not user.show_device_ui:
+            return request.redirect('/')
+        
         partner = request.env.user.partner_id
 
         devices = request.env['device.inventory'].sudo().search([

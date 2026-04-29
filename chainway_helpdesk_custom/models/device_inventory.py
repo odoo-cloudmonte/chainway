@@ -10,6 +10,7 @@ class DeviceInventory(models.Model):
     _name = 'device.inventory'
     _description = 'Device Inventory'
     _inherit = ['mail.thread', 'mail.activity.mixin']
+    _rec_name ='device_sn'
 
     
 
@@ -100,6 +101,13 @@ class DeviceInventory(models.Model):
                     raise ValidationError("Device SN must be unique!")
 
         return super().create(vals_list)
+    
+    def action_download_template(self):
+        return {
+            'type': 'ir.actions.act_url',
+            'url': '/chainway_helpdesk_custom/static/files/device_import_template.xlsx',
+            'target': 'self',
+        }
     
     # def action_export_devices(self):
     #     output = io.BytesIO()
