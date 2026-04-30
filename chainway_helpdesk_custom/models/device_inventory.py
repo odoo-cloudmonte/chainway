@@ -54,7 +54,7 @@ class DeviceInventory(models.Model):
     po_date = fields.Date(string="PO Date", tracking=True)
     po_no = fields.Char(string="PO No", tracking=True)
 
-    invoice_no = fields.Char(string="Invoice No", tracking=True),
+    invoice_no = fields.Char(string="Invoice No", tracking=True)
     invoice_date = fields.Date(string="Invoice Date", tracking=True)
 
     location = fields.Char(string="Location", tracking=True)
