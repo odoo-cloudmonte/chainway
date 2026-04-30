@@ -1,6 +1,8 @@
 from datetime import timedelta
+import re
 
 from odoo import api, models, fields
+from odoo.exceptions import ValidationError
 
 class TicketHelpdesk(models.Model):
     _inherit = 'ticket.helpdesk'
@@ -78,3 +80,41 @@ class TicketHelpdesk(models.Model):
             # 🟡 ON TIME
             else:
                 rec.is_on_time = True
+
+
+    @api.constrains('create_date', 'start_date', 'end_date')
+    def _check_ticket_dates(self):
+        for rec in self:
+
+            # create_date <= start_date
+            if rec.create_date and rec.start_date:
+                if rec.start_date < rec.create_date:
+                    raise ValidationError(
+                        "Start Date cannot be earlier than Creation Date."
+                    )
+
+            # start_date <= end_date
+            if rec.start_date and rec.end_date:
+                if rec.end_date < rec.start_date:
+                    raise ValidationError(
+                        "End Date cannot be earlier than Start Date."
+                    )
+
+            # create_date <= end_date
+            if rec.create_date and rec.end_date:
+                if rec.end_date < rec.create_date:
+                    raise ValidationError(
+                        "End Date cannot be earlier than Creation Date."
+                    )
+                
+    @api.constrains('phone')
+    def _check_phone_number(self):
+        for rec in self:
+            if rec.phone:
+                phone = rec.phone.strip()
+
+                # Allow only digits, optional + at start, length 10–15
+                if not re.match(r'^\+?\d{10,15}$', phone):
+                    raise ValidationError(
+                        "Phone number must be 10–15 digits and can optionally start with '+'."
+                    )

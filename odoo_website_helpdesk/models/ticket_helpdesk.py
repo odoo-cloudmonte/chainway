@@ -64,14 +64,14 @@ class TicketHelpDesk(models.Model):
                        help='Ticket Name')
     customer_id = fields.Many2one('res.partner',
                                   string='Customer Name',
-                                  help='Customer Name')
+                                  help='Customer Name', tracking=True)
     customer_name = fields.Char('Customer Name', help='Customer Name')
     subject = fields.Text('Subject', required=True,
-                          help='Subject of the Ticket')
+                          help='Subject of the Ticket', tracking=True)
     description = fields.Text('Description', required=True,
-                              help='Description')
-    email = fields.Char('Email', help='Email')
-    phone = fields.Char('Phone', help='Contact Number')
+                              help='Description', tracking=True)
+    email = fields.Char('Email', help='Email', tracking=True)
+    phone = fields.Char('Phone', help='Contact Number', tracking=True)
     team_id = fields.Many2one('team.helpdesk', string='Helpdesk Team',
                               help='Helpdesk Team Name')
     product_ids = fields.Many2many('product.template',
@@ -84,7 +84,7 @@ class TicketHelpDesk(models.Model):
                                  store=True,
                                  help='Project Name')
     priority = fields.Selection(PRIORITIES, default='1', help='Priority of the'
-                                                              ' Ticket')
+                                                              ' Ticket', tracking=True)
     stage_id = fields.Many2one('ticket.stage', string='Stage',
                                tracking=True,
                                group_expand='_read_group_stage_ids',
@@ -101,8 +101,8 @@ class TicketHelpDesk(models.Model):
                                          domain=[
                                              ('type', '=', 'service')])
     create_date = fields.Datetime('Creation Date', help='Created date')
-    start_date = fields.Datetime('Start Date', help='Start Date')
-    end_date = fields.Datetime('End Date', help='End Date')
+    start_date = fields.Datetime('Start Date', help='Start Date', tracking=True)
+    end_date = fields.Datetime('End Date', help='End Date',tracking=True)
     public_ticket = fields.Boolean(string="Public Ticket",
                                    help='Public Ticket')
     invoice_ids = fields.Many2many('account.move',
@@ -125,15 +125,15 @@ class TicketHelpDesk(models.Model):
                                        domain=lambda self: [('group_ids', 'in',
                                                              self.env.ref(
                                                                  'odoo_website_helpdesk.helpdesk_user').id)],
-                                       help='Assigned User Name')
+                                       help='Assigned User Name', tracking=True)
     category_id = fields.Many2one('helpdesk.category', string='Category',
-                                  help='Category')
+                                  help='Category', tracking=True)
     tags_ids = fields.Many2many('helpdesk.tag', help='Tags', string='Tags')
     assign_user = fields.Boolean(default=False, help='Assign User',
-                                 string='Assign User')
+                                 string='Assign User', tracking=True)
     attachment_ids = fields.One2many('ir.attachment', 'res_id',
                                      help='Attachment Line',
-                                     string='Attachments')
+                                     string='Attachments', tracking=True)
     merge_ticket_invisible = fields.Boolean(string='Merge Ticket',
                                             help='Merge Ticket Invisible or '
                                                  'Not', default=False)

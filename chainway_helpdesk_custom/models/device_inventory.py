@@ -14,35 +14,35 @@ class DeviceInventory(models.Model):
 
     
 
-    device_sn = fields.Char(string="Device SN")
-    accessories_sn = fields.Char(string="Accessories SN")
+    device_sn = fields.Char(string="Device SN", tracking=True)
+    accessories_sn = fields.Char(string="Accessories SN", tracking=True)
     type = fields.Selection([
         ('device', 'Device'),
         ('accessory', 'Accessory'),
         ('accessories','Accessories')
-    ], string="Type")
+    ], string="Type", tracking=True)
 
-    bt_mac = fields.Char(string="BT MAC")
-    imei1 = fields.Char(string="IMEI 1")
-    imei2 = fields.Char(string="IMEI 2")
-    wifi_mac = fields.Char(string="WiFi MAC")
-    model = fields.Char(string="Model")
-    description = fields.Text(string="Descriptions")
+    bt_mac = fields.Char(string="BT MAC", tracking=True)
+    imei1 = fields.Char(string="IMEI 1", tracking=True)
+    imei2 = fields.Char(string="IMEI 2", tracking=True)
+    wifi_mac = fields.Char(string="WiFi MAC", tracking=True)
+    model = fields.Char(string="Model", tracking=True)
+    description = fields.Text(string="Descriptions", tracking=True)
 
-    sw_version = fields.Char(string="SW Version")
+    sw_version = fields.Char(string="SW Version", tracking=True)
 
-    configuration_in = fields.Text(string="Configuration IN")
-    configuration_out = fields.Text(string="Configuration OUT")
+    configuration_in = fields.Text(string="Configuration IN", tracking=True)
+    configuration_out = fields.Text(string="Configuration OUT", tracking=True)
 
-    warranty_wef = fields.Date(string="Warranty Effective From (WEF/DoP)")
+    warranty_wef = fields.Date(string="Warranty Effective From (WEF/DoP)", tracking=True)
     warranty_category = fields.Selection([
         ('standard', 'Standard'),
         ('extended', 'Extended'),
         ('comprehesive','Comprehesive Warranty'),
         ('none', 'None')
-    ], string="Category Of Warranty")
+    ], string="Category Of Warranty", tracking=True)
 
-    warranty_upto = fields.Date(string="Warranty Applicable Up To")
+    warranty_upto = fields.Date(string="Warranty Applicable Up To", tracking=True)
 
     # end_user_name = fields.Char(string="User Name")
     end_user_name = fields.Many2one(
@@ -51,29 +51,29 @@ class DeviceInventory(models.Model):
         tracking=True
     )
 
-    po_date = fields.Date(string="PO Date")
-    po_no = fields.Char(string="PO No")
+    po_date = fields.Date(string="PO Date", tracking=True)
+    po_no = fields.Char(string="PO No", tracking=True)
 
-    invoice_no = fields.Char(string="Invoice No")
-    invoice_date = fields.Date(string="Invoice Date")
+    invoice_no = fields.Char(string="Invoice No", tracking=True),
+    invoice_date = fields.Date(string="Invoice Date", tracking=True)
 
-    location = fields.Char(string="Location")
-    location_code = fields.Char(string="Location Code")
+    location = fields.Char(string="Location", tracking=True)
+    location_code = fields.Char(string="Location Code", tracking=True)
 
-    shipping_address_po = fields.Text(string="Shipping Address (PO)")
-    shipping_address_invoice = fields.Text(string="Shipping Address (Invoice)")
-    delivery_location = fields.Char(string="Confirm Delivery Location")
+    shipping_address_po = fields.Text(string="Shipping Address (PO)", tracking=True)
+    shipping_address_invoice = fields.Text(string="Shipping Address (Invoice)", tracking=True)
+    delivery_location = fields.Char(string="Confirm Delivery Location", tracking=True)
 
-    courier_name = fields.Char(string="Courier Name")
-    tracking_id = fields.Char(string="Tracking ID")
+    courier_name = fields.Char(string="Courier Name", tracking=True)
+    tracking_id = fields.Char(string="Tracking ID", tracking=True)
 
-    delivery_date = fields.Date(string="Delivery Date")
+    delivery_date = fields.Date(string="Delivery Date", tracking=True)
 
-    pod_copy = fields.Binary(string="POD Copy", attachment=True)
+    pod_copy = fields.Binary(string="POD Copy", attachment=True, tracking=True)
 
-    chainway_reference = fields.Char(string="Chainway CI Reference / Tax Invoice No")
+    chainway_reference = fields.Char(string="Chainway CI Reference / Tax Invoice No", tracking=True)
 
-    remark = fields.Text(string="Remark")
+    remark = fields.Text(string="Remark", tracking=True)
 
     name = fields.Char(string="Reference", compute="_compute_name", store=True)
     # ticket_id = fields.Many2one(
@@ -108,6 +108,45 @@ class DeviceInventory(models.Model):
             'url': '/chainway_helpdesk_custom/static/files/device_import_template.xlsx',
             'target': 'self',
         }
+    
+
+    @api.constrains(
+        'warranty_wef',
+        'warranty_upto',
+        'po_date',
+        'invoice_date',
+        'delivery_date'
+    )
+    def _check_date_validations(self):
+        for rec in self:
+
+            # 1. Warranty validation
+            if rec.warranty_wef and rec.warranty_upto:
+                if rec.warranty_upto < rec.warranty_wef:
+                    raise ValidationError(
+                        "Warranty 'Applicable Up To' date cannot be before Warranty Start Date."
+                    )
+
+            # 2. Invoice date should not be before PO date
+            if rec.po_date and rec.invoice_date:
+                if rec.invoice_date < rec.po_date:
+                    raise ValidationError(
+                        "Invoice Date cannot be earlier than PO Date."
+                    )
+
+            # 3. Delivery date should not be before invoice date
+            if rec.invoice_date and rec.delivery_date:
+                if rec.delivery_date < rec.invoice_date:
+                    raise ValidationError(
+                        "Delivery Date cannot be earlier than Invoice Date."
+                    )
+
+            # 4. Delivery date should not be before PO date (optional but useful)
+            if rec.po_date and rec.delivery_date:
+                if rec.delivery_date < rec.po_date:
+                    raise ValidationError(
+                        "Delivery Date cannot be earlier than PO Date."
+                    )
     
     # def action_export_devices(self):
     #     output = io.BytesIO()

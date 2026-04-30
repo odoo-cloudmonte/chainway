@@ -2,6 +2,7 @@ import base64
 import io
 
 from odoo import http
+from odoo.exceptions import ValidationError
 from odoo.http import request
 from datetime import date, datetime
 
@@ -104,38 +105,45 @@ class WarrantyController(http.Controller):
         #             'device_sn': serial,
         #             'description': desc,
         #         })
+        try:
         
-        stage = request.env['ticket.stage'].sudo().search([('name', '=', 'New')], limit=1)
-        ticket = request.env['ticket.helpdesk'].sudo().create({
-            'customer_id':request.env.user.partner_id.id,
-            'company_name': post.get('company_name'),
-            'company_address':post.get('company_address'),
-            'contact': post.get('contact_person'),
-            'store':post.get('store_location'),
-            # 'customer_name': post.get('company_name'),
-            'subject': post.get('problem_type'),
-            'description': post.get('description'),
-            'email': post.get('email'),
-            'phone': post.get('contact_number'),
-            'sr_ids': sr_lines,
-            'stage_id':stage.id,
-        })
+            stage = request.env['ticket.stage'].sudo().search([('name', '=', 'New')], limit=1)
+            ticket = request.env['ticket.helpdesk'].sudo().create({
+                'customer_id':request.env.user.partner_id.id,
+                'company_name': post.get('company_name'),
+                'company_address':post.get('company_address'),
+                'contact': post.get('contact_person'),
+                'store':post.get('store_location'),
+                # 'customer_name': post.get('company_name'),
+                'subject': post.get('problem_type'),
+                'description': post.get('description'),
+                'email': post.get('email'),
+                'phone': post.get('contact_number'),
+                'sr_ids': sr_lines,
+                'stage_id':stage.id,
+            })
 
+            
+
+            files = request.httprequest.files.getlist('attachment')
+
+            for file in files:
+                if file:
+                    request.env['ir.attachment'].sudo().create({
+                        'name': file.filename,
+                        'datas': base64.b64encode(file.read()),
+                        'res_model': 'ticket.helpdesk',
+                        'res_id': ticket.id,
+                        'type': 'binary',
+                    })
+
+            return request.redirect('/my/tickets')
         
-
-        files = request.httprequest.files.getlist('attachment')
-
-        for file in files:
-            if file:
-                request.env['ir.attachment'].sudo().create({
-                    'name': file.filename,
-                    'datas': base64.b64encode(file.read()),
-                    'res_model': 'ticket.helpdesk',
-                    'res_id': ticket.id,
-                    'type': 'binary',
-                })
-
-        return request.redirect('/my/tickets')
+        except ValidationError as e:
+            return request.render('chainway_helpdesk_custom.portal_helpdesk_form', {
+                'error_message': str(e),
+                  # keep old values
+            })
     
 
     @http.route(['/my/devices'], type='http', auth="user", website=True)

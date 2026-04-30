@@ -601,7 +601,7 @@
                                 <span class="info-value" t-esc="details['category_id'].name"/>
                             </div>
                             <div class="info-item">
-                                <span class="info-label">Subject</span>
+                                <span class="info-label">Issue</span>
                                 <span class="info-value" t-esc="details['subject']"/>
                             </div>
                             <!-- <div class="info-item">
@@ -662,7 +662,7 @@
 
                     <!-- Contact Card -->
                     <div class="sidebar-card">
-                        <div class="sidebar-card-header">Your Contact</div>
+                        <div class="sidebar-card-header">Contact</div>
                         <div class="sidebar-card-content">
                             <div class="contact-card">
                                 <div class="contact-avatar">
@@ -686,7 +686,7 @@
 
                     <!-- Assigned Consultant Card -->
                     <div class="sidebar-card">
-                        <div class="sidebar-card-header">Consultant</div>
+                        <div class="sidebar-card-header">Assigned To</div>
                         <div class="sidebar-card-content">
                             <p class="info-value" t-esc="details['assigned_user_id'].name"/>
                         </div>

@@ -1,6 +1,11 @@
 <odoo>
     <template id="portal_helpdesk_form" name="Helpdesk Form">
         <t t-call="portal.portal_layout">
+            <t t-if="error_message">
+                <script type="text/javascript">
+                    alert("<t t-esc='error_message'/>");
+                </script>
+            </t>
 
             <style>
                 /* Professional Color Scheme */
@@ -363,8 +368,16 @@
 
                                 <div class="input-row">
                                     <label class="form-label">Contact Number *</label>
-                                    <input type="tel" name="contact_number" class="form-control" 
-                                           placeholder="Enter phone number" required="True"/>
+                                    <!-- <input type="tel" name="contact_number" class="form-control" 
+                                           placeholder="Enter phone number" required="True"/> -->
+                                    <input type="tel"
+                                            name="contact_number"
+                                            class="form-control"
+                                            placeholder="Enter phone number"
+                                            pattern="^\+?\d{10,15}$"
+                                            inputmode="numeric"
+                                            maxlength="15"
+                                            required="required"/>
                                 </div>
 
                             </div>
