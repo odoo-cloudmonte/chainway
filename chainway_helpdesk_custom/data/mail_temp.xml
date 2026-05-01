@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+ <!-- <odoo> 
+    <data noupdate="1">
+        <record id="email_template_chainway_user" model="mail.template">
+            <field name="name">Chainway User Creation Mail</field>
+            <field name="model_id" ref="base.model_res_users"/>
+            <field name="subject">Access Details for Chainway Support Portal</field>
+            <field name="email_from">${(user.email or 'noreply@chainway.com')}</field>
+            <field name="email_to">${object.email}</field>
+            <field name="body_html">${'''
+            &lt;div style="font-family: Arial, sans-serif; font-size: 14px; color: #333; padding: 20px;"&gt;
+
+                &lt;p&gt;Dear ''' + (object.name or '') + ''',&lt;/p&gt;
+
+                &lt;p&gt;Greetings from &lt;strong&gt;Chainway&lt;/strong&gt;!&lt;/p&gt;
+
+                &lt;p&gt;We are pleased to introduce our online support interface for logging repair 
+                requests and technical queries related to our products.&lt;/p&gt;
+
+                &lt;p&gt;This portal has been designed to provide you with a quick and convenient way 
+                to register service requests, track progress, and share technical concerns directly 
+                with our support team.&lt;/p&gt;
+
+                &lt;p&gt;&lt;strong&gt;Please find your login details below:&lt;/strong&gt;&lt;/p&gt;
+
+                &lt;table style="border-collapse: collapse; width: 420px; margin: 10px 0;"&gt;
+                    &lt;tr style="background-color: #f5f5f5;"&gt;
+                        &lt;td style="padding: 10px 14px; border: 1px solid #ddd; font-weight: bold; width: 140px;"&gt;Portal Link&lt;/td&gt;
+                        &lt;td style="padding: 10px 14px; border: 1px solid #ddd;"&gt;
+                            &lt;a href="https://support.chainway.com"&gt;https://support.chainway.com&lt;/a&gt;
+                        &lt;/td&gt;
+                    &lt;/tr&gt;
+                    &lt;tr&gt;
+                        &lt;td style="padding: 10px 14px; border: 1px solid #ddd; font-weight: bold;"&gt;User ID&lt;/td&gt;
+                        &lt;td style="padding: 10px 14px; border: 1px solid #ddd;"&gt;''' + (object.login or '') + '''&lt;/td&gt;
+                    &lt;/tr&gt;
+                    &lt;tr style="background-color: #f5f5f5;"&gt;
+                        &lt;td style="padding: 10px 14px; border: 1px solid #ddd; font-weight: bold;"&gt;Password&lt;/td&gt;
+                        &lt;td style="padding: 10px 14px; border: 1px solid #ddd;"&gt;''' + (ctx.get('temp_password') or '') + '''&lt;/td&gt;
+                    &lt;/tr&gt;
+                &lt;/table&gt;
+
+                &lt;p&gt;We request you to use this interface for all future repair and technical support 
+                requirements to ensure faster response and better tracking of your requests.&lt;/p&gt;
+
+                &lt;p&gt;If you face any difficulty accessing the portal or need any assistance, 
+                please feel free to contact us.&lt;/p&gt;
+
+                &lt;p&gt;We look forward to supporting you better through this system.&lt;/p&gt;
+
+                &lt;br/&gt;
+                &lt;p&gt;Warm Regards,&lt;/p&gt;
+                &lt;p&gt;&lt;strong&gt;Chainway Support Team&lt;/strong&gt;&lt;/p&gt;
+
+            &lt;/div&gt;
+            '''}</field>
+        </record>
+    </data>
+</odoo> -->
+<odoo>
+    <data noupdate="1">
+        <record id="email_template_chainway_user" model="mail.template">
+            <field name="name">Chainway User Creation Mail</field>
+            <field name="model_id" ref="base.model_res_users"/>
+            <field name="subject">Access Details for Chainway Support Portal</field>
+        </record>
+    </data>
+</odoo>

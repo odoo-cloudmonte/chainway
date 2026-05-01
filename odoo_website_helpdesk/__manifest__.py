@@ -31,7 +31,7 @@
     'maintainer': 'Cybrosys Techno Solutions',
     'website': "https://www.cybrosys.com",
     'depends': ['website', 'project', 'sale_project', 'hr_timesheet',
-                'mail', 'contacts'],
+                'mail', 'contacts', 'portal', 'base'],
     'data': [
         'data/helpdesk_category_data.xml',
         'security/odoo_website_helpdesk_groups.xml',

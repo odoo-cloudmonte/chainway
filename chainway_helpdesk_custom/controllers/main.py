@@ -122,6 +122,7 @@ class WarrantyController(http.Controller):
                 'sr_ids': sr_lines,
                 'stage_id':stage.id,
             })
+            ticket.message_subscribe(partner_ids=[request.env.user.partner_id.id])
 
             
 

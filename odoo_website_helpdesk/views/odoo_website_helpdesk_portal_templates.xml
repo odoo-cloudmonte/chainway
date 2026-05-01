@@ -698,7 +698,8 @@
             <div class="communication-section">
                 <h2><i class="fa fa-comments"></i> Communication History</h2>
                 <t t-call="portal.message_thread">
-                    <t t-set="object" t-value="details"/>
+                    <!-- <t t-set="object" t-value="details"/> -->
+                     <t t-esc="details"/>
                 </t>
             </div>
         </t>

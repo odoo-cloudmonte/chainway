@@ -4,7 +4,7 @@
     'depends': ['base', 'mail','odoo_website_helpdesk','web'],
     'data': [
         'security/ir.model.access.csv',
-        'data/cron.xml',
+        
         'views/device_inventory_views.xml',
         'views/device_inventory_menu.xml',
         'views/warrenty_form.xml',
@@ -14,6 +14,9 @@
         'views/res_user_inherit_view.xml',
         'views/portal_device_list.xml',
         'views/export_import_wizard.xml',
+        'data/cron.xml',
+        'data/mail_temp.xml',
+        
     ],
     'assets': {
         'web.assets_backend': [
