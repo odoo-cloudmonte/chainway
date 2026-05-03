@@ -9,5 +9,16 @@
         <field name="active">True</field>
     </record>
 
+    <record id="device_inventory_mis" model="res.groups">
+        <field name="name">MIS</field>
+    </record>
+    <!-- <record id="module_category_device_inventory" model="ir.module.category">
+        <field name="name">Device Inventory</field>
+    </record>
+
+    <record id="device_inventory_mis" model="res.groups">
+        <field name="name">MIS</field>
+        <field name="category_id" ref="chainway_helpdesk_custom.module_category_device_inventory"/>
+    </record> -->
     
 </odoo>

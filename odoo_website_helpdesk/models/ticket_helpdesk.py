@@ -113,8 +113,8 @@ class TicketHelpDesk(models.Model):
                                 string='Tasks',
                                 help='Task id')
     color = fields.Integer(string="Color", help='Color')
-    replied_date = fields.Datetime('Replied date', help='Replied Date')
-    last_update_date = fields.Datetime('Last Update Date',
+    replied_date = fields.Date('Replied date', help='Replied Date')
+    last_update_date = fields.Date('Last Update Date',
                                        help='Last Update Date')
     ticket_type_id = fields.Many2one('helpdesk.type',
                                      string='Ticket Type', help='Ticket Type')

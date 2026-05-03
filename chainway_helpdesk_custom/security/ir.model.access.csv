@@ -1,5 +1,5 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_device_inventory_user,device.inventory.user,model_device_inventory,odoo_website_helpdesk.helpdesk_team_leader,1,0,0,0
+access_device_inventory_mis,device.inventory.mis,model_device_inventory,chainway_helpdesk_custom.device_inventory_mis,1,1,1,0
 access_device_inventory_admin,device.inventory.admin,model_device_inventory,odoo_website_helpdesk.helpdesk_manager,1,1,1,1
 access_helpdesk_sr_manager,helpdesk_sr_manager,model_helpdesk_sr,,1,1,1,1
 access_helpdesk_sr_user,helpdesk.sr user,model_helpdesk_sr,base.group_user,1,1,1,1
