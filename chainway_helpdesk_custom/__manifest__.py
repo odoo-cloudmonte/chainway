@@ -1,7 +1,7 @@
 {
     'name': 'Device Inventory Management',
     'version': '1.0',
-    'depends': ['base', 'mail','odoo_website_helpdesk','web'],
+    'depends': ['base', 'mail','odoo_website_helpdesk','web','website','contacts'],
     'data': [
         'security/ir.model.access.csv',
         
