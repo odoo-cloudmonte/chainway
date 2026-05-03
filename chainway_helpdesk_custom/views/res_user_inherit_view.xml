@@ -9,7 +9,7 @@
                 <page string="Access Control">
                     <group>
                         <field name="show_device_ui"/>
-                        <field name="mis_access"/>
+                        <!-- <field name="mis_access"/> -->
                         
                     <!-- <field name="group_ids" eval="[(4, ref('chainway_helpdesk_custom.device_inventory_mis'))]"/> -->
                     </group>
