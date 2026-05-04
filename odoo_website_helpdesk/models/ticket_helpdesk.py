@@ -61,7 +61,7 @@ class TicketHelpDesk(models.Model):
 
     name = fields.Char('Name', default=lambda self: self.env['ir.sequence'].
                        next_by_code('ticket.helpdesk') or _('New'),
-                       help='Ticket Name')
+                       help='Ticket Name', store=True)
     customer_id = fields.Many2one('res.partner',
                                   string='Customer Name',
                                   help='Customer Name', tracking=True)

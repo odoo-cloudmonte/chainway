@@ -342,369 +342,386 @@
 
     <!-- Template for displaying ticket details -->
     <template id="portal_ticket_details" name="Ticket Details">
-        <t t-call="portal.portal_layout">
-            <style>
-                :root {
-                    --primary-color: #2563eb;
-                    --primary-dark: #1e40af;
-                    --neutral-50: #f9fafb;
-                    --neutral-100: #f3f4f6;
-                    --neutral-200: #e5e7eb;
-                    --neutral-500: #6b7280;
-                    --neutral-700: #374151;
-                }
+    <t t-call="portal.portal_layout">
+        <style>
 
-                .ticket-details-header {
-                    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
-                    color: white;
-                    padding: 2rem;
-                    border-radius: 12px;
-                    margin-bottom: 2rem;
-                    display: flex;
-                    justify-content: space-between;
-                    align-items: center;
-                    flex-wrap: wrap;
-                    gap: 1.5rem;
-                }
+            :root {
+                --primary: #2563eb;
+                --primary-soft: #eff6ff;
+                --dark: #1e293b;
+                --text: #334155;
+                --muted: #64748b;
+                --border: #e2e8f0;
+                --bg: #f8fafc;
+            }
 
-                .ticket-details-header h1 {
-                    font-size: 1.75rem;
-                    margin: 0;
-                    font-weight: 700;
-                }
+            .tk {
+                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+                background: var(--bg);
+                padding: 1rem;
+            }
 
-                .ticket-details-header .actions {
-                    display: flex;
-                    gap: 1rem;
-                    flex-wrap: wrap;
-                }
+            /* HEADER */
+            .tk-hdr {
+                background: linear-gradient(135deg, #2563eb, #1e40af);
+                border-radius: 14px;
+                padding: 1.8rem;
+                color: #fff;
+                box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+                margin-bottom: 1.5rem;
+            }
 
-                .btn-download {
-                    background-color: rgba(255, 255, 255, 0.2);
-                    color: white;
-                    border: 1px solid rgba(255, 255, 255, 0.3);
-                    padding: 0.75rem 1.5rem;
-                    border-radius: 8px;
-                    text-decoration: none;
-                    font-weight: 600;
-                    font-size: 0.9rem;
-                    transition: all 0.3s ease;
-                    display: inline-flex;
-                    align-items: center;
-                    gap: 0.5rem;
-                }
+            .tk-hdr h1 {
+                font-size: 1.5rem;
+                margin: 0;
+            }
 
-                .btn-download:hover {
-                    background-color: rgba(255, 255, 255, 0.25);
-                    border-color: rgba(255, 255, 255, 0.5);
-                }
+            .tk-hdr-meta {
+                opacity: 0.85;
+                font-size: 13px;
+                margin-top: 5px;
+            }
 
-                .details-container {
-                    display: grid;
-                    grid-template-columns: 1fr 350px;
-                    gap: 2rem;
-                    margin-bottom: 2rem;
-                }
+            /* STATS */
+            .tk-stats {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 12px;
+                margin-bottom: 1.5rem;
+            }
 
-                .details-main {
-                    background: white;
-                    border-radius: 12px;
-                    border: 1px solid var(--neutral-200);
-                    overflow: hidden;
-                    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
-                }
+            .tk-stat {
+                background: #fff;
+                border-radius: 12px;
+                padding: 1rem;
+                display: flex;
+                gap: 12px;
+                align-items: center;
+                border: 1px solid var(--border);
+                box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+                transition: 0.2s;
+            }
 
-                .details-section {
-                    padding: 2rem;
-                    border-bottom: 1px solid var(--neutral-100);
-                }
+            .tk-stat:hover {
+                transform: translateY(-2px);
+            }
 
-                .details-section:last-child {
-                    border-bottom: none;
-                }
+            .tk-stat-icon {
+                background: var(--primary-soft);
+                color: var(--primary);
+                border-radius: 8px;
+                padding: 8px;
+            }
 
-                .details-section h3 {
-                    font-size: 0.95rem;
-                    font-weight: 700;
-                    color: var(--neutral-700);
-                    text-transform: uppercase;
-                    letter-spacing: 0.5px;
-                    margin-bottom: 1.5rem;
-                    padding-bottom: 0.75rem;
-                    border-bottom: 2px solid var(--neutral-100);
-                }
+            .tk-stat-label {
+                font-size: 11px;
+                color: var(--muted);
+                text-transform: uppercase;
+            }
 
-                .info-grid {
-                    display: grid;
-                    grid-template-columns: 1fr 1fr;
-                    gap: 2rem;
-                }
+            .tk-stat-val {
+                font-size: 13px;
+                font-weight: 600;
+                color: var(--text);
+            }
 
-                .info-item {
-                    display: flex;
-                    flex-direction: column;
-                }
+            /* LAYOUT */
+            .tk-layout {
+                display: grid;
+                grid-template-columns: 1fr 280px;
+                gap: 1.5rem;
+            }
 
-                .info-label {
-                    font-size: 0.8rem;
-                    font-weight: 700;
-                    color: var(--neutral-500);
-                    text-transform: uppercase;
-                    letter-spacing: 0.3px;
-                    margin-bottom: 0.5rem;
-                }
+            /* CARDS */
+            .tk-card {
+                background: #fff;
+                border-radius: 14px;
+                border: 1px solid var(--border);
+                box-shadow: 0 6px 15px rgba(0,0,0,0.04);
+                overflow: hidden;
+                margin-bottom: 1.2rem;
+            }
 
-                .info-value {
-                    font-size: 1rem;
-                    color: var(--neutral-700);
-                    font-weight: 500;
-                }
+            .tk-ch {
+                padding: 0.8rem 1.2rem;
+                background: #f1f5f9;
+                font-size: 12px;
+                font-weight: 600;
+                color: var(--muted);
+                text-transform: uppercase;
+            }
 
-                .sidebar {
-                    display: flex;
-                    flex-direction: column;
-                    gap: 1.5rem;
-                }
+            .tk-cb {
+                padding: 1.2rem;
+            }
 
-                .sidebar-card {
-                    background: white;
-                    border-radius: 12px;
-                    border: 1px solid var(--neutral-200);
-                    overflow: hidden;
-                    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
-                }
+            .tk-grid2 {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 1rem;
+            }
 
-                .sidebar-card-header {
-                    background-color: var(--neutral-50);
-                    padding: 1rem;
-                    border-bottom: 1px solid var(--neutral-200);
-                    font-weight: 700;
-                    font-size: 0.9rem;
-                    color: var(--neutral-700);
-                    text-transform: uppercase;
-                    letter-spacing: 0.3px;
-                }
+            .tk-il {
+                font-size: 11px;
+                color: var(--muted);
+            }
 
-                .sidebar-card-content {
-                    padding: 1.5rem;
-                }
+            .tk-iv {
+                font-weight: 600;
+                color: var(--text);
+            }
 
-                .contact-card {
-                    display: flex;
-                    gap: 1rem;
-                }
+            .tk-desc {
+                line-height: 1.7;
+                color: var(--text);
+            }
 
-                .contact-avatar {
-                    width: 80px;
-                    height: 80px;
-                    border-radius: 50%;
-                    overflow: hidden;
-                    flex-shrink: 0;
-                    border: 2px solid var(--neutral-200);
-                }
+            /* SIDEBAR */
+            .tk-sidebar {
+                display: flex;
+                flex-direction: column;
+                gap: 1rem;
+            }
 
-                .contact-avatar img {
-                    width: 100%;
-                    height: 100%;
-                    object-fit: cover;
-                }
+            .tk-sc {
+                background: #fff;
+                border-radius: 12px;
+                border: 1px solid var(--border);
+                box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+            }
 
-                .contact-info h4 {
-                    margin: 0 0 0.5rem 0;
-                    font-size: 0.95rem;
-                    color: var(--neutral-700);
-                }
+            .tk-sc-top {
+                padding: 0.7rem 1rem;
+                border-bottom: 1px solid var(--border);
+                font-size: 11px;
+                color: var(--muted);
+                text-transform: uppercase;
+            }
 
-                .contact-info p {
-                    margin: 0.25rem 0;
-                    font-size: 0.85rem;
-                    color: var(--neutral-500);
-                }
+            .tk-sc-body {
+                padding: 1rem;
+            }
 
-                .status-badge {
-                    display: inline-block;
-                    padding: 0.75rem 1.25rem;
-                    border-radius: 8px;
-                    font-weight: 600;
-                    font-size: 0.85rem;
-                    text-transform: capitalize;
-                    background-color: #dcfce7;
-                    color: #15803d;
-                    text-align: center;
-                    width: 100%;
-                    box-sizing: border-box;
-                }
+            /* STATUS COLORS */
+            .status-open {
+                background: #ecfeff;
+                color: #0369a1;
+            }
 
-                .description-text {
-                    line-height: 1.6;
-                    color: var(--neutral-700);
-                    white-space: pre-wrap;
-                    word-wrap: break-word;
-                }
+            .status-progress {
+                background: #fef9c3;
+                color: #92400e;
+            }
 
-                .communication-section {
-                    background: white;
-                    border-radius: 12px;
-                    border: 1px solid var(--neutral-200);
-                    padding: 2rem;
-                    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
-                    margin-top: 2rem;
-                }
+            .status-done {
+                background: #dcfce7;
+                color: #166534;
+            }
 
-                .communication-section h2 {
-                    font-size: 1.25rem;
-                    font-weight: 700;
-                    margin: 0 0 1.5rem 0;
-                    color: var(--neutral-700);
-                }
+            .tk-status-badge {
+                padding: 6px 14px;
+                border-radius: 20px;
+                font-size: 12px;
+                font-weight: 600;
+                display: inline-block;
+            }
 
-                @media (max-width: 992px) {
-                    .details-container {
-                        grid-template-columns: 1fr;
-                    }
+            /* CONTACT */
+            .tk-contact-row {
+                display: flex;
+                gap: 10px;
+                align-items: center;
+            }
 
-                    .info-grid {
-                        grid-template-columns: 1fr;
-                    }
+            .tk-avatar {
+                width: 42px;
+                height: 42px;
+                border-radius: 50%;
+                overflow: hidden;
+            }
 
-                    .ticket-details-header {
-                        flex-direction: column;
-                        text-align: center;
-                    }
-                }
-            </style>
+            .tk-avatar img {
+                width: 100%;
+                height: 100%;
+            }
 
-            <div class="ticket-details-header">
+            .tk-avatar-placeholder {
+                width: 42px;
+                height: 42px;
+                border-radius: 50%;
+                background: var(--primary);
+                color: #fff;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-weight: 600;
+            }
+
+            .tk-cn {
+                font-weight: 600;
+                color: var(--text);
+            }
+
+            .tk-ce {
+                font-size: 12px;
+                color: var(--primary);
+            }
+
+            /* COMMUNICATION */
+            .tk-comms {
+                background: #fff;
+                border-radius: 14px;
+                border: 1px solid var(--border);
+                margin-top: 1.5rem;
+            }
+
+            .tk-comms-top {
+                padding: 0.8rem 1.2rem;
+                border-bottom: 1px solid var(--border);
+                font-size: 12px;
+                color: var(--muted);
+                text-transform: uppercase;
+            }
+
+            .tk-comms-body {
+                padding: 1.5rem;
+            }
+
+        </style>
+
+        <div class="tk">
+
+            <!-- HEADER -->
+            <div class="tk-hdr">
+                <h1 t-esc="details['display_name']"/>
+                <div class="tk-hdr-meta">
+                    <t t-esc="details['ticket_type_id'].name"/> • 
+                    <t t-esc="details['category_id'].name"/>
+                </div>
+            </div>
+
+            <!-- STATS -->
+            <div class="tk-stats">
+                <div class="tk-stat">
+                    <div class="tk-stat-icon"><i class="fa fa-calendar"/></div>
+                    <div>
+                        <div class="tk-stat-label">Created</div>
+                        <div class="tk-stat-val" t-field="details.create_date"/>
+                    </div>
+                </div>
+
+                <div class="tk-stat">
+                    <div class="tk-stat-icon"><i class="fa fa-refresh"/></div>
+                    <div>
+                        <div class="tk-stat-label">Updated</div>
+                        <div class="tk-stat-val" t-field="details.last_update_date"/>
+                    </div>
+                </div>
+
+                <div class="tk-stat">
+                    <div class="tk-stat-icon"><i class="fa fa-flag"/></div>
+                    <div>
+                        <div class="tk-stat-label">Stage</div>
+                        <div class="tk-stat-val" t-esc="details['stage_id'].name"/>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tk-layout">
+
+                <!-- LEFT -->
                 <div>
-                    <h1 t-esc="details['display_name']"/>
-                </div>
-                <!-- <div class="actions">
-                    <a class="btn-download" t-attf-href="/my/tickets/download/{{details.id}}" target="_blank">
-                        <i class="fa fa-download"></i> Download
-                    </a>
-                </div> -->
-            </div>
-
-            <div class="details-container">
-                <!-- Main Content -->
-                <div class="details-main">
-                    <!-- Ticket Information -->
-                    <div class="details-section">
-                        <h3>Ticket Information</h3>
-                        <div class="info-grid">
-                            <div class="info-item">
-                                <span class="info-label">Ticket Type</span>
-                                <span class="info-value" t-esc="details['ticket_type_id'].name"/>
+                    <div class="tk-card">
+                        <div class="tk-ch">Ticket Info</div>
+                        <div class="tk-cb tk-grid2">
+                            <div>
+                                <div class="tk-il">Type</div>
+                                <div class="tk-iv" t-esc="details['ticket_type_id'].name"/>
                             </div>
-                            <div class="info-item">
-                                <span class="info-label">Category</span>
-                                <span class="info-value" t-esc="details['category_id'].name"/>
+                            <div>
+                                <div class="tk-il">Category</div>
+                                <div class="tk-iv" t-esc="details['category_id'].name"/>
                             </div>
-                            <div class="info-item">
-                                <span class="info-label">Issue</span>
-                                <span class="info-value" t-esc="details['subject']"/>
-                            </div>
-                            <!-- <div class="info-item">
-                                <span class="info-label">Priority</span>
-                                <span class="info-value" t-esc="details['priority']"/>
-                            </div> -->
-                        </div>
-                    </div>
-
-                    <!-- Timeline Information -->
-                    <div class="details-section">
-                        <h3>Timeline</h3>
-                        <div class="info-grid">
-                            <div class="info-item">
-                                <span class="info-label">Created Date</span>
-                                <!-- <span class="info-value" t-esc="details['create_date']"/> -->
-                                 <span t-field="details.create_date"
-                                        t-options="{'widget': 'date'}"
-                                        class="info-value"/>
-                            </div>
-                            <div class="info-item">
-                                <span class="info-label">Last Update</span>
-                                <!-- <span class="info-value" t-esc="details['last_update_date']"/> -->
-                                 <span t-field="details.last_update_date"
-                                        t-options="{'widget': 'date'}"
-                                        class="info-value"/>
-                            </div>
-                            <div class="info-item">
-                                <span class="info-label">Status</span>
-                                <span class="info-value" t-esc="details['stage_id'].name"/>
-                            </div>
-                            <div class="info-item">
-                                <span class="info-label">Replied Date</span>
-                                <!-- <span class="info-value" t-esc="details['replied_date']"/> -->
-                                 <span t-field="details.replied_date"
-                                        t-options="{'widget': 'date'}"
-                                        class="info-value"/>
+                            <div style="grid-column: 1/-1;">
+                                <div class="tk-il">Subject</div>
+                                <div class="tk-iv" t-esc="details['subject']"/>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Description -->
-                    <div class="details-section">
-                        <h3>Description</h3>
-                        <p class="description-text" t-esc="details['description']"/>
-                    </div>
-                </div>
-
-                <!-- Sidebar -->
-                <div class="sidebar">
-                    <!-- Status Card -->
-                    <div class="sidebar-card">
-                        <div class="sidebar-card-header">Status</div>
-                        <div class="sidebar-card-content">
-                            <b><span class="status-badge" t-esc="details['stage_id'].name"/></b>
-                        </div>
-                    </div>
-
-                    <!-- Contact Card -->
-                    <div class="sidebar-card">
-                        <div class="sidebar-card-header">Contact</div>
-                        <div class="sidebar-card-content">
-                            <div class="contact-card">
-                                <div class="contact-avatar">
-                                    <img t-att-src="image_data_uri(details['customer_id'].avatar_1024)" alt="Contact"/>
-                                </div>
-                                <div class="contact-info">
-                                    <h4 t-esc="details['customer_id'].name"/>
-                                    <p>
-                                        <i class="fa fa-envelope"></i>
-                                        <a t-attf-href="mailto:{{details['customer_id'].email}}" t-esc="details['customer_id'].email"/>
-                                    </p>
-                                    
-                                    <!-- <p>
-                                        <i class="fa fa-phone"></i>
-                                        <t t-esc="details['customer_id'].phone"/>
-                                    </p> -->
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Assigned Consultant Card -->
-                    <div class="sidebar-card">
-                        <div class="sidebar-card-header">Assigned To</div>
-                        <div class="sidebar-card-content">
-                            <p class="info-value" t-esc="details['assigned_user_id'].name"/>
+                    <div class="tk-card">
+                        <div class="tk-ch">Description</div>
+                        <div class="tk-cb">
+                            <p class="tk-desc" t-esc="details['description']"/>
                         </div>
                     </div>
                 </div>
+
+                <!-- SIDEBAR -->
+                <div class="tk-sidebar">
+
+                    <!-- STATUS -->
+                    <div class="tk-sc">
+                        <div class="tk-sc-top">Status</div>
+                        <div class="tk-sc-body">
+                            <t t-set="stage" t-value="details['stage_id'].name.lower()"/>
+                            <span t-att-class="'tk-status-badge ' + ('status-open' if 'new' in stage else 'status-progress' if 'progress' in stage else 'status-done')">
+                                <t t-esc="details['stage_id'].name"/>
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- CONTACT -->
+                    <div class="tk-sc">
+                        <div class="tk-sc-top">Contact</div>
+                        <div class="tk-sc-body tk-contact-row">
+                            <div class="tk-avatar">
+                                <img t-att-src="image_data_uri(details['customer_id'].avatar_1024)"/>
+                            </div>
+                            <div>
+                                <div class="tk-cn" t-esc="details['customer_id'].name"/>
+                                <div class="tk-ce" t-esc="details['customer_id'].email"/>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ASSIGNED -->
+                    <div class="tk-sc">
+    <div class="tk-sc-top">Assigned</div>
+    <div class="tk-sc-body tk-contact-row">
+
+        <div class="tk-avatar-placeholder">
+            <t t-esc="details['assigned_user_id'] and details['assigned_user_id'].name and details['assigned_user_id'].name[0] or '?'"/>
+        </div>
+
+        <div>
+            <t t-if="details['assigned_user_id']">
+                <div class="tk-cn" t-esc="details['assigned_user_id'].name"/>
+            </t>
+            <t t-else="">
+                <div class="tk-cn" style="color:#999;">Unassigned</div>
+            </t>
+        </div>
+
+    </div>
+</div>
+
+                </div>
             </div>
 
-            <!-- Communication History -->
-            <div class="communication-section">
-                <h2><i class="fa fa-comments"></i> Communication History</h2>
-                <t t-call="portal.message_thread">
-                    <t t-set="object" t-value="details"/>
-                     <!-- <t t-esc="details"/> -->
-                </t>
+            <!-- COMMUNICATION -->
+            <div class="tk-comms">
+                <div class="tk-comms-top">Communication</div>
+                <div class="tk-comms-body">
+                    <t t-call="portal.message_thread">
+                        <t t-set="object" t-value="details"/>
+                    </t>
+                </div>
             </div>
-        </t>
-    </template>
 
+        </div>
+    </t>
+</template>
     <!-- Template for displaying tickets grouped by certain criteria -->
     <template id="ticket_group_by_table">
         <div class="portal-table-wrapper">
