@@ -1,0 +1,9 @@
+<odoo>
+    <record id="seq_image_record" model="ir.sequence">
+        <field name="name">Image Record Sequence</field>
+        <field name="code">image.record.seq</field>
+        <field name="prefix">IMG-</field>
+        <field name="padding">6</field>
+        <field name="number_increment">1</field>
+    </record>
+</odoo>

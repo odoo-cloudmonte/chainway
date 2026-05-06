@@ -1,6 +1,9 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 
-access_help_ticket,access.ticket.helpdesk,model_ticket_helpdesk,,1,1,1,1
+access_help_ticket_user,access.ticket.helpdesk,model_ticket_helpdesk,odoo_website_helpdesk.helpdesk_user,1,1,1,0
+access_help_ticket_teams,access.ticket.helpdesk,model_ticket_helpdesk,odoo_website_helpdesk.helpdesk_team_leader,1,1,1,0
+access_help_ticket_manager,access.ticket.helpdesk,model_ticket_helpdesk,odoo_website_helpdesk.helpdesk_manager,1,1,1,1
+access_help_ticket_admin,access.ticket.helpdesk.admin,model_ticket_helpdesk,base.group_system,1,1,1,1
 
 access_help_ticket_teams_user,access.team.helpdesk,model_team_helpdesk,odoo_website_helpdesk.helpdesk_user,1,1,0,0
 access_help_ticket_teams_leader,access.team.helpdesk,model_team_helpdesk,odoo_website_helpdesk.helpdesk_team_leader,1,1,0,0

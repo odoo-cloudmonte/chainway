@@ -120,7 +120,7 @@ class TicketHelpDesk(models.Model):
                                      string='Ticket Type', help='Ticket Type')
     team_head_id = fields.Many2one('res.users', string='Team Leader',
                                    compute='_compute_team_head_id',
-                                   help='Team Leader Name', store = True)
+                                   help='Team Leader Name', store = True, tracking=True)
     assigned_user_id = fields.Many2one('res.users', string='Assigned User',
                                        domain=lambda self: [('group_ids', 'in',
                                                              self.env.ref(
