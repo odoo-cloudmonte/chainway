@@ -69,7 +69,7 @@ class DeviceInventory(models.Model):
 
     delivery_date = fields.Date(string="Delivery Date", tracking=True)
 
-    pod_copy = fields.Binary(string="POD Copy", attachment=True, tracking=True)
+    pod_copy = fields.Binary(string="POD Copy", attachment=True)
 
     chainway_reference = fields.Char(string="Chainway CI Reference / Tax Invoice No", tracking=True)
 

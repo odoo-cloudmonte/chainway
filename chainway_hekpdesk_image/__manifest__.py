@@ -9,6 +9,7 @@
         'security/ir.model.access.csv',
         'data/sequence.xml',
         'views/image_record_views.xml',
+        'views/res_users.xml',
     ],
     'installable': True,
     'application': True,
