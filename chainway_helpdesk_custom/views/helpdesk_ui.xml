@@ -325,9 +325,9 @@
                                 </div>
 
                                 <div class="input-row">
-                                    <label class="form-label">Store Location</label>
+                                    <label class="form-label">Pin Code</label>
                                     <input type="text" name="store_location" class="form-control" 
-                                           placeholder="Enter store location"/>
+                                           placeholder="Pin Code"/>
                                 </div>
 
                                 <div style="grid-column: 1 / -1;" class="input-row">

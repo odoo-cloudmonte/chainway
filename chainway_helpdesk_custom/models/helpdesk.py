@@ -24,7 +24,7 @@ class TicketHelpdesk(models.Model):
     company_name = fields.Char(string="Company Name")
     company_address = fields.Char(string="Company Address")
     contact = fields.Char(string="Contact")
-    store = fields.Char(string="Store Location")
+    store = fields.Char(string="Pin Code")
 
     is_overdue = fields.Boolean(compute="_compute_states", store=True)
     is_closed = fields.Boolean(compute="_compute_states", store=True)
