@@ -15,7 +15,7 @@
             <div class="col-xs-12 " style="padding:0;">
                 <div class="ticket_box_head">
                     <t t-esc="ticket['name']+' - ('+ticket['create_date'].strftime('%d-%b-%y')"/>
-                    )
+                    
                 </div>
             </div>
             <div class="row m-4 pt-3 w-75">

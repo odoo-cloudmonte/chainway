@@ -1,290 +1,421 @@
 /** @odoo-module **/
+
 import { registry } from "@web/core/registry";
-import { rpc } from '@web/core/network/rpc';
+import { rpc } from "@web/core/network/rpc";
 import { _t } from "@web/core/l10n/translation";
 import { Component } from "@odoo/owl";
 import { onMounted, useRef } from "@odoo/owl";
 import { useService } from "@web/core/utils/hooks";
-/** Initializes the HelpDeskDashBoard component**/
-class HelpDeskDashBoard extends Component{
-    /**Set up function**/
+import { session } from "@web/session";
+
+/** HelpDesk Dashboard **/
+
+class HelpDeskDashBoard extends Component {
+
     setup() {
         super.setup();
-        var self = this;
-        this.ref = useRef("helpDeskDashboard")
+
+        this.ref = useRef("helpDeskDashboard");
         this.actionService = useService("action");
+
         onMounted(this.onMounted);
     }
-    /**Function for onMounted**/
-    onMounted(){
+
+    /** Mounted **/
+
+    onMounted() {
         this.render_dashboards();
         this.render_graphs();
     }
-    /**To render the charts**/
-    render_graphs() {
-        var self = this;
-        self.render_tickets_month_graph();
-        self.render_team_ticket_count_graph();
-    }
-    /**Doughnut chart: TICKET STATUS**/
-    render_tickets_month_graph() {
-        var self = this;
-        var ctx = this.ref.el.querySelector('#ticket_month')
-        rpc('/web/dataset/call_kw/ticket.helpdesk/get_tickets_count', {
-            model: "ticket.helpdesk",
-            method: "get_tickets_view",
-             args: [],
-            kwargs: {},
-        }).then(function (values) {
-            var data = {
-                labels: ['New', 'In Progress', 'Solved'],
-                datasets: [{
-                    data: [values.inbox_count, values.progress_count, values.done_count],
-                    backgroundColor: [
-                        "#665191",
-                        "#ff7c43",
-                        "#ffa600"
-                    ],
-                    borderColor: [
-                        "#003f5c",
-                        "#2f4b7c",
-                        "#f95d6a"
-                    ],
-                    borderWidth: 1
-                }]
-            };
-            /** Options **/
-            var options = {
-                responsive: true,
-                title: false,
-                legend: {
-                    display: true,
-                    position: "right",
-                    labels: {
-                        fontColor: "#333",
-                        fontSize: 16
-                    }
-                },
-                scales: {
-                    yAxes: [{
-                        gridLines: {
-                            color: "rgba(0, 0, 0, 0)",
-                            display: false,
-                        },
-                        ticks: {
-                            min: 0,
-                            display: false,
-                        }
-                    }]
-                }
-            };
-            /** Create Chart class object **/
-            var chart = new Chart(ctx, {
-                type: "doughnut",
-                data: data,
-                options: options
-            });
-        });
-    }
-    /** Bar chart: Team - Tickets Count Ratio **/
-    render_team_ticket_count_graph() {
-        var self = this
-        var ctx = this.ref.el.querySelector('.team_ticket_count');
-        rpc('/web/dataset/call_kw/ticket.helpdesk/get_tickets_count', {
-            model: "ticket.helpdesk",
-            method: "get_team_ticket_count_pie",
-             args: [],
-            kwargs: {},
-        }).then(function (arrays) {
-            var data = {
-                labels: arrays[1],
-                datasets: [{
-                    label: "",
-                    data: arrays[0],
-                    backgroundColor: [
-                        'rgba(255, 99, 132, 0.2)',
-                        'rgba(255, 159, 64, 0.2)',
-                        'rgba(255, 205, 86, 0.2)',
-                        'rgba(75, 192, 192, 0.2)',
-                        'rgba(54, 162, 235, 0.2)',
-                        'rgba(153, rpc102, 255, 0.2)',
-                        'rgba(201, 203, 207, 0.2)'
-                    ],
-                    borderColor: ['rgb(255, 99, 132)',
-                        'rgb(255, 159, 64)',
-                        'rgb(255, 205, 86)',
-                        'rgb(75, 192, 192)',
-                        'rgb(54, 162, 235)',
-                        'rgb(153, 102, 255)',
-                        'rgb(201, 203, 207)'
-                    ],
-                    borderWidth: 1
-                },]
-            };
-            /** Options **/
-            var options = {
-                responsive: true,
-                title: false,
-                maintainAspectRatio: true,
-                legend: {
-                    display: false
-                },
-                scales: {
-                    yAxes: [{
-                        display: true,
-                        ticks: {
-                            beginAtZero: true,
-                            steps: 10,
-                            stepValue: 5,
-                            // max: 100
-                        }
-                    }]
-                }
-            };
-            /** Create Chart class object **/
-            var chart = new Chart(ctx, {
-                type: "bar",
-                data: data,
-                options: options
-            });
-        });
-    }
-    /** List view of tickets in dashboard **/
+
+    /** =========================================
+     *  DASHBOARD COUNTS
+     * ========================================= */
+
     render_dashboards() {
+
         var self = this;
+
         rpc('/web/dataset/call_kw/ticket.helpdesk/get_tickets_count', {
             model: 'ticket.helpdesk',
             method: 'get_tickets_count',
             args: [],
             kwargs: {},
         }).then(function(result) {
-            var inbox_count_span = document.createElement("span");
-            inbox_count_span.textContent = result.inbox_count
-            self.ref.el.querySelector('#inbox_count').appendChild(inbox_count_span);
-            var progress_count_span = document.createElement("span");
-            progress_count_span.textContent = result.progress_count
-            self.ref.el.querySelector('#inprogress_count').appendChild(progress_count_span);
-            var done_count_span = document.createElement("span");
-            done_count_span.textContent = result.done_count
-            self.ref.el.querySelector('#done_count').appendChild(done_count_span);
-            var team_count_span = document.createElement("span");
-            team_count_span.textContent = result.team_count
-            self.ref.el.querySelector('#team_count').appendChild(team_count_span);
-            var priorityCounts = {
-                very_low: result.very_low_count1,
-                low: result.low_count1,
-                normal: result.normal_count1,
-                high: result.high_count1,
-                very_high : result.very_high_count1
-            };
-            /**Loop through the priorities and create progress bars**/
-            for (var priority in priorityCounts) {
-                var progressBarWidth = priorityCounts[priority] + "%";
-                var progressBar = $("<div class='progress-bar'></div>").css("width", progressBarWidth);
-                var progressBarContainer = $("<div class='progress'></div>").append(progressBar);
-                var progressValue = $("<div class='progress-value'></div>").text(priorityCounts[priority] + "%");
-                // Append the progress bar container to elements with class corresponding to the priority
-                $("." + priority + "_count").append(progressBarContainer);
-                $("." + priority + "_count .progress-value").append(progressValue);
-            }
-            var tbody = $(".ticket-details");
-            var ticket_details = result.ticket_details;
-            for (var i = 0; i < ticket_details.length; i++) {
-                 /** Get the current ticket object **/
-                var ticket = ticket_details[i];
-                var row = $("<tr></tr>");
-                /** Assuming you have the Base64-encoded image data in a
-                variable called ticket.assigned_image **/
-                var base64Image = ticket.assigned_image;
-                var assignedUserCell = $("<td class='td'></td>");
-                var imgElement = $("<img>");
-                /** Set the image source **/
-                imgElement.attr("src", "data:image/png;base64," + base64Image);
-                /** Set an alt attribute for accessibility **/
-                imgElement.attr("alt", "User Image");
-                /** Add the 'oe-avatar' class to the <img> element **/
-                imgElement.addClass("user-image");
 
-                /** Append the img element to the assignedUserCell **/
-                assignedUserCell.append(imgElement);
-                /** Append the assignedUserCell to the row **/
-                row.append(assignedUserCell);
-                row.append("<td class='td'>" + ticket.customer_name + "</td>");
-                row.append("<td class='td'>" + ticket.ticket_name + "</td>");
-                row.append(assignedUserCell);
-                row.append("<td>" + ticket.assigned_to + "</td>");
-                row.append("<td>" + ticket.subject + "</td>");
-                row.append("<td>" + ticket.priority + "</td>");
-                tbody.append(row);
+            /** SAFE SETTER **/
+
+            function setCount(id, value) {
+
+                const el = self.ref.el.querySelector(id);
+
+                if (el) {
+                    el.innerHTML = value || 0;
+                }
             }
-            $(".response").append(result.response);
-            rpc('/help/tickets', {}).then((values) => {
-                $('.pending_tickets').append(values);
+
+            /** STAGE COUNTS **/
+            debugger;
+            setCount('#new_count', result.new_count);
+            setCount('#inprogress_count', result.progress_count);
+            setCount('#device_received_count', result.device_received_count);
+            setCount('#assign_engineer_count', result.assign_engineer_count);
+            setCount('#pending_approval_count', result.pending_approval_count);
+            setCount('#dispatch_count', result.dispatch_count);
+            setCount('#cancelled_count', result.cancelled_count);
+            setCount('#done_count', result.done_count);
+            setCount('#closed_count', result.closed_count);
+
+            /** CUSTOMER RESPONSE **/
+
+            $(".response").empty().append(result.response || 0);
+
+            /** PRIORITY BARS **/
+
+            var priorityCounts = {
+                very_low: result.very_low_count1 || 0,
+                low: result.low_count1 || 0,
+                normal: result.normal_count1 || 0,
+                high: result.high_count1 || 0,
+                very_high: result.very_high_count1 || 0
+            };
+
+            for (var priority in priorityCounts) {
+
+                $("." + priority + "_count").empty();
+
+                var progressBarWidth = priorityCounts[priority] + "%";
+
+                var progressBar = $("<div class='progress-bar'></div>")
+                    .css({
+                        "width": progressBarWidth,
+                        "height": "12px",
+                        "border-radius": "20px",
+                        "background": "linear-gradient(90deg,#6366f1,#8b5cf6)"
+                    });
+
+                var progressBarContainer = $("<div class='progress'></div>")
+                    .css({
+                        "background": "#e5e7eb",
+                        "border-radius": "20px",
+                        "overflow": "hidden",
+                        "height": "12px"
+                    })
+                    .append(progressBar);
+
+                var progressValue = $("<div class='progress-value'></div>")
+                    .text(priorityCounts[priority] + "%")
+                    .css({
+                        "margin-top": "6px",
+                        "font-size": "13px",
+                        "font-weight": "600",
+                        "color": "#475569"
+                    });
+
+                $("." + priority + "_count").append(progressBarContainer);
+                $("." + priority + "_count").append(progressValue);
+            }
+
+        });
+    }
+
+    /** =========================================
+     *  RENDER CHARTS
+     * ========================================= */
+
+    render_graphs() {
+
+        this.render_tickets_month_graph();
+        this.render_team_ticket_count_graph();
+    }
+
+    /** =========================================
+     *  DOUGHNUT CHART
+     * ========================================= */
+
+    render_tickets_month_graph() {
+
+        var self = this;
+
+        var ctx = this.ref.el.querySelector('#ticket_month');
+
+        if (!ctx) {
+            return;
+        }
+
+        rpc('/web/dataset/call_kw/ticket.helpdesk/get_tickets_count', {
+            model: "ticket.helpdesk",
+            method: "get_tickets_view",
+            args: [],
+            kwargs: {},
+        }).then(function(values) {
+
+            var data = {
+
+                labels: [
+                    'New',
+                    'In Progress',
+                    'Device Received',
+                    'Assign Engineer',
+                    'Pending Approval',
+                    'Dispatch',
+                    'Cancelled',
+                    'Done',
+                    'Closed'
+                ],
+
+                datasets: [{
+                    data: [
+                        values.new_count || 0,
+                        values.progress_count || 0,
+                        values.device_received_count || 0,
+                        values.assign_engineer_count || 0,
+                        values.pending_approval_count || 0,
+                        values.dispatch_count || 0,
+                        values.cancelled_count || 0,
+                        values.done_count || 0,
+                        values.closed_count || 0
+                    ],
+
+                    backgroundColor: [
+                        "#ec4899",
+                        "#f59e0b",
+                        "#8b5cf6",
+                        "#3b82f6",
+                        "#6366f1",
+                        "#14b8a6",
+                        "#ef4444",
+                        "#10b981",
+                        "#334155"
+                    ],
+
+                    borderWidth: 1
+                }]
+            };
+
+            var options = {
+
+                responsive: true,
+
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    }
+                }
+            };
+
+            new Chart(ctx, {
+                type: "doughnut",
+                data: data,
+                options: options
             });
         });
     }
-    /** To show new tickets **/
-    tickets_inbox(ev) {
+
+    /** =========================================
+     *  TEAM BAR CHART
+     * ========================================= */
+
+    render_team_ticket_count_graph() {
+
         var self = this;
-        ev.stopPropagation();
-        ev.preventDefault();
-        self.actionService.doAction({
-            name: _t("Inbox"),
-            type: 'ir.actions.act_window',
-            res_model: 'ticket.helpdesk',
-            view_mode: 'tree,form',
-            views: [[false, 'list'], [false, 'form']],
-            domain: [['stage_id.name', 'in', ['Inbox', 'Draft']]],
-            context: {default_stage_id_name: 'Draft'},
-            target: 'current'
+
+        var ctx = this.ref.el.querySelector('.team_ticket_count');
+
+        if (!ctx) {
+            return;
+        }
+
+        rpc('/web/dataset/call_kw/ticket.helpdesk/get_tickets_count', {
+            model: "ticket.helpdesk",
+            method: "get_team_ticket_count_pie",
+            args: [],
+            kwargs: {},
+        }).then(function(arrays) {
+
+            var data = {
+
+                labels: arrays[1],
+
+                datasets: [{
+                    label: "Tickets",
+
+                    data: arrays[0],
+
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.5)',
+                        'rgba(255, 159, 64, 0.5)',
+                        'rgba(255, 205, 86, 0.5)',
+                        'rgba(75, 192, 192, 0.5)',
+                        'rgba(54, 162, 235, 0.5)',
+                        'rgba(153, 102, 255, 0.5)',
+                        'rgba(201, 203, 207, 0.5)'
+                    ],
+
+                    borderWidth: 1
+                }]
+            };
+
+            var options = {
+
+                responsive: true,
+
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            };
+
+            new Chart(ctx, {
+                type: "bar",
+                data: data,
+                options: options
+            });
         });
     }
-    /** To show in progress tickets **/
+
+    /** =========================================
+     *  COMMON STAGE ACTION
+     * ========================================= */
+
+    // open_stage(ev, stageName) {
+
+    //     ev.stopPropagation();
+    //     ev.preventDefault();
+    //     debugger;
+
+    //     this.actionService.doAction({
+
+    //         name: _t(stageName),
+
+    //         type: 'ir.actions.act_window',
+
+    //         res_model: 'ticket.helpdesk',
+
+    //         view_mode: 'tree,form',
+
+    //         views: [
+    //             [false, 'list'],
+    //             [false, 'form']
+    //         ],
+            
+    //         domain: [['stage_id.name', '=', stageName]],
+
+    //         context: {
+    //             create: false
+    //         },
+
+    //         target: 'current'
+    //     });
+    // }
+
+    open_stage(ev, stageName) {
+
+    ev.stopPropagation();
+    ev.preventDefault();
+
+    const self = this;
+
+    rpc('/web/dataset/call_kw', {
+
+        model: 'ticket.helpdesk',
+
+        method: 'action_open_stage',
+
+        args: [stageName],
+
+        kwargs: {}
+
+    }).then(function(action) {
+
+        self.actionService.doAction(action);
+
+    });
+}
+
+    /** =========================================
+     *  STAGE METHODS
+     * ========================================= */
+
+    tickets_new(ev) {
+        this.open_stage(ev, "New");
+    }
+
     tickets_inprogress(ev) {
-        var self = this;
-        ev.stopPropagation();
-        ev.preventDefault();
-        self.actionService.doAction({
-            name: _t("In Progress"),
-            type: 'ir.actions.act_window',
-            res_model: 'ticket.helpdesk',
-            view_mode: 'tree,form',
-            views: [[false, 'list'], [false, 'form']],
-            domain: [['stage_id.name', '=', 'In Progress']],
-            context: {create: false},
-            target: 'current'
-        });
+        this.open_stage(ev, "In Progress");
     }
-    /** To show done tickets **/
+
+    tickets_device_received(ev) {
+        this.open_stage(ev, "Device Received");
+    }
+
+    tickets_assign_engineer(ev) {
+        this.open_stage(ev, "Assign to Engineer");
+    }
+
+    tickets_pending_approval(ev) {
+        this.open_stage(ev, "Pending for Approval");
+    }
+
+    tickets_dispatch(ev) {
+        this.open_stage(ev, "Dispatch");
+    }
+
+    tickets_cancelled(ev) {
+        this.open_stage(ev, "Cancelled");
+    }
+
     tickets_done(ev) {
-        var self = this;
-        ev.stopPropagation();
-        ev.preventDefault();
-        self.actionService.doAction({
-            name: _t("Done"),
-            type: 'ir.actions.act_window',
-            res_model: 'ticket.helpdesk',
-            view_mode: 'tree,form',
-            views: [[false, 'list'], [false, 'form']],
-            domain: [['stage_id.name', '=', 'Done']],
-            context: {create: false},
-            target: 'current'
-        });
+        this.open_stage(ev, "Done");
     }
-    /** To show the helpdesk teams**/
+
+    tickets_closed(ev) {
+        this.open_stage(ev, "Closed");
+    }
+
+    /** =========================================
+     *  HELPDESK TEAMS
+     * ========================================= */
+
     helpdesk_teams(ev) {
-        var self = this;
+
         ev.stopPropagation();
         ev.preventDefault();
-        self.actionService.doAction({
+
+        this.actionService.doAction({
+
             name: _t("Teams"),
+
             type: 'ir.actions.act_window',
+
             res_model: 'team.helpdesk',
+
             view_mode: 'tree,form',
-            views: [[false, 'list'], [false, 'form']],
+
+            views: [
+                [false, 'list'],
+                [false, 'form']
+            ],
+
             target: 'current'
         });
     }
 }
-HelpDeskDashBoard.template = 'DashBoardHelpDesk'
-registry.category("actions").add("helpdesk_dashboard", HelpDeskDashBoard)
+
+/** TEMPLATE **/
+
+HelpDeskDashBoard.template = 'DashBoardHelpDesk';
+
+/** REGISTER ACTION **/
+
+registry.category("actions").add(
+    "helpdesk_dashboard",
+    HelpDeskDashBoard
+);

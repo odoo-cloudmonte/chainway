@@ -1,224 +1,629 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="UTF-8"?>
 <templates id="template" xml:space="preserve">
-  <t t-name="HelpDesk_Dashboard" owl="1">
-    <div class="helpdesk_dashboards">
-      <div class="container-fluid helpdesk_dashboard_main"/>
-    </div>
-  </t>
+
+    <!-- =========================================================
+                            MAIN DASHBOARD
+    ========================================================== -->
+
+    <t t-name="HelpDesk_Dashboard" owl="1">
+
+        <div class="helpdesk_dashboards">
+            <div class="container-fluid helpdesk_dashboard_main"/>
+        </div>
+
+    </t>
+
+    <!-- =========================================================
+                            DASHBOARD TEMPLATE
+    ========================================================== -->
+
     <t t-name="DashBoardHelpDesk">
-    <link rel="stylesheet"
-          href="/odoo_website_helpdesk_dashboard/static/src/css/dashboard.css"/>
-        <div class="row main-section mt-5" t-ref="helpDeskDashboard">
-      <h2 class="section-header" style="font-size: 2em; color:#4a5c9a;">HelpDesk Dashboard</h2>
-            <div class="col-sm-6 col-md-3-12 col-md-6 col-lg-3 helpdesk inbox_tickets"
-                 t-on-click="tickets_inbox">
-            <div class="dashboard_card" data-toggle="collapse">
-              <div class="dashboard_card-body panel panel-new">
-                <div class="stat-widget-one" style="background-color:pink">
-                  <div class="stat-icon">
-                    <i class="fa fa-inbox"/>
-                  </div>
-                    <div class="stat-content">
-                    <div class="stat-text" style="color:black">New Tickets</div>
-                        <div class="stat-digit" id="inbox_count">
+
+        <!-- =========================================================
+                                INLINE CSS
+        ========================================================== -->
+
+        <style>
+
+            .modern_helpdesk_dashboard{
+                background:#f4f7fb;
+                min-height:100vh;
+                padding:25px;
+                font-family:'Segoe UI',sans-serif;
+            }
+
+            /* =====================================================
+                                HEADER
+            ====================================================== */
+
+            .dashboard-header{
+                display:flex;
+                justify-content:space-between;
+                align-items:center;
+                margin-bottom:30px;
+            }
+
+            .dashboard-title{
+                font-size:34px;
+                font-weight:700;
+                color:#1e293b;
+                margin-bottom:5px;
+            }
+
+            .dashboard-subtitle{
+                color:#64748b;
+                font-size:15px;
+            }
+
+            .dashboard-live{
+                background:white;
+                padding:12px 20px;
+                border-radius:12px;
+                box-shadow:0 5px 15px rgba(0,0,0,0.06);
+                font-weight:600;
+                color:#334155;
+            }
+
+            /* =====================================================
+                                TOP CARDS
+            ====================================================== */
+
+            .modern-card{
+                background:white;
+                border-radius:18px;
+                padding:24px;
+                display:flex;
+                align-items:center;
+                gap:18px;
+                box-shadow:0 5px 18px rgba(0,0,0,0.06);
+                transition:0.3s ease;
+                cursor:pointer;
+                height:100%;
+            }
+
+            .modern-card:hover{
+                transform:translateY(-5px);
+            }
+
+            .card-icon{
+                width:68px;
+                height:68px;
+                border-radius:18px;
+                display:flex;
+                justify-content:center;
+                align-items:center;
+                color:white;
+                font-size:28px;
+            }
+
+            .card-info h5{
+                margin:0;
+                color:#64748b;
+                font-size:14px;
+                font-weight:600;
+            }
+
+            .card-info h2{
+                margin-top:8px;
+                font-size:32px;
+                font-weight:700;
+                color:#0f172a;
+            }
+
+            /* =====================================================
+                                CARD COLORS
+            ====================================================== */
+
+            .new-card .card-icon{
+                background:linear-gradient(135deg,#ec4899,#f472b6);
+            }
+
+            .progress-card .card-icon{
+                background:linear-gradient(135deg,#f59e0b,#fbbf24);
+            }
+
+            .device-card .card-icon{
+                background:linear-gradient(135deg,#8b5cf6,#a78bfa);
+            }
+
+            .engineer-card .card-icon{
+                background:linear-gradient(135deg,#3b82f6,#60a5fa);
+            }
+
+            .approval-card .card-icon{
+                background:linear-gradient(135deg,#6366f1,#818cf8);
+            }
+
+            .dispatch-card .card-icon{
+                background:linear-gradient(135deg,#14b8a6,#2dd4bf);
+            }
+
+            .cancel-card .card-icon{
+                background:linear-gradient(135deg,#ef4444,#f87171);
+            }
+
+            .done-card .card-icon{
+                background:linear-gradient(135deg,#10b981,#34d399);
+            }
+
+            .closed-card .card-icon{
+                background:linear-gradient(135deg,#334155,#64748b);
+            }
+
+            /* =====================================================
+                        CUSTOMER SATISFACTION
+            ====================================================== */
+
+            .satisfaction-card{
+                margin-top:35px;
+                background:linear-gradient(135deg,#4f46e5,#7c3aed);
+                padding:30px;
+                border-radius:22px;
+                color:white;
+                display:flex;
+                justify-content:space-between;
+                align-items:center;
+                box-shadow:0 10px 20px rgba(79,70,229,0.2);
+            }
+
+            .satisfaction-left h4{
+                font-size:26px;
+                font-weight:700;
+            }
+
+            .satisfaction-left p{
+                margin-top:5px;
+                opacity:0.9;
+            }
+
+            .satisfaction-right{
+                display:flex;
+                align-items:center;
+                gap:20px;
+            }
+
+            .emoji{
+                font-size:48px;
+            }
+
+            .response-title{
+                display:block;
+                font-weight:600;
+                margin-bottom:5px;
+            }
+
+            .response{
+                font-size:24px;
+                font-weight:700;
+            }
+
+            /* =====================================================
+                                CHARTS
+            ====================================================== */
+
+            .chart-card{
+                background:white;
+                border-radius:18px;
+                padding:25px;
+                box-shadow:0 5px 18px rgba(0,0,0,0.06);
+                height:100%;
+            }
+
+            .chart-header h4{
+                font-size:22px;
+                font-weight:700;
+                margin-bottom:20px;
+                color:#0f172a;
+            }
+
+            .graph_canvas{
+                display:flex;
+                justify-content:center;
+                align-items:center;
+            }
+
+            /* =====================================================
+                            PRIORITY SECTION
+            ====================================================== */
+
+            .priority-item{
+                margin-bottom:18px;
+            }
+
+            .priority-item label{
+                display:block;
+                margin-bottom:8px;
+                font-weight:600;
+                color:#334155;
+            }
+
+            .modern-progress{
+                background:#e5e7eb;
+                border-radius:20px;
+                overflow:hidden;
+                height:12px;
+            }
+
+            .progress-value{
+                height:100%;
+                width:65%;
+                border-radius:20px;
+                background:linear-gradient(90deg,#6366f1,#8b5cf6);
+            }
+
+            /* =====================================================
+                                RESPONSIVE
+            ====================================================== */
+
+            @media(max-width:768px){
+
+                .dashboard-header{
+                    flex-direction:column;
+                    align-items:flex-start;
+                    gap:15px;
+                }
+
+                .satisfaction-card{
+                    flex-direction:column;
+                    text-align:center;
+                    gap:20px;
+                }
+            }
+
+        </style>
+
+        <!-- =========================================================
+                                DASHBOARD BODY
+        ========================================================== -->
+
+        <div class="container-fluid helpdesk_dashboard_main modern_helpdesk_dashboard"
+             t-ref="helpDeskDashboard">
+
+            <!-- =====================================================
+                                HEADER
+            ====================================================== -->
+
+            <div class="dashboard-header">
+
+                <div>
+
+                    <h1 class="dashboard-title">
+                        HelpDesk Dashboard
+                    </h1>
+
+                    <p class="dashboard-subtitle">
+                        Monitor tickets, engineers, dispatch, approvals and workflow.
+                    </p>
+
+                </div>
+
+                <div class="dashboard-live">
+
+                    <i class="fa fa-calendar"/>
+
+                    Live Dashboard
+
+                </div>
+
+            </div>
+
+            <!-- =====================================================
+                                STAGE CARDS
+            ====================================================== -->
+
+            <div class="row g-4">
+
+                <!-- NEW -->
+
+                <div class="col-xl-3 col-lg-4 col-md-6 col-sm-12"
+                     t-on-click="tickets_new">
+
+                    <div class="modern-card new-card">
+
+                        <div class="card-icon">
+                            <i class="fa fa-ticket"/>
+                        </div>
+
+                        <div class="card-info">
+                            <h5>New</h5>
+                            <h2 id="new_count">0</h2>
+                        </div>
+
                     </div>
-                  </div>
+
                 </div>
-              </div>
-                <div class="panel-new-collapse collapse">
-            <div id="help_new_tickets"
-                 style="border:none; font-size:8px; padding:0 8px 8px 8px;">
-              <br/>
-                <br/>
-                <p style="border:none; font-size:14px; padding:0 15px 15px 15px;"/>
-            </div>
-          </div>
-        </div>
-      </div>
-            <div class="col-sm-6 col-md-3-12 col-md-6 col-lg-3  salon_spa_orders helpdesk inprogress_tickets"
-                 t-on-click="tickets_inprogress">
-        <div class="dashboard_card" data-toggle="collapse">
-          <div class="dashboard_card-body panel panel-progress">
-            <div class="stat-widget-one" style="background-color:orange">
-              <div class="stat-icon">
-                <i class="fa fa-spinner"/>
-              </div>
-                <div class="stat-content">
-                <div class="stat-text"
-                     style="color:black">Tickets In Progress</div>
-                    <div class="stat-digit" id="inprogress_count">
+
+                <!-- IN PROGRESS -->
+
+                <div class="col-xl-3 col-lg-4 col-md-6 col-sm-12"
+                     t-on-click="tickets_inprogress">
+
+                    <div class="modern-card progress-card">
+
+                        <div class="card-icon">
+                            <i class="fa fa-spinner"/>
+                        </div>
+
+                        <div class="card-info">
+                            <h5>In Progress</h5>
+                            <h2 id="inprogress_count">0</h2>
+                        </div>
+
+                    </div>
+
                 </div>
-              </div>
-            </div>
-          </div>
-            <div class="panel-progress-collapse collapse">
-            <div id="help_progress_tickets"
-                 style="border:none; font-size:8px; padding:0 8px 8px 8px;">
-              <br/>
-                <br/>
-                <p style="border:none; font-size:14px; padding:0 15px 15px 15px;"/>
-            </div>
-          </div>
-        </div>
-      </div>
-            <div class="col-sm-6 col-md-3-12 col-md-6 col-lg-3 helpdesk done_tickets"
-                 t-on-click="tickets_done">
-        <div class="dashboard_card" data-toggle="collapse">
-          <div class="dashboard_card-body panel panel-done">
-            <div class="stat-widget-one" style="background-color:pink">
-              <div class="stat-icon">
-                <i class="fa fa-check"/>
-              </div>
-                <div class="stat-content">
-                <div class="stat-text" style="color:black">Done Tickets</div>
-                    <div class="stat-digit" id="done_count">
+
+                <!-- DEVICE RECEIVED -->
+
+                <div class="col-xl-3 col-lg-4 col-md-6 col-sm-12"
+                     t-on-click="tickets_device_received">
+
+                    <div class="modern-card device-card">
+
+                        <div class="card-icon">
+                            <i class="fa fa-laptop"/>
+                        </div>
+
+                        <div class="card-info">
+                            <h5>Device Received</h5>
+                            <h2 id="device_received_count">0</h2>
+                        </div>
+
+                    </div>
+
                 </div>
-              </div>
-            </div>
-          </div>
-            <div class="panel-done-collapse collapse">
-            <div id="help_done_tickets"
-                 style="border:none; font-size:14px; padding:0 15px 15px 15px;">
-              <br/>
-                <br/>
-                <p style="font-style:italic; font-weight:100;"/>
-            </div>
-          </div>
-        </div>
-      </div>
-            <div class="col-sm-6 col-md-3-12 col-md-6 col-lg-3 helpdesk team_card"
-                 t-on-click="helpdesk_teams">
-        <div class="dashboard_card" data-toggle="collapse">
-          <div class="dashboard_card-body panel panel-team">
-            <div class="stat-widget-one" style="background-color:white">
-              <div class="stat-icon">
-                <i class="fa fa-group" id="team_ico"/>
-              </div>
-                <div class="stat-content">
-                <div class="stat-text" style="color:black">HelpDesk Teams</div>
-                    <div class="stat-digit" id="team_count">
+
+                <!-- ASSIGN ENGINEER -->
+
+                <div class="col-xl-3 col-lg-4 col-md-6 col-sm-12"
+                     t-on-click="tickets_assign_engineer">
+
+                    <div class="modern-card engineer-card">
+
+                        <div class="card-icon">
+                            <i class="fa fa-user"/>
+                        </div>
+
+                        <div class="card-info">
+                            <h5>Assign to Engineer</h5>
+                            <h2 id="assign_engineer_count">0</h2>
+                        </div>
+
+                    </div>
+
                 </div>
-              </div>
-            </div>
-          </div>
-            <div class="panel-team-collapse collapse">
-            <div id="help_teams"
-                 style="border:none; font-size:14px; padding:0 15px 15px 15px;">
-              <br/>
-                <br/>
-                <p style="font-style:italic; font-weight:100;"/>
-            </div>
-          </div>
-        </div>
-      </div>
-            <div class="dashboard_card"
-                 style="display: flex; justify-content: center; align-items: center;">
-        <div style="color: black; font-weight: bold; height: 60px; width: 700px; text-align: center;">
-            <span>CUSTOMER SATISFACTION:</span>
-            <div style="display: flex; justify-content: center; align-items: center;">
-                <span>😃</span>
-                <span>Response Received:</span>
-                <div style="width: 10px;"/> <!-- Using width for spacing -->
-                <div class="response"/>
-            </div>
-        </div>
-      </div>
-            <div class="row ticket-section">
-           <div class="col-12 col-sm-12 col-md-4 ticket_box chart-container card-shadow">
-                <h2 class="tickets_head">Ticket Priority</h2>
-               <hr/>
-               <div class="col-xs-12 text-align">
-                  <div class="text-color">
-                      <div class="line">
-                      Very low :
-                      <div class="very_low_count" widget="progressbar">
-                      <div class="progress-value">
-                      </div>
-                  </div>
+
+                <!-- PENDING APPROVAL -->
+
+                <div class="col-xl-3 col-lg-4 col-md-6 col-sm-12"
+                     t-on-click="tickets_pending_approval">
+
+                    <div class="modern-card approval-card">
+
+                        <div class="card-icon">
+                            <i class="fa fa-clock-o"/>
+                        </div>
+
+                        <div class="card-info">
+                            <h5>Pending Approval</h5>
+                            <h2 id="pending_approval_count">0</h2>
+                        </div>
+
+                    </div>
+
                 </div>
-             </div>
-           </div>
-               <div class="col-xs-12 text-align">
-      <div class="text-color">
-        <div class="line">
-          Low :
-        <div class="low_count" widget="progressbar">
-        <div class="progress-value"/>
-      </div>
-    </div></div>
-     </div>
-               <div class="col-xs-12 text-align">
-      <div class="text-color">
-        <div class="line">
-        Normal :
-      <div class="normal_count" widget="progressbar">
-      <div class="progress-value"/>
-  </div>
-</div>
-      </div>
-     </div>
-               <div class="col-xs-12 text-align">
-              <div class="text-color">
-                <div class="line">
-                High :
-                <div class="high_count" widget="progressbar">
-                <div class="progress-value"/>
-                  </div>
+
+                <!-- DISPATCH -->
+
+                <div class="col-xl-3 col-lg-4 col-md-6 col-sm-12"
+                     t-on-click="tickets_dispatch">
+
+                    <div class="modern-card dispatch-card">
+
+                        <div class="card-icon">
+                            <i class="fa fa-truck"/>
+                        </div>
+
+                        <div class="card-info">
+                            <h5>Dispatch</h5>
+                            <h2 id="dispatch_count">0</h2>
+                        </div>
+
+                    </div>
+
                 </div>
-              </div>
-            </div>
-               <div class="col-xs-12 text-align">
-              <div class="text-color">
-                <div class="line">
-                Very High :
-                <div class="very_high_count" widget="progressbar">
-                <div class="progress-value"/>
-                  </div>
+
+                <!-- CANCELLED -->
+
+                <div class="col-xl-3 col-lg-4 col-md-6 col-sm-12"
+                     t-on-click="tickets_cancelled">
+
+                    <div class="modern-card cancel-card">
+
+                        <div class="card-icon">
+                            <i class="fa fa-times-circle"/>
+                        </div>
+
+                        <div class="card-info">
+                            <h5>Cancelled</h5>
+                            <h2 id="cancelled_count">0</h2>
+                        </div>
+
+                    </div>
+
                 </div>
-              </div>
+
+                <!-- DONE -->
+
+                <div class="col-xl-3 col-lg-4 col-md-6 col-sm-12"
+                     t-on-click="tickets_done">
+
+                    <div class="modern-card done-card">
+
+                        <div class="card-icon">
+                            <i class="fa fa-check-circle"/>
+                        </div>
+
+                        <div class="card-info">
+                            <h5>Done</h5>
+                            <h2 id="done_count">0</h2>
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <!-- CLOSED -->
+
+                <div class="col-xl-3 col-lg-4 col-md-6 col-sm-12"
+                     t-on-click="tickets_closed">
+
+                    <div class="modern-card closed-card">
+
+                        <div class="card-icon">
+                            <i class="fa fa-lock"/>
+                        </div>
+
+                        <div class="card-info">
+                            <h5>Closed</h5>
+                            <h2 id="closed_count">0</h2>
+                        </div>
+
+                    </div>
+
+                </div>
+
             </div>
-        </div>
-                <div class="col-12 col-sm-12 col-md-4">
-          <div class="leads_month_pie_div half_chart chart-container card-shadow">
-            <h2>TICKET STATUS</h2>
-              <hr/>
-              <div class="graph_canvas">
-              <canvas id="ticket_month" width="200" height="120"/>
+
+            <!-- =====================================================
+                        CUSTOMER SATISFACTION
+            ====================================================== -->
+
+            <!-- <div class="satisfaction-card">
+
+                <div class="satisfaction-left">
+
+                    <h4>Customer Satisfaction</h4>
+
+                    <p>
+                        Track customer response and service quality.
+                    </p>
+
+                </div>
+
+                <div class="satisfaction-right">
+
+                    <div class="emoji">
+                        😃
+                    </div>
+
+                    <div>
+
+                        <span class="response-title">
+                            Response Received
+                        </span>
+
+                        <div class="response">
+                            0
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div> -->
+
+            <!-- =====================================================
+                                CHARTS
+            ====================================================== -->
+
+            <div class="row mt-5 g-4">
+
+                <!-- PRIORITY -->
+
+                <!-- <div class="col-lg-4 col-md-12">
+
+                    <div class="chart-card">
+
+                        <div class="chart-header">
+                            <h4>Ticket Priority</h4>
+                        </div>
+
+                        <div class="priority-item">
+                            <label>Very Low</label>
+                            <div class="very_low_count"/>
+                        </div>
+
+                        <div class="priority-item">
+                            <label>Low</label>
+                            <div class="low_count"/>
+                        </div>
+
+                        <div class="priority-item">
+                            <label>Normal</label>
+                            <div class="normal_count"/>
+                        </div>
+
+                        <div class="priority-item">
+                            <label>High</label>
+                            <div class="high_count"/>
+                        </div>
+
+                        <div class="priority-item">
+                            <label>Very High</label>
+                            <div class="very_high_count"/>
+                        </div>
+
+                    </div>
+
+                </div> -->
+
+                <!-- STATUS CHART -->
+
+                <!-- <div class="col-lg-4 col-md-6">
+
+                    <div class="chart-card">
+
+                        <div class="chart-header">
+                            <h4>Ticket Status</h4>
+                        </div>
+
+                        <div class="graph_canvas">
+
+                            <canvas id="ticket_month"
+                                    width="220"
+                                    height="220"/>
+
+                        </div>
+
+                    </div>
+
+                </div> -->
+
+                <!-- TEAM CHART -->
+
+                <!-- <div class="col-lg-4 col-md-6">
+
+                    <div class="chart-card">
+
+                        <div class="chart-header">
+                            <h4>Team Ticket Ratio</h4>
+                        </div>
+
+                        <div class="graph_canvas">
+
+                            <canvas class="team_ticket_count"/>
+
+                        </div>
+
+                    </div>
+
+                </div> -->
+
             </div>
-          </div>
+
         </div>
-                <div class="col-12 col-sm-12 col-md-4">
-          <div class="team_ticket_div half_chart chart-container card-shadow">
-            <h2>Team - Tickets Count Ratio</h2>
-              <hr/>
-              <div class="graph_canvas">
-              <canvas class="team_ticket_count"/>
-            </div>
-          </div>
-        </div>
-                <!--<div class="col-100 col-sm-100 col-md-20">
-        <div class="leads_month_pie_div half_chart chart-container card-shadow">
-          <h2>ISSUE</h2>
-            <hr/>
-            &lt;!&ndash; Add a table to display ticket details &ndash;&gt;
-            <table class="ticket-table">
-            <thead>
-              <tr style="font-size: 16px; font-weight: bold; background-color: pink; color: black;height:50%"
-                  class="custom-tr">
-                <th style="width: 20%; min-width: 20px; font-size: 13px;">Customer Name</th>
-                  <th style="width: 20%; min-width: 10px; font-size: 13px;">Ticket</th>
-                  <th style="width: 20%; min-width: 20px; font-size: 13px;"> </th>
-                  <th style="width: 20%; min-width: 20px; font-size: 13px;">Assigned to</th>
-                  <th style="width: 20%; min-width: 20px; font-size: 13px;">Subject</th>
-                  <th style="width: 20%; min-width: 20px; font-size: 13px;">Priority</th>
-              </tr>
-            </thead>
-                <tbody class="ticket-details">
-            </tbody>
-          </table>
-        </div>
-        </div>-->
-      </div>
-      </div>
-  </t>
+
+    </t>
+
 </templates>
