@@ -326,7 +326,7 @@
 
                                 <div class="input-row">
                                     <label class="form-label">Pin Code</label>
-                                    <input type="text" name="store_location" class="form-control" 
+                                    <input type="number" name="store_location" class="form-control" 
                                            placeholder="Pin Code"/>
                                 </div>
 
@@ -517,4 +517,7 @@
         </script>
 
     </template>
+
+
+    
 </odoo>

@@ -348,135 +348,382 @@
             :root {
                 --primary: #2563eb;
                 --primary-soft: #eff6ff;
+                --primary-glow: rgba(37,99,235,0.15);
                 --dark: #1e293b;
                 --text: #334155;
                 --muted: #64748b;
                 --border: #e2e8f0;
-                --bg: #f8fafc;
+                --bg: #f1f5f9;
+                --row-hover: #f8fafc;
+                --radius-lg: 16px;
+                --radius-md: 12px;
+                --radius-sm: 8px;
+                --shadow-sm: 0 2px 8px rgba(0,0,0,0.05);
+                --shadow-md: 0 6px 20px rgba(0,0,0,0.07);
+                --shadow-lg: 0 12px 32px rgba(0,0,0,0.10);
             }
 
             .tk {
-                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+                font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
                 background: var(--bg);
-                padding: 1rem;
+                padding: 1.25rem;
+                min-height: 100vh;
             }
 
-            /* HEADER */
+            /* ── HEADER ── */
             .tk-hdr {
-                background: linear-gradient(135deg, #2563eb, #1e40af);
-                border-radius: 14px;
-                padding: 1.8rem;
+                background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 60%, #1e3a8a 100%);
+                border-radius: var(--radius-lg);
+                padding: 2rem 2.2rem;
                 color: #fff;
-                box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+                box-shadow: 0 14px 40px rgba(30,64,175,0.35);
                 margin-bottom: 1.5rem;
+                position: relative;
+                overflow: hidden;
+            }
+
+            .tk-hdr::before {
+                content: '';
+                position: absolute;
+                top: -40px; right: -40px;
+                width: 180px; height: 180px;
+                border-radius: 50%;
+                background: rgba(255,255,255,0.06);
+            }
+
+            .tk-hdr::after {
+                content: '';
+                position: absolute;
+                bottom: -60px; right: 80px;
+                width: 240px; height: 240px;
+                border-radius: 50%;
+                background: rgba(255,255,255,0.04);
             }
 
             .tk-hdr h1 {
-                font-size: 1.5rem;
+                font-size: 1.55rem;
+                font-weight: 700;
                 margin: 0;
+                letter-spacing: -0.3px;
             }
 
             .tk-hdr-meta {
-                opacity: 0.85;
+                opacity: 0.75;
                 font-size: 13px;
-                margin-top: 5px;
+                margin-top: 6px;
+                display: flex;
+                gap: 8px;
+                align-items: center;
             }
 
-            /* STATS */
+            .tk-hdr-meta span {
+                background: rgba(255,255,255,0.12);
+                border-radius: 20px;
+                padding: 2px 10px;
+                font-size: 12px;
+            }
+
+            /* ── STATS ── */
             .tk-stats {
                 display: grid;
                 grid-template-columns: repeat(3, 1fr);
-                gap: 12px;
+                gap: 14px;
                 margin-bottom: 1.5rem;
             }
 
             .tk-stat {
                 background: #fff;
-                border-radius: 12px;
-                padding: 1rem;
+                border-radius: var(--radius-md);
+                padding: 1.1rem 1.2rem;
                 display: flex;
-                gap: 12px;
+                gap: 14px;
                 align-items: center;
                 border: 1px solid var(--border);
-                box-shadow: 0 4px 10px rgba(0,0,0,0.03);
-                transition: 0.2s;
+                box-shadow: var(--shadow-sm);
+                transition: transform 0.2s, box-shadow 0.2s;
             }
 
             .tk-stat:hover {
-                transform: translateY(-2px);
+                transform: translateY(-3px);
+                box-shadow: var(--shadow-md);
             }
 
             .tk-stat-icon {
                 background: var(--primary-soft);
                 color: var(--primary);
-                border-radius: 8px;
-                padding: 8px;
+                border-radius: var(--radius-sm);
+                width: 38px; height: 38px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                flex-shrink: 0;
             }
 
             .tk-stat-label {
-                font-size: 11px;
+                font-size: 10px;
                 color: var(--muted);
                 text-transform: uppercase;
+                letter-spacing: 0.6px;
+                font-weight: 600;
             }
 
             .tk-stat-val {
-                font-size: 13px;
-                font-weight: 600;
+                font-size: 13.5px;
+                font-weight: 700;
                 color: var(--text);
+                margin-top: 2px;
             }
 
-            /* LAYOUT */
+            /* ── LAYOUT ── */
             .tk-layout {
                 display: grid;
-                grid-template-columns: 1fr 280px;
+                grid-template-columns: 1fr 290px;
                 gap: 1.5rem;
             }
 
-            /* CARDS */
+            /* ── CARDS ── */
             .tk-card {
                 background: #fff;
-                border-radius: 14px;
+                border-radius: var(--radius-lg);
                 border: 1px solid var(--border);
-                box-shadow: 0 6px 15px rgba(0,0,0,0.04);
+                box-shadow: var(--shadow-sm);
                 overflow: hidden;
-                margin-bottom: 1.2rem;
+                margin-bottom: 1.25rem;
+                transition: box-shadow 0.2s;
+            }
+
+            .tk-card:hover {
+                box-shadow: var(--shadow-md);
             }
 
             .tk-ch {
-                padding: 0.8rem 1.2rem;
-                background: #f1f5f9;
-                font-size: 12px;
-                font-weight: 600;
+                padding: 0.75rem 1.3rem;
+                background: linear-gradient(to right, #f8fafc, #f1f5f9);
+                font-size: 11px;
+                font-weight: 700;
                 color: var(--muted);
                 text-transform: uppercase;
+                letter-spacing: 0.8px;
+                border-bottom: 1px solid var(--border);
+                display: flex;
+                align-items: center;
+                gap: 8px;
+            }
+
+            .tk-ch-dot {
+                width: 6px; height: 6px;
+                background: var(--primary);
+                border-radius: 50%;
             }
 
             .tk-cb {
-                padding: 1.2rem;
+                padding: 1.3rem;
             }
 
             .tk-grid2 {
                 display: grid;
                 grid-template-columns: 1fr 1fr;
-                gap: 1rem;
+                gap: 1.1rem;
             }
 
             .tk-il {
                 font-size: 11px;
                 color: var(--muted);
+                font-weight: 600;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+                margin-bottom: 3px;
             }
 
             .tk-iv {
                 font-weight: 600;
                 color: var(--text);
+                font-size: 14px;
             }
 
             .tk-desc {
-                line-height: 1.7;
+                line-height: 1.75;
+                color: var(--text);
+                font-size: 14px;
+            }
+
+            /* ── SERVICE REQUEST CARD ── */
+            .sr-header-row {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                padding: 0.75rem 1.3rem;
+                background: linear-gradient(to right, #f8fafc, #f1f5f9);
+                font-size: 11px;
+                font-weight: 700;
+                color: var(--muted);
+                text-transform: uppercase;
+                letter-spacing: 0.8px;
+                border-bottom: 1px solid var(--border);
+            }
+
+            .sr-header-left {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+            }
+
+            .sr-count-badge {
+                background: var(--primary);
+                color: #fff;
+                border-radius: 20px;
+                padding: 2px 9px;
+                font-size: 11px;
+                font-weight: 700;
+                min-width: 24px;
+                text-align: center;
+            }
+
+            .sr-scroll-hint {
+                font-size: 11px;
+                color: var(--primary);
+                font-weight: 600;
+                display: flex;
+                align-items: center;
+                gap: 5px;
+                opacity: 0.85;
+            }
+
+            .sr-table-wrap {
+                /* Show ~10 rows; each row ~44px + 1px border ≈ 45px; thead ~42px */
+                max-height: 492px; /* 42px thead + 10 × 45px rows */
+                overflow-y: auto;
+                overflow-x: auto;
+                scroll-behavior: smooth;
+            }
+
+            /* Custom scrollbar */
+            .sr-table-wrap::-webkit-scrollbar {
+                width: 6px;
+                height: 6px;
+            }
+
+            .sr-table-wrap::-webkit-scrollbar-track {
+                background: #f1f5f9;
+            }
+
+            .sr-table-wrap::-webkit-scrollbar-thumb {
+                background: #cbd5e1;
+                border-radius: 10px;
+            }
+
+            .sr-table-wrap::-webkit-scrollbar-thumb:hover {
+                background: #94a3b8;
+            }
+
+            .sr-table {
+                width: 100%;
+                border-collapse: collapse;
+                min-width: 520px;
+                font-size: 13.5px;
+            }
+
+            .sr-table thead {
+                position: sticky;
+                top: 0;
+                z-index: 2;
+                background: #1e293b;
+            }
+
+            .sr-table thead th {
+                padding: 11px 14px;
+                color: #cbd5e1;
+                font-size: 11px;
+                font-weight: 700;
+                text-transform: uppercase;
+                letter-spacing: 0.7px;
+                text-align: left;
+                white-space: nowrap;
+                border: none;
+            }
+
+            .sr-table thead th:first-child {
+                border-radius: 0;
+                width: 50px;
+            }
+
+            .sr-table tbody tr {
+                border-bottom: 1px solid var(--border);
+                transition: background 0.15s;
+            }
+
+            .sr-table tbody tr:last-child {
+                border-bottom: none;
+            }
+
+            .sr-table tbody tr:hover {
+                background: #eff6ff;
+            }
+
+            .sr-table tbody td {
+                padding: 11px 14px;
+                vertical-align: middle;
+                border: none;
                 color: var(--text);
             }
 
-            /* SIDEBAR */
+            .sr-num {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                width: 26px; height: 26px;
+                background: var(--primary-soft);
+                color: var(--primary);
+                border-radius: 6px;
+                font-weight: 700;
+                font-size: 12px;
+            }
+
+            .sr-model {
+                font-weight: 600;
+                color: #1e293b;
+            }
+
+            .sr-sn {
+                font-family: "SF Mono", "Fira Code", monospace;
+                color: var(--primary);
+                font-size: 12.5px;
+                background: var(--primary-soft);
+                padding: 2px 8px;
+                border-radius: 5px;
+                display: inline-block;
+            }
+
+            .sr-desc {
+                color: #475569;
+                font-size: 13px;
+                max-width: 220px;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+            .sr-empty {
+                padding: 2.5rem;
+                text-align: center;
+                color: var(--muted);
+                background: #fafbfc;
+            }
+
+            .sr-empty i {
+                font-size: 28px;
+                opacity: 0.35;
+                margin-bottom: 10px;
+                display: block;
+            }
+
+            .sr-empty p {
+                margin: 0;
+                font-size: 13px;
+                font-weight: 500;
+            }
+
+            /* ── SIDEBAR ── */
             .tk-sidebar {
                 display: flex;
                 flex-direction: column;
@@ -485,109 +732,217 @@
 
             .tk-sc {
                 background: #fff;
-                border-radius: 12px;
+                border-radius: var(--radius-md);
                 border: 1px solid var(--border);
-                box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+                box-shadow: var(--shadow-sm);
+                overflow: hidden;
             }
 
             .tk-sc-top {
                 padding: 0.7rem 1rem;
                 border-bottom: 1px solid var(--border);
-                font-size: 11px;
+                font-size: 10px;
+                font-weight: 700;
                 color: var(--muted);
                 text-transform: uppercase;
+                letter-spacing: 0.8px;
+                background: linear-gradient(to right, #f8fafc, #f1f5f9);
             }
 
             .tk-sc-body {
                 padding: 1rem;
             }
 
-            /* STATUS COLORS */
-            .status-open {
-                background: #ecfeff;
-                color: #0369a1;
-            }
-
-            .status-progress {
-                background: #fef9c3;
-                color: #92400e;
-            }
-
-            .status-done {
-                background: #dcfce7;
-                color: #166534;
-            }
+            /* ── STATUS BADGES ── */
+            .status-open    { background: #ecfeff; color: #0369a1; border: 1px solid #bae6fd; }
+            .status-progress{ background: #fef9c3; color: #854d0e; border: 1px solid #fde68a; }
+            .status-done    { background: #dcfce7; color: #166534; border: 1px solid #bbf7d0; }
 
             .tk-status-badge {
-                padding: 6px 14px;
+                padding: 6px 16px;
                 border-radius: 20px;
                 font-size: 12px;
-                font-weight: 600;
-                display: inline-block;
+                font-weight: 700;
+                display: inline-flex;
+                align-items: center;
+                gap: 6px;
             }
 
-            /* CONTACT */
+            .tk-status-badge::before {
+                content: '';
+                width: 7px; height: 7px;
+                border-radius: 50%;
+                background: currentColor;
+                opacity: 0.7;
+            }
+
+            /* ── CONTACT ── */
             .tk-contact-row {
                 display: flex;
-                gap: 10px;
+                gap: 12px;
                 align-items: center;
             }
 
             .tk-avatar {
-                width: 42px;
-                height: 42px;
+                width: 44px; height: 44px;
                 border-radius: 50%;
                 overflow: hidden;
+                border: 2px solid var(--border);
+                flex-shrink: 0;
             }
 
-            .tk-avatar img {
-                width: 100%;
-                height: 100%;
-            }
+            .tk-avatar img { width: 100%; height: 100%; object-fit: cover; }
 
             .tk-avatar-placeholder {
-                width: 42px;
-                height: 42px;
+                width: 44px; height: 44px;
                 border-radius: 50%;
-                background: var(--primary);
+                background: linear-gradient(135deg, #2563eb, #1e40af);
                 color: #fff;
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                font-weight: 600;
+                font-weight: 700;
+                font-size: 16px;
+                flex-shrink: 0;
             }
 
-            .tk-cn {
-                font-weight: 600;
-                color: var(--text);
-            }
+            .tk-cn { font-weight: 700; color: var(--text); font-size: 14px; }
+            .tk-ce { font-size: 12px; color: var(--primary); margin-top: 2px; }
 
-            .tk-ce {
-                font-size: 12px;
-                color: var(--primary);
-            }
-
-            /* COMMUNICATION */
+            /* ── COMMUNICATION ── */
             .tk-comms {
                 background: #fff;
-                border-radius: 14px;
+                border-radius: var(--radius-lg);
                 border: 1px solid var(--border);
+                box-shadow: var(--shadow-sm);
                 margin-top: 1.5rem;
+                overflow: hidden;
             }
 
             .tk-comms-top {
-                padding: 0.8rem 1.2rem;
+                padding: 0.8rem 1.3rem;
                 border-bottom: 1px solid var(--border);
-                font-size: 12px;
+                font-size: 11px;
+                font-weight: 700;
                 color: var(--muted);
                 text-transform: uppercase;
+                letter-spacing: 0.8px;
+                background: linear-gradient(to right, #f8fafc, #f1f5f9);
+                display: flex;
+                align-items: center;
+                gap: 8px;
             }
 
-            .tk-comms-body {
-                padding: 1.5rem;
+            .tk-comms-body { padding: 1.5rem; }
+
+            /* ── ATTACHMENTS ── */
+            .att-list {
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
+                padding: 1rem 1.3rem;
             }
 
-            
+            .att-item {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                padding: 10px 12px;
+                border: 1px solid var(--border);
+                border-radius: var(--radius-sm);
+                background: #fafbfc;
+                transition: background 0.15s, border-color 0.15s, box-shadow 0.15s;
+            }
+
+            .att-item:hover {
+                background: var(--primary-soft);
+                border-color: #bfdbfe;
+                box-shadow: 0 2px 8px rgba(37,99,235,0.08);
+            }
+
+            .att-icon {
+                width: 36px; height: 36px;
+                border-radius: 8px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 15px;
+                flex-shrink: 0;
+            }
+
+            .att-icon-pdf   { background: #fee2e2; color: #dc2626; }
+            .att-icon-img   { background: #e0f2fe; color: #0284c7; }
+            .att-icon-xls   { background: #dcfce7; color: #16a34a; }
+            .att-icon-doc   { background: #ede9fe; color: #7c3aed; }
+            .att-icon-zip   { background: #fef9c3; color: #ca8a04; }
+            .att-icon-other { background: #f1f5f9; color: #64748b; }
+
+            .att-info {
+                flex: 1;
+                min-width: 0;
+            }
+
+            .att-name {
+                font-size: 13px;
+                font-weight: 600;
+                color: var(--text);
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+            .att-meta {
+                font-size: 11px;
+                color: var(--muted);
+                margin-top: 2px;
+            }
+
+            .att-dl {
+                flex-shrink: 0;
+                display: inline-flex;
+                align-items: center;
+                gap: 5px;
+                padding: 5px 12px;
+                background: var(--primary);
+                color: #fff;
+                border-radius: 20px;
+                font-size: 11px;
+                font-weight: 700;
+                text-decoration: none;
+                transition: background 0.15s, transform 0.15s;
+            }
+
+            .att-dl:hover {
+                background: #1d4ed8;
+                color: #fff;
+                text-decoration: none;
+                transform: translateY(-1px);
+            }
+
+            .att-empty {
+                padding: 2rem;
+                text-align: center;
+                color: var(--muted);
+                background: #fafbfc;
+            }
+
+            .att-empty i {
+                font-size: 24px;
+                opacity: 0.35;
+                margin-bottom: 8px;
+                display: block;
+            }
+
+            .att-empty p { margin: 0; font-size: 13px; font-weight: 500; }
+
+            .att-count-badge {
+                background: var(--primary);
+                color: #fff;
+                border-radius: 20px;
+                padding: 2px 9px;
+                font-size: 11px;
+                font-weight: 700;
+            }
 
         </style>
 
@@ -597,21 +952,20 @@
             <div class="tk-hdr">
                 <h1 t-esc="details['display_name']"/>
                 <div class="tk-hdr-meta">
-                    <t t-esc="details['ticket_type_id'].name"/> • 
-                    <t t-esc="details['category_id'].name"/>
+                    <span t-esc="details['ticket_type_id'].name"/>
+                    <span t-esc="details['category_id'].name"/>
                 </div>
             </div>
 
             <!-- STATS -->
             <div class="tk-stats">
                 <div class="tk-stat">
-                    <div class="tk-stat-icon"><i class="fa fa-calendar"/></div>
+                    <div class="tk-stat-icon"><i class="fa fa-calendar-o"/></div>
                     <div>
                         <div class="tk-stat-label">Created</div>
                         <div class="tk-stat-val" t-field="details.create_date"/>
                     </div>
                 </div>
-
                 <div class="tk-stat">
                     <div class="tk-stat-icon"><i class="fa fa-refresh"/></div>
                     <div>
@@ -619,7 +973,6 @@
                         <div class="tk-stat-val" t-field="details.last_update_date"/>
                     </div>
                 </div>
-
                 <div class="tk-stat">
                     <div class="tk-stat-icon"><i class="fa fa-flag"/></div>
                     <div>
@@ -633,8 +986,13 @@
 
                 <!-- LEFT -->
                 <div>
+
+                    <!-- Ticket Info -->
                     <div class="tk-card">
-                        <div class="tk-ch">Ticket Info</div>
+                        <div class="tk-ch">
+                            <span class="tk-ch-dot"/>
+                            Ticket Info
+                        </div>
                         <div class="tk-cb tk-grid2">
                             <div>
                                 <div class="tk-il">Type</div>
@@ -644,26 +1002,162 @@
                                 <div class="tk-il">Category</div>
                                 <div class="tk-iv" t-esc="details['category_id'].name"/>
                             </div>
-                            <div style="grid-column: 1/-1;">
+                            <div style="grid-column:1/-1;">
                                 <div class="tk-il">Subject</div>
                                 <div class="tk-iv" t-esc="details['subject']"/>
                             </div>
                         </div>
                     </div>
 
+                    <!-- Description -->
                     <div class="tk-card">
-                        <div class="tk-ch">Description</div>
+                        <div class="tk-ch">
+                            <span class="tk-ch-dot"/>
+                            Description
+                        </div>
                         <div class="tk-cb">
                             <p class="tk-desc" t-esc="details['description']"/>
                         </div>
+                    </div>
+
+                    <!-- SERVICE REQUESTS -->
+                    <div class="tk-card">
+
+                        <!-- Header with count + scroll hint -->
+                        <div class="sr-header-row">
+                            <div class="sr-header-left">
+                                <span class="tk-ch-dot"/>
+                                Service Requests
+                                <t t-if="details.sr_ids">
+                                    <span class="sr-count-badge" t-esc="len(details.sr_ids)"/>
+                                </t>
+                            </div>
+                            <t t-if="details.sr_ids and len(details.sr_ids) > 10">
+                                <span class="sr-scroll-hint">
+                                    <i class="fa fa-arrows-v"/>
+                                    Scroll to view all
+                                </span>
+                            </t>
+                        </div>
+
+                        <t t-if="details.sr_ids">
+                            <!-- Scrollable wrapper — max 10 rows visible -->
+                            <div class="sr-table-wrap">
+                                <table class="sr-table">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Model No.</th>
+                                            <th>Device S/N</th>
+                                            <th>Description</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <t t-set="sr_index" t-value="1"/>
+                                        <t t-foreach="details.sr_ids" t-as="sr">
+                                            <tr>
+                                                <td>
+                                                    <span class="sr-num">
+                                                        <t t-esc="sr_index"/>
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    <span class="sr-model">
+                                                        <t t-esc="sr.model_mo or '—'"/>
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    <span class="sr-sn">
+                                                        <t t-esc="sr.device_sn or '—'"/>
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    <span class="sr-desc" t-att-title="sr.description or ''">
+                                                        <t t-esc="sr.description or '—'"/>
+                                                    </span>
+                                                </td>
+                                            </tr>
+                                            <t t-set="sr_index" t-value="sr_index + 1"/>
+                                        </t>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </t>
+
+                        <t t-else="">
+                            <div class="sr-empty">
+                                <i class="fa fa-inbox"/>
+                                <p>No Service Requests Available</p>
+                            </div>
+                        </t>
+
+                    </div>
+
+                    <!-- ATTACHMENTS -->
+                    <div class="tk-card">
+
+                        <div class="sr-header-row">
+                            <div class="sr-header-left">
+                                <span class="tk-ch-dot"/>
+                                Attachments
+                                <t t-if="details.attachment_ids">
+                                    <span class="att-count-badge" t-esc="len(details.attachment_ids)"/>
+                                </t>
+                            </div>
+                        </div>
+
+                        <t t-if="details.attachment_ids">
+                            <div class="att-list">
+                                <t t-foreach="details.attachment_ids" t-as="att">
+                                    <t t-set="ext" t-value="(att.name or '').rsplit('.', 1)[-1].lower() if '.' in (att.name or '') else ''"/>
+                                    <div class="att-item">
+
+                                        <!-- File type icon -->
+                                        <div t-att-class="'att-icon ' + ('att-icon-pdf' if ext == 'pdf' else 'att-icon-img' if ext in ['png','jpg','jpeg','gif','webp','svg'] else 'att-icon-xls' if ext in ['xls','xlsx','csv'] else 'att-icon-doc' if ext in ['doc','docx','txt'] else 'att-icon-zip' if ext in ['zip','rar','7z'] else 'att-icon-other')">
+                                            <i t-att-class="'fa ' + ('fa-file-pdf-o' if ext == 'pdf' else 'fa-file-image-o' if ext in ['png','jpg','jpeg','gif','webp','svg'] else 'fa-file-excel-o' if ext in ['xls','xlsx','csv'] else 'fa-file-word-o' if ext in ['doc','docx','txt'] else 'fa-file-archive-o' if ext in ['zip','rar','7z'] else 'fa-file-o')"/>
+                                        </div>
+
+                                        <!-- File info -->
+                                        <div class="att-info">
+                                            <div class="att-name" t-att-title="att.name">
+                                                <t t-esc="att.name"/>
+                                            </div>
+                                            <div class="att-meta">
+                                                <t t-esc="round(att.file_size / 1024.0, 1) if att.file_size else ''"/>
+                                                <t t-if="att.file_size"> KB</t>
+                                                <t t-if="att.mimetype"> · <t t-esc="att.mimetype"/></t>
+                                            </div>
+                                        </div>
+
+                                        <!-- Download button -->
+                                        <a t-att-href="'/web/content/%s?download=true' % att.id"
+                                           t-att-download="att.name"
+                                           class="att-dl"
+                                           target="_blank">
+                                            <i class="fa fa-download"/>
+                                            Download
+                                        </a>
+
+                                    </div>
+                                </t>
+                            </div>
+                        </t>
+
+                        <t t-else="">
+                            <div class="att-empty">
+                                <i class="fa fa-paperclip"/>
+                                <p>No Attachments Available</p>
+                            </div>
+                        </t>
+
                     </div>
                 </div>
 
                 <!-- SIDEBAR -->
                 <div class="tk-sidebar">
 
-                    <!-- STATUS -->
-                    <div class="tk-sc">
+                    <!-- Status -->
+                    <!-- <div class="tk-sc">
                         <div class="tk-sc-top">Status</div>
                         <div class="tk-sc-body">
                             <t t-set="stage" t-value="details['stage_id'].name.lower()"/>
@@ -671,9 +1165,9 @@
                                 <t t-esc="details['stage_id'].name"/>
                             </span>
                         </div>
-                    </div>
+                    </div> -->
 
-                    <!-- CONTACT -->
+                    <!-- Contact -->
                     <div class="tk-sc">
                         <div class="tk-sc-top">Contact</div>
                         <div class="tk-sc-body tk-contact-row">
@@ -687,33 +1181,34 @@
                         </div>
                     </div>
 
-                    <!-- ASSIGNED -->
+                    <!-- Assigned -->
                     <div class="tk-sc">
-    <div class="tk-sc-top">Assigned</div>
-    <div class="tk-sc-body tk-contact-row">
-
-        <div class="tk-avatar-placeholder">
-            <t t-esc="details['assigned_user_id'] and details['assigned_user_id'].name and details['assigned_user_id'].name[0] or '?'"/>
-        </div>
-
-        <div>
-            <t t-if="details['assigned_user_id']">
-                <div class="tk-cn" t-esc="details['assigned_user_id'].name"/>
-            </t>
-            <t t-else="">
-                <div class="tk-cn" style="color:#999;">Unassigned</div>
-            </t>
-        </div>
-
-    </div>
-</div>
+                        <div class="tk-sc-top">Assigned To</div>
+                        <div class="tk-sc-body tk-contact-row">
+                            <div class="tk-avatar-placeholder">
+                                <t t-esc="details['assigned_user_id'] and details['assigned_user_id'].name and details['assigned_user_id'].name[0] or '?'"/>
+                            </div>
+                            <div>
+                                <t t-if="details['assigned_user_id']">
+                                    <div class="tk-cn" t-esc="details['assigned_user_id'].name"/>
+                                </t>
+                                <t t-else="">
+                                    <div class="tk-cn" style="color:#94a3b8; font-weight:500;">Unassigned</div>
+                                </t>
+                            </div>
+                        </div>
+                    </div>
+                    
 
                 </div>
             </div>
 
             <!-- COMMUNICATION -->
             <div class="tk-comms">
-                <div class="tk-comms-top">Communication</div>
+                <div class="tk-comms-top">
+                    <span class="tk-ch-dot"/>
+                    Communication
+                </div>
                 <div class="tk-comms-body">
                     <t t-call="portal.message_thread">
                         <t t-set="object" t-value="details"/>

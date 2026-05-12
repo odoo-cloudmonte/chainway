@@ -38,7 +38,7 @@ class DeviceInventory(models.Model):
     warranty_category = fields.Selection([
         ('standard', 'Standard'),
         ('extended', 'Extended'),
-        ('comprehesive','Comprehesive Warranty'),
+        ('comprehensive','Comprehensive Warranty'),
         ('none', 'None')
     ], string="Category Of Warranty", tracking=True)
 
@@ -221,7 +221,7 @@ class DeviceInventory(models.Model):
 
         # ✅ ALL HEADERS
         headers = [
-            "Device SN", "Accessories SN", "Type",
+            "Device SN", "Type",
             "BT MAC", "IMEI1", "IMEI2", "WiFi MAC",
             "Model", "Description", "SW Version",
             "Configuration IN", "Configuration OUT",
@@ -250,7 +250,7 @@ class DeviceInventory(models.Model):
 
             # ✅ Write all fields safely
             sheet.write(row, col, rec.device_sn or ''); col += 1
-            sheet.write(row, col, rec.accessories_sn or ''); col += 1
+            # sheet.write(row, col, rec.accessories_sn or ''); col += 1
             sheet.write(row, col, rec.type or ''); col += 1
             sheet.write(row, col, rec.bt_mac or ''); col += 1
             sheet.write(row, col, rec.imei1 or ''); col += 1
