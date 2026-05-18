@@ -291,7 +291,8 @@
                         <tr>
                             <th style="width: 20%;">Ticket ID</th>
                             <th style="width: 35%;">Subject</th>
-                            <th style="width: 30%;">Created</th>
+                            <th style="width: 15%;">Updated On</th>
+                            <th style="width: 15%;">Priority</th>
                             <th style="width: 15%;">Status</th>
                             <!-- <th style="width: 15%;">Priority</th> -->
                         </tr>
@@ -307,6 +308,9 @@
                                 </td>
                                 <td>
                                     <span t-field="ticket.subject" class="fw-500"/>
+                                </td>
+                                <td>
+                                    <span t-field="ticket.last_update_date" class="fw-500"/>
                                 </td>
                                 <td>
                                     <div class="date-time">
@@ -617,91 +621,108 @@
             }
 
             .sr-table {
-                width: 100%;
-                border-collapse: collapse;
-                min-width: 520px;
-                font-size: 13.5px;
-            }
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 520px;
+    font-size: 13.5px;
+    table-layout: fixed;
+}
 
-            .sr-table thead {
-                position: sticky;
-                top: 0;
-                z-index: 2;
-                background: #1e293b;
-            }
+.sr-table thead {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    background: #1e293b;
+}
 
-            .sr-table thead th {
-                padding: 11px 14px;
-                color: #cbd5e1;
-                font-size: 11px;
-                font-weight: 700;
-                text-transform: uppercase;
-                letter-spacing: 0.7px;
-                text-align: left;
-                white-space: nowrap;
-                border: none;
-            }
+.sr-table thead th {
+    padding: 11px 14px;
+    color: #cbd5e1;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.7px;
+    text-align: left;
+    border: none;
+}
 
-            .sr-table thead th:first-child {
-                border-radius: 0;
-                width: 50px;
-            }
+.sr-table thead th:first-child {
+    width: 50px;
+}
 
-            .sr-table tbody tr {
-                border-bottom: 1px solid var(--border);
-                transition: background 0.15s;
-            }
+.sr-table thead th:nth-child(2) {
+    width: 20%;
+}
 
-            .sr-table tbody tr:last-child {
-                border-bottom: none;
-            }
+.sr-table thead th:nth-child(3) {
+    width: 25%;
+}
 
-            .sr-table tbody tr:hover {
-                background: #eff6ff;
-            }
+.sr-table thead th:nth-child(4) {
+    width: 45%;
+}
 
-            .sr-table tbody td {
-                padding: 11px 14px;
-                vertical-align: middle;
-                border: none;
-                color: var(--text);
-            }
+.sr-table tbody tr {
+    border-bottom: 1px solid var(--border);
+    transition: background 0.15s;
+}
 
-            .sr-num {
-                display: inline-flex;
-                align-items: center;
-                justify-content: center;
-                width: 26px; height: 26px;
-                background: var(--primary-soft);
-                color: var(--primary);
-                border-radius: 6px;
-                font-weight: 700;
-                font-size: 12px;
-            }
+.sr-table tbody tr:last-child {
+    border-bottom: none;
+}
 
-            .sr-model {
-                font-weight: 600;
-                color: #1e293b;
-            }
+.sr-table tbody tr:hover {
+    background: #eff6ff;
+}
 
-            .sr-sn {
-                font-family: "SF Mono", "Fira Code", monospace;
-                color: var(--primary);
-                font-size: 12.5px;
-                background: var(--primary-soft);
-                padding: 2px 8px;
-                border-radius: 5px;
-                display: inline-block;
-            }
+.sr-table tbody td {
+    padding: 11px 14px;
+    vertical-align: top;
+    border: none;
+    color: var(--text);
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
 
-            .sr-desc {
-                color: #475569;
-                font-size: 13px;
-                max-width: 220px;
-                white-space: nowrap;
-                overflow: hidden;
-                text-overflow: ellipsis;
-            }
+.sr-num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 26px;
+    height: 26px;
+    background: var(--primary-soft);
+    color: var(--primary);
+    border-radius: 6px;
+    font-weight: 700;
+    font-size: 12px;
+}
+
+.sr-model {
+    font-weight: 600;
+    color: #1e293b;
+    word-break: break-word;
+}
+
+.sr-sn {
+    font-family: "SF Mono", "Fira Code", monospace;
+    color: var(--primary);
+    font-size: 12.5px;
+    background: var(--primary-soft);
+    padding: 2px 8px;
+    border-radius: 5px;
+    display: inline-block;
+    word-break: break-all;
+}
+
+.sr-desc {
+    color: #475569;
+    font-size: 13px;
+    line-height: 1.6;
+    white-space: normal;
+    word-break: break-word;
+    overflow-wrap: anywhere;
+    display: block;
+}
 
             .sr-empty {
                 padding: 2.5rem;

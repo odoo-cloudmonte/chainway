@@ -444,7 +444,7 @@
                                 </svg>
                                 Export Excel
                             </a>
-                            <div class="dv-badge">Live Inventory</div>
+                            <!-- <div class="dv-badge">Live Inventory</div> -->
                         </div>
                     </div>
 
