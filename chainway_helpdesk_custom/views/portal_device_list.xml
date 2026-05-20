@@ -499,7 +499,8 @@
                                         <t t-foreach="devices" t-as="d" t-foreach-index="i">
                                             <tr>
                                                 <!-- Sr. No -->
-                                                <td><t t-esc="(i or 0) + 1"/></td>
+                                                <!-- <td><t t-esc="(i or 0) + 1"/></td> -->
+                                                 <td><t t-esc="d_index + 1"/></td>
 
                                                 <!-- Vendor -->
                                                 <td style="font-weight:500;color:#0F172A;">
