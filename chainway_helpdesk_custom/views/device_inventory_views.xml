@@ -26,12 +26,7 @@
                 <field name="imei1"/>
                 <field name="model"/>
                 <field name="end_user_name"/>
-                <field name="device_condition"
-                   widget="badge"
-                   decoration-danger="device_condition == 'poor'"
-                   decoration-warning="device_condition == 'moderate'"
-                   decoration-success="device_condition == 'good'"
-                   optional="show"/>
+                
                 <field name="description" optional="true"/>
                 <field name="chainway_reference" optional="true"/>
                 <field name="remark" optional="true"/>
@@ -84,7 +79,7 @@
                             <field name="bt_mac"/>
                             <field name="wifi_mac"/>
                             <field name="sw_version"/>
-                            <field name="device_condition"/>
+                            <!-- <field name="device_condition"/> -->
                         </group>
 
                         <!-- ✅ POD Image in main view -->
