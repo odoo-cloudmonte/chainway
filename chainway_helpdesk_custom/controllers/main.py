@@ -114,7 +114,7 @@ class WarrantyController(http.Controller):
                 'company_address':post.get('company_address'),
                 'contact': post.get('contact_person'),
                 'store':post.get('store_location'),
-                
+                'city':post.get('city'),
                 # 'customer_name': post.get('company_name'),
                 'subject': post.get('problem_type'),
                 'description': post.get('description'),

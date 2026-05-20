@@ -334,7 +334,7 @@
                     <tr>
                         <th>Ticket ID</th>
                         <th>Subject</th>
-                        <th>Address</th>
+                        <th>City</th>
                         <th>Updated On</th>
                         <th>Created On</th>
                         <th>Status</th>
@@ -358,7 +358,7 @@
                             </td>
 
                             <td>
-                                <span t-field="ticket.company_address"/>
+                                <span t-field="ticket.city"/>
                             </td>
 
                             <td>
@@ -370,9 +370,9 @@
                                     <span t-field="ticket.create_date"
                                           t-options="{'widget': 'date'}"/>
 
-                                    <span class="time"
+                                    <!-- <span class="time"
                                           t-field="ticket.create_date"
-                                          t-options="{'time_only': True}"/>
+                                          t-options="{'time_only': True}"/> -->
                                 </div>
                             </td>
 
