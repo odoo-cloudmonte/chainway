@@ -26,6 +26,19 @@
                 <field name="imei1"/>
                 <field name="model"/>
                 <field name="end_user_name"/>
+                <field name="device_condition"
+                   widget="badge"
+                   decoration-danger="device_condition == 'poor'"
+                   decoration-warning="device_condition == 'moderate'"
+                   decoration-success="device_condition == 'good'"
+                   optional="show"/>
+                <field name="description" optional="true"/>
+                <field name="chainway_reference" optional="true"/>
+                <field name="remark" optional="true"/>
+                <field name="imei2" optional="true"/>
+                <field name="bt_mac" optional="true"/>
+                <field name="wifi_mac" optional="true"/>
+                <field name="sw_version" optional="true"/>
                 <field name="delivery_date" optional="true"/>
                 <field name="configuration_in" optional="true"/>
                 <field name="configuration_out" optional="true"/>
@@ -71,6 +84,7 @@
                             <field name="bt_mac"/>
                             <field name="wifi_mac"/>
                             <field name="sw_version"/>
+                            <field name="device_condition"/>
                         </group>
 
                         <!-- ✅ POD Image in main view -->
@@ -126,8 +140,10 @@
                         <!-- ❌ Removed Attachments tab since image is now in main view -->
 
                         <page string="Other">
-                            <field name="chainway_reference"/>
-                            <field name="remark"/>
+                            <group>
+                                <field name="chainway_reference"/>
+                                <field name="remark"/>
+                            </group>
                         </page>
 
                     </notebook>

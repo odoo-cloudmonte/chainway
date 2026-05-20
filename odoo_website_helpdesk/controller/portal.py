@@ -1,3 +1,5 @@
+from werkzeug.utils import redirect
+
 from odoo import http
 from odoo.addons.portal.controllers import portal
 from odoo.http import request
@@ -57,6 +59,7 @@ class TicketPortal(portal.CustomerPortal):
         """
         ticket_id = kwargs.get("id")
         details = request.env['ticket.helpdesk'].sudo().browse(ticket_id)
+        
         data = {
             'page_name': 'ticket',
             'ticket': True,
@@ -88,3 +91,20 @@ class TicketPortal(portal.CustomerPortal):
                             ('Content-Disposition',
                              'attachment; filename="Helpdesk Ticket.pdf"')]
         return request.make_response(pdf, headers=pdf_http_headers)
+    
+    @http.route(
+        ['/my/ticket/attachment/<int:attachment_id>'],
+        type='http',
+        auth='public',
+        website=True
+    )
+    def download_attachment(self, attachment_id, access_token=None, **kw):
+
+        attachment = request.env['ir.attachment'].sudo().browse(attachment_id)
+
+        if not attachment.exists():
+            return request.not_found()
+
+        return redirect(
+            '/web/content/{0}?download=true'.format(attachment.id)
+        )

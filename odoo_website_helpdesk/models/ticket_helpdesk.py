@@ -160,6 +160,20 @@ class TicketHelpDesk(models.Model):
         ('normal', 'Ready'),
         ('done', 'In Progress'),
         ('blocked', 'Blocked'), ], default='normal')
+    
+    message_ids = fields.One2many(
+        'mail.message',
+        'res_id',
+        string='Messages',
+        domain=lambda self: [('model', '=', self._name)]
+    )
+
+    message_follower_ids = fields.One2many(
+        'mail.followers',
+        'res_id',
+        string='Followers',
+        domain=lambda self: [('res_model', '=', self._name)]
+)
 
     @api.onchange('team_id', 'team_head_id')
     def _onchange_team_id(self):

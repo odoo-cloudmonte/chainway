@@ -43,6 +43,11 @@ class DeviceInventory(models.Model):
     ], string="Category Of Warranty", tracking=True)
 
     warranty_upto = fields.Date(string="Warranty Applicable Up To", tracking=True)
+    device_condition = fields.Selection([
+        ('poor', 'Poor'),
+        ('moderate', 'Moderate'),
+        ('good','Good')
+    ], string="Device Condition", tracking=True)
 
     # end_user_name = fields.Char(string="User Name")
     end_user_name = fields.Many2one(
@@ -71,7 +76,7 @@ class DeviceInventory(models.Model):
 
     pod_copy = fields.Binary(string="POD Copy", attachment=True)
 
-    chainway_reference = fields.Char(string="Chainway CI Reference / Tax Invoice No", tracking=True)
+    chainway_reference = fields.Char(string="Reference ", tracking=True)
 
     remark = fields.Text(string="Remark", tracking=True)
 

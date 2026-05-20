@@ -11,6 +11,7 @@
                         <list editable="bottom">
                             <field name="device_sn"/>
                             <field name="model_mo"/>
+                            <field name="device_condition"/>
                             <field name="description"/>
                         </list>
                     </field>
@@ -96,4 +97,6 @@
             </style>
         </xpath>
     </template>
+
+   
 </odoo>

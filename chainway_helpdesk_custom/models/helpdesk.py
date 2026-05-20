@@ -29,6 +29,11 @@ class TicketHelpdesk(models.Model):
     is_overdue = fields.Boolean(compute="_compute_states", store=True)
     is_closed = fields.Boolean(compute="_compute_states", store=True)
     is_on_time = fields.Boolean(compute="_compute_states", store=True)
+    # device_condition = fields.Selection([
+    #     ('poor', 'Poor'),
+    #     ('moderate', 'Moderate'),
+    #     ('good','Good')
+    # ], string="Device Condition", tracking=True)
 
     @api.depends('create_date', 'stage_id')
     def _compute_states(self):

@@ -114,6 +114,7 @@ class WarrantyController(http.Controller):
                 'company_address':post.get('company_address'),
                 'contact': post.get('contact_person'),
                 'store':post.get('store_location'),
+                
                 # 'customer_name': post.get('company_name'),
                 'subject': post.get('problem_type'),
                 'description': post.get('description'),
@@ -126,17 +127,33 @@ class WarrantyController(http.Controller):
 
             
 
+            # files = request.httprequest.files.getlist('attachment')
+
+            # for file in files:
+            #     if file:
+            #         request.env['ir.attachment'].sudo().create({
+            #             'name': file.filename,
+            #             'datas': base64.b64encode(file.read()),
+            #             'res_model': 'ticket.helpdesk',
+            #             'res_id': ticket.id,
+            #             'type': 'binary',
+            #         })
+
             files = request.httprequest.files.getlist('attachment')
 
             for file in files:
-                if file:
+                if file and file.filename:
+
                     request.env['ir.attachment'].sudo().create({
                         'name': file.filename,
                         'datas': base64.b64encode(file.read()),
                         'res_model': 'ticket.helpdesk',
                         'res_id': ticket.id,
                         'type': 'binary',
+                        'public': True,
+                        'mimetype': file.content_type,
                     })
+    
 
             return request.redirect('/my/tickets')
         

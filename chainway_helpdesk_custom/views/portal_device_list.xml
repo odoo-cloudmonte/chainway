@@ -489,7 +489,7 @@
                                         <th>Courier</th>
                                         <th>Tracking ID</th>
                                         <th>Delivery Date</th>
-                                        <th>POD</th>
+                                        <!-- <th>POD</th> -->
                                     </tr>
                                 </thead>
 
@@ -573,33 +573,7 @@
                                                 </td>
 
                                                 <!-- POD Download -->
-                                                <td>
-                                                    <t t-if="d.pod_copy">
-                                                        <div class="dv-pod-container">
-                                                            <!-- Image preview thumbnail -->
-                                                            <img t-att-src="'/web/image/device.inventory/%s/pod_copy?unique=%s' % (d.id, d.write_date)"
-                                                                 class="dv-pod-thumbnail pod-image"
-                                                                 title="Click to view full image"
-                                                                 t-att-data-image-url="'/web/image/device.inventory/%s/pod_copy?unique=%s' % (d.id, d.write_date)"
-                                                                 alt="POD Image"
-                                                                 loading="lazy" />
-                                                            <!-- Download button -->
-                                                            <a t-att-href="'/web/content?model=device.inventory&amp;id=%s&amp;field=pod_copy&amp;download=true' % d.id"
-                                                               class="dv-pod-download"
-                                                               title="Download POD"
-                                                               target="_blank">
-                                                                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                                                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                                                                    <polyline points="7 10 12 15 17 10"/>
-                                                                    <line x1="12" y1="15" x2="12" y2="3"/>
-                                                                </svg>
-                                                            </a>
-                                                        </div>
-                                                    </t>
-                                                    <t t-else="">
-                                                        <span class="dv-dash">—</span>
-                                                    </t>
-                                                </td>
+                                                
 
                                             </tr>
                                         </t>

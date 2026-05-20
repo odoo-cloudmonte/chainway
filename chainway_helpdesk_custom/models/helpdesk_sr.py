@@ -7,6 +7,11 @@ class HelpdeskSr(models.Model):
     device_sn = fields.Char(string="Device SN")
     description = fields.Char(string="Description")
     model_mo = fields.Char(string="Model No")
+    device_condition = fields.Selection([
+        ('poor', 'Poor'),
+        ('moderate', 'Moderate'),
+        ('good','Good')
+    ], string="Device Condition", tracking=True)
 
     ticket_id = fields.Many2one(
                 'ticket.helpdesk',

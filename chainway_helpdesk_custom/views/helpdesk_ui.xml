@@ -313,9 +313,9 @@
                             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
 
                                 <div class="input-row">
-                                    <label class="form-label">Company Name *</label>
+                                    <label class="form-label">Store / Mother Hub / Location *</label>
                                     <input type="text" name="company_name" class="form-control" 
-                                           placeholder="Enter company name" required="True"/>
+                                           placeholder="Enter Store / Mother Hub / Location name" required="True"/>
                                 </div>
 
                                 <div class="input-row">
@@ -331,7 +331,7 @@
                                 </div>
 
                                 <div style="grid-column: 1 / -1;" class="input-row">
-                                    <label class="form-label">Company Address *</label>
+                                    <label class="form-label">Complete Address *</label>
                                     <textarea name="company_address" class="form-control" 
                                               placeholder="Enter full company address" required="True"></textarea>
                                 </div>

@@ -42,12 +42,23 @@ class ImageRecord(models.Model):
     #             record.image_url = False
 
 
-    @api.depends('access_token', 'name')
+    # @api.depends('access_token', 'name')
+    # def _compute_image_url(self):
+    #     base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')
+    #     for record in self:
+    #         if record.access_token and record.name:
+    #             safe_name = url_quote(record.name)
+    #             record.image_url = f"{base_url}/image_link/{record.access_token}/{safe_name}"
+    #         else:
+    #             record.image_url = False
+
+    @api.depends('name')
     def _compute_image_url(self):
         base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')
+
         for record in self:
-            if record.access_token and record.name:
+            if record.name:
                 safe_name = url_quote(record.name)
-                record.image_url = f"{base_url}/image_link/{record.access_token}/{safe_name}"
+                record.image_url = f"{base_url}/image/{safe_name}"
             else:
                 record.image_url = False
