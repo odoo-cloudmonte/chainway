@@ -33,8 +33,7 @@
     </template>
 
     <!-- Template for displaying My Tickets portal page -->
-    <template id="
-    " name="My Tickets">
+    <template id="portal_my_tickets" name="My Tickets">
         <t t-call="portal.portal_layout">
             <t t-set="breadcrumbs_searchbar" t-value="True"/>
             
@@ -1239,8 +1238,8 @@
 
                                             </tr>
 
-                                            <t t-set="sr_index"
-                                               t-value="sr_index + 1"/>
+                                            <!-- <t t-set="sr_index"
+                                               t-value="sr_index + 1"/> -->
 
                                         </t>
 
