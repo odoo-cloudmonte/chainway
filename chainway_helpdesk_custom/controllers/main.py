@@ -164,6 +164,27 @@ class WarrantyController(http.Controller):
             })
     
 
+    # @http.route(['/my/devices'], type='http', auth="user", website=True)
+    # def my_devices(self, **kwargs):
+
+    #     user = request.env.user
+
+    #     if not user.show_device_ui:
+    #         return request.redirect('/')
+        
+    #     partner = request.env.user.partner_id
+
+    #     devices = request.env['device.inventory'].sudo().search([
+    #         ('end_user_name', '=', partner.id)
+    #     ])
+
+    #     return request.render(
+    #         'chainway_helpdesk_custom.portal_device_list',
+    #         {
+    #             'devices': devices
+    #         }
+    #     )
+
     @http.route(['/my/devices'], type='http', auth="user", website=True)
     def my_devices(self, **kwargs):
 
@@ -171,11 +192,17 @@ class WarrantyController(http.Controller):
 
         if not user.show_device_ui:
             return request.redirect('/')
-        
-        partner = request.env.user.partner_id
+
+        partner = user.partner_id
+
+        company = partner.commercial_partner_id
+
+        partner_ids = request.env['res.partner'].sudo().search([
+            ('commercial_partner_id', '=', company.id)
+        ]).ids
 
         devices = request.env['device.inventory'].sudo().search([
-            ('end_user_name', '=', partner.id)
+            ('end_user_name', 'in', partner_ids)
         ])
 
         return request.render(
@@ -183,6 +210,67 @@ class WarrantyController(http.Controller):
             {
                 'devices': devices
             }
+        )
+    
+
+    @http.route(
+        ['/my/device/pod/<int:device_id>'],
+        type='http',
+        auth='user',
+        website=True
+    )
+    def download_pod(self, device_id, **kwargs):
+
+        device = request.env['device.inventory'].sudo().browse(device_id)
+
+        # Record exists
+        if not device.exists():
+            return request.not_found()
+
+        # Security check
+        # if device.end_user_name.id != request.env.user.partner_id.id:
+        #     return request.not_found()
+
+        # File exists
+        if not device.pod_copy:
+            return request.not_found()
+
+        file_content = base64.b64decode(device.pod_copy)
+
+        # Default values
+        content_type = 'application/octet-stream'
+        extension = 'bin'
+
+        # Detect file type
+        if file_content.startswith(b'%PDF'):
+            content_type = 'application/pdf'
+            extension = 'pdf'
+
+        elif file_content.startswith(b'\x89PNG'):
+            content_type = 'image/png'
+            extension = 'png'
+
+        elif file_content.startswith(b'\xff\xd8'):
+            content_type = 'image/jpeg'
+            extension = 'jpg'
+
+        elif file_content.startswith(b'PK'):
+            content_type = 'application/zip'
+            extension = 'zip'
+
+        # Filename
+        filename = 'POD_%s.%s' % (
+            device.device_sn or device.id,
+            extension
+        )
+
+        return request.make_response(
+            file_content,
+            headers=[
+                ('Content-Type', content_type),
+                ('Content-Disposition', 'inline; filename="%s"' % filename),
+                ('Content-Length', len(file_content)),
+            ]
         )
 
         # if request.env.user.show_device_ui:

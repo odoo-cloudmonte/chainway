@@ -67,18 +67,20 @@
             <field name="is_overdue" optional="True"/>
             <field name="is_closed" optional="True"/>
             <field name="is_on_time" optional="True"/>
+            <field name="is_super_overdue" optional="True"/>
         </xpath>
 
         <!-- Apply colors -->
         <xpath expr="//list" position="attributes">
             <!-- 🔴 Overdue -->
-            <attribute name="decoration-danger">is_overdue</attribute>
+            <attribute name="decoration-warning">is_overdue</attribute>
+            <attribute name="decoration-danger">is_super_overdue</attribute>
 
             <!-- 🟢 Completed -->
             <attribute name="decoration-success">is_closed</attribute>
 
             <!-- 🟡 On time -->
-            <attribute name="decoration-warning">is_on_time</attribute>
+            <attribute name="decoration-info">is_on_time</attribute>
         </xpath>
 
     </field>

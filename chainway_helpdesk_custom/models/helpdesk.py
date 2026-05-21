@@ -27,34 +27,36 @@ class TicketHelpdesk(models.Model):
     store = fields.Char(string="Pin Code")
     city = fields.Char(string="City")
 
-    is_overdue = fields.Boolean(compute="_compute_states", store=True)
-    is_closed = fields.Boolean(compute="_compute_states", store=True)
-    is_on_time = fields.Boolean(compute="_compute_states", store=True)
+    is_overdue = fields.Boolean()
+    is_super_overdue = fields.Boolean()
+
+    is_closed = fields.Boolean()
+    is_on_time = fields.Boolean()
     # device_condition = fields.Selection([
     #     ('poor', 'Poor'),
     #     ('moderate', 'Moderate'),
     #     ('good','Good')
     # ], string="Device Condition", tracking=True)
 
-    @api.depends('create_date', 'stage_id')
-    def _compute_states(self):
-        now = fields.Datetime.now()
-        for rec in self:
-            rec.is_overdue = False
-            rec.is_closed = False
-            rec.is_on_time = False
+    # @api.depends('create_date', 'stage_id')
+    # def _compute_states(self):
+    #     now = fields.Datetime.now()
+    #     for rec in self:
+    #         rec.is_overdue = False
+    #         rec.is_closed = False
+    #         rec.is_on_time = False
 
-            if not rec.create_date:
-                continue
+    #         if not rec.create_date:
+    #             continue
 
-            is_closed = rec.stage_id.closing_stage if rec.stage_id else False
+    #         is_closed = rec.stage_id.closing_stage if rec.stage_id else False
 
-            if is_closed:
-                rec.is_closed = True
-            elif now > rec.create_date + timedelta(hours=48):
-                rec.is_overdue = True
-            else:
-                rec.is_on_time = True
+    #         if is_closed:
+    #             rec.is_closed = True
+    #         elif now > rec.create_date + timedelta(hours=48):
+    #             rec.is_overdue = True
+    #         else:
+    #             rec.is_on_time = True
 
     def cron_update_ticket_states(self):
         now = fields.Datetime.now()
@@ -69,6 +71,7 @@ class TicketHelpdesk(models.Model):
             rec.is_overdue = False
             rec.is_closed = False
             rec.is_on_time = False
+            rec.is_super_overdue = False
 
             if not rec.create_date:
                 continue
@@ -78,14 +81,31 @@ class TicketHelpdesk(models.Model):
             # 🟢 CLOSED
             if is_closed:
                 rec.is_closed = True
+                rec.is_on_time = False
+                rec.is_overdue = False
+                rec.is_super_overdue = False
+
+            elif now > rec.create_date + timedelta(hours=72):
+                rec.is_overdue = False
+                rec.is_closed = False
+                rec.is_on_time = False
+                rec.is_super_overdue = True
 
             # 🔴 OVERDUE
             elif now > rec.create_date + timedelta(hours=48):
                 rec.is_overdue = True
+                rec.is_closed = False
+                rec.is_on_time = False
+                rec.is_super_overdue = False
+
+            
 
             # 🟡 ON TIME
             else:
                 rec.is_on_time = True
+                rec.is_overdue = False
+                rec.is_closed = False
+                rec.is_super_overdue = False
 
 
     @api.constrains('create_date', 'start_date', 'end_date')

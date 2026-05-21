@@ -489,7 +489,7 @@
                                         <th>Courier</th>
                                         <th>Tracking ID</th>
                                         <th>Delivery Date</th>
-                                        <!-- <th>POD</th> -->
+                                        <th>POD</th>
                                     </tr>
                                 </thead>
 
@@ -574,8 +574,22 @@
                                                 </td>
 
                                                 <!-- POD Download -->
-                                                
+                                                <td>
+    <t t-if="d.pod_copy">
+        <a t-att-href="'/my/device/pod/%s' % d.id"
+           class="btn btn-sm btn-primary"
+           target="_blank">
+            View POD
+        </a>
+    </t>
+    <t t-else="">
+        <span class="dv-dash">—</span>
+    </t>
 
+
+
+
+                                                </td>
                                             </tr>
                                         </t>
                                     </t>

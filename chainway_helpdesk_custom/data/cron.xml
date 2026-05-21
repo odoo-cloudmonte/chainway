@@ -4,8 +4,8 @@
         <field name="model_id" ref="model_ticket_helpdesk"/>
         <field name="state">code</field>
         <field name="code">model.cron_update_ticket_states()</field>
-        <field name="interval_number">1</field>
-        <field name="interval_type">days</field>
+        <field name="interval_number">15</field>
+        <field name="interval_type">minutes</field>
         <field name="active">True</field>
     </record>
 
