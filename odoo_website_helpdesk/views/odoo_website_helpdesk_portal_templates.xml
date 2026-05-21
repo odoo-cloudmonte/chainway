@@ -1267,52 +1267,39 @@
 
                         <t t-if="details.attachment_ids">
 
-                            <div class="att-list">
+    <t t-set="att" t-value="details.attachment_ids[-1]"/>
 
-                                <t t-foreach="details.attachment_ids"
-                                   t-as="att">
+    <div class="att-list">
 
-                                    <div class="att-item">
+        <div class="att-item">
 
-                                        <div class="att-icon">
-                                            <i class="fa fa-file-o"/>
-                                        </div>
+            <div class="att-icon">
+                <i class="fa fa-file-o"/>
+            </div>
 
-                                        <div class="att-info">
+            <div class="att-info">
 
-                                            <div class="att-name"
-                                                 t-esc="att.name"/>
+                <div class="att-name"
+                     t-esc="att.name"/>
 
-                                            <div class="att-meta"
-                                                 t-esc="att.mimetype"/>
+                <div class="att-meta"
+                     t-esc="att.mimetype"/>
 
-                                        </div>
+            </div>
 
-                                        <!-- <a t-att-href="'/web/content/%s?download=true' % att.id"
-                                           class="att-dl"
-                                           target="_blank">
+            <a t-att-href="'/web/content/%s?download=true' % att.id"
+               class="att-dl">
 
-                                            <i class="fa fa-download"/>
-                                            Download
+                <i class="fa fa-download"/>
+                Download
 
-                                        </a> -->
+            </a>
 
-                                        <a t-att-href="'/web/content/%s?download=true' % att.id"
-                                            class="att-dl">
+        </div>
 
-                                                <i class="fa fa-download"/>
-                                                Download
+    </div>
 
-                                            </a>
-                                        
-
-                                    </div>
-
-                                </t>
-
-                            </div>
-
-                        </t>
+</t>
 
                     </div>
 

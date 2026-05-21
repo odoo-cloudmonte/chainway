@@ -35,7 +35,7 @@
     'data': [
         'data/helpdesk_category_data.xml',
         'security/odoo_website_helpdesk_groups.xml',
-        # 'security/odoo_website_helpdesk_security.xml',
+        # 'security/security.xml',
         'security/ir.model.access.csv',
         # 'data/helpdesk_replay_template_data.xml',
         'data/helpdesk_type_data.xml',
