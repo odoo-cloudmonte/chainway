@@ -35,10 +35,19 @@ class TicketHelpdesk(models.Model):
             return True
         return False
 
+#   ============================================================================================
+
     # @api.model
     # def get_tickets_count(self):
-    #     """ Function To Get The Ticket Count"""
-    #     ticket_details = self.search([])
+    #     """Function To Get The Ticket Count (Current User Only)"""
+
+    #     user_id = self.env.user.id
+
+    #     # ONLY CURRENT USER TICKETS
+    #     domain = [('assigned_user_id', '=', user_id)]
+
+    #     ticket_details = self.search(domain)
+
     #     ticket_data = [
     #         {
     #             'ticket_name': ticket.name,
@@ -50,37 +59,146 @@ class TicketHelpdesk(models.Model):
     #         }
     #         for ticket in ticket_details
     #     ]
-    #     tickets_new_count = self.search_count(
-    #         [('stage_id.name', 'in', ['Inbox', 'Draft'])])
-    #     tickets_in_progress_count = self.search_count(
-    #         [('stage_id.name', '=', 'In Progress')])
-    #     tickets_closed_count = self.search_count(
-    #         [('stage_id.name', '=', 'Done')])
+
+    #     # =========================================
+    #     # STAGE COUNTS
+    #     # =========================================
+
+    #     tickets_new_count = self.search_count([
+    #         ('assigned_user_id', '=', user_id),
+    #         ('stage_id.name', 'in', ['Inbox', 'Draft', 'New'])
+    #     ])
+
+    #     tickets_in_progress_count = self.search_count([
+    #         ('assigned_user_id', '=', user_id),
+    #         ('stage_id.name', '=', 'In Progress')
+    #     ])
+
+    #     tickets_device_recieved_count = self.search_count([
+    #         ('assigned_user_id', '=', user_id),
+    #         ('stage_id.name', '=', 'Device Received')
+    #     ])
+
+    #     tickets_assign_engineer_count = self.search_count([
+    #         ('assigned_user_id', '=', user_id),
+    #         ('stage_id.name', '=', 'Assign to Engineer')
+    #     ])
+
+    #     tickets_pending_count = self.search_count([
+    #         ('assigned_user_id', '=', user_id),
+    #         ('stage_id.name', '=', 'Pending for Approval')
+    #     ])
+
+    #     tickets_dispatch_count = self.search_count([
+    #         ('assigned_user_id', '=', user_id),
+    #         ('stage_id.name', '=', 'Dispatch')
+    #     ])
+
+    #     tickets_cancelled_count = self.search_count([
+    #         ('assigned_user_id', '=', user_id),
+    #         ('stage_id.name', '=', 'Cancelled')
+    #     ])
+
+
+
+    #     tickets_done_count = self.search_count([
+    #         ('assigned_user_id', '=', user_id),
+    #         ('stage_id.name', '=', 'Done')
+    #     ])
+
+    #     tickets_closed_count = self.search_count([
+    #         ('assigned_user_id', '=', user_id),
+    #         ('stage_id.name', '=', 'Closed')
+    #     ])
+
+
+
+    #     # =========================================
+    #     # PRIORITY COUNTS
+    #     # =========================================
+
     #     very_low_count = self.search_count([
-    #         ('priority', '=', '0')])
-    #     very_low_count1 = very_low_count * 10
+    #         ('assigned_user_id', '=', user_id),
+    #         ('priority', '=', '0')
+    #     ])
+
     #     low_count = self.search_count([
-    #         ('priority', '=', '1')])
-    #     low_count1 = low_count * 10
+    #         ('assigned_user_id', '=', user_id),
+    #         ('priority', '=', '1')
+    #     ])
+
     #     normal_count = self.search_count([
-    #         ('priority', '=', '2')])
-    #     normal_count1 = normal_count * 10
+    #         ('assigned_user_id', '=', user_id),
+    #         ('priority', '=', '2')
+    #     ])
+
     #     high_count = self.search_count([
-    #         ('priority', '=', '3')])
-    #     high_count1 = high_count * 10
+    #         ('assigned_user_id', '=', user_id),
+    #         ('priority', '=', '3')
+    #     ])
+
     #     very_high_count = self.search_count([
-    #         ('priority', '=', '4')])
-    #     very_high_count1 = very_high_count * 10
+    #         ('assigned_user_id', '=', user_id),
+    #         ('priority', '=', '4')
+    #     ])
+
+    #     # =========================================
+    #     # PROGRESS VALUES
+    #     # =========================================
+    #     total_count = very_low_count + low_count + normal_count + high_count + very_high_count
+
+    #     if total_count > 0:
+    #         very_low_count1 = (very_low_count / total_count) * 100
+    #         low_count1 = (low_count / total_count) * 100
+    #         normal_count1 = (normal_count / total_count) * 100
+    #         high_count1 = (high_count / total_count) * 100
+    #         very_high_count1 = (very_high_count / total_count) * 100
+    #     else:
+    #         very_low_count1 = 0
+    #         low_count1 = 0
+    #         normal_count1 = 0
+    #         high_count1 = 0
+    #         very_high_count1 = 0
+
+    #     # =========================================
+    #     # CUSTOMER RESPONSE
+    #     # =========================================
+
     #     response = self.search_count([
-    #         ('review', '!=', None)])
-    #     teams_count = self.env['team.helpdesk'].search_count([])
-    #     tickets = self.search(
-    #         [('stage_id.name', 'in', ['Inbox', 'Draft'])])
+    #         ('assigned_user_id', '=', user_id),
+    #         ('review', '!=', False)
+    #     ])
+
+    #     # =========================================
+    #     # TEAM COUNT
+    #     # =========================================
+
+    #     teams = self.search([
+    #         ('assigned_user_id', '=', user_id),
+    #         ('team_id', '!=', False)
+    #     ]).mapped('team_id')
+
+    #     teams_count = len(teams)
+
+    #     # =========================================
+    #     # PENDING TICKETS
+    #     # =========================================
+
+    #     tickets = self.search([
+    #         ('assigned_user_id', '=', user_id),
+    #         ('stage_id.name', 'in', ['Inbox', 'Draft', 'New'])
+    #     ])
+
     #     p_tickets = [ticket.name for ticket in tickets]
+
+    #     # =========================================
+    #     # RETURN
+    #     # =========================================
+
     #     values = {
-    #         'inbox_count': tickets_new_count,
+    #         'new_count': tickets_new_count,
     #         'progress_count': tickets_in_progress_count,
-    #         'done_count': tickets_closed_count,
+    #         'done_count': tickets_done_count,
     #         'team_count': teams_count,
     #         'p_tickets': p_tickets,
     #         'very_low_count1': very_low_count1,
@@ -90,17 +208,53 @@ class TicketHelpdesk(models.Model):
     #         'very_high_count1': very_high_count1,
     #         'response': response,
     #         'ticket_details': ticket_data,
+    #         'device_received_count':tickets_device_recieved_count,
+    #         'assign_engineer_count': tickets_assign_engineer_count,
+    #         'pending_approval_count': tickets_pending_count,
+    #         'dispatch_count': tickets_dispatch_count,
+    #         'cancelled_count': tickets_cancelled_count,
+    #         'closed_count' : tickets_closed_count,
     #     }
     #     return values
+    
+    # @api.model
+    # def action_open_stage(self, stage_name):
+
+    #     return {
+    #         'name': stage_name,
+    #         'type': 'ir.actions.act_window',
+    #         'res_model': 'ticket.helpdesk',
+    #         'view_mode': 'tree,form',
+    #         'views': [
+    #             [False, 'list'],
+    #             [False, 'form']
+    #         ],
+    #         'domain': [
+    #             ('stage_id.name', '=', stage_name),
+    #             ('assigned_user_id', '=', self.env.user.id)
+    #         ],
+    #         'context': {
+    #             'create': False
+    #         },
+    #         'target': 'current'
+    #     }
+
+
 
     @api.model
     def get_tickets_count(self):
-        """Function To Get The Ticket Count (Current User Only)"""
+        """Function To Get The Ticket Count"""
 
-        user_id = self.env.user.id
+        user = self.env.user
 
-        # ONLY CURRENT USER TICKETS
-        domain = [('assigned_user_id', '=', user_id)]
+        # =========================================
+        # DOMAIN BASED ON GROUP
+        # =========================================
+
+        if user.has_group('odoo_website_helpdesk.helpdesk_manager'):
+            domain = []
+        else:
+            domain = [('assigned_user_id', '=', user.id)]
 
         ticket_details = self.search(domain)
 
@@ -120,88 +274,71 @@ class TicketHelpdesk(models.Model):
         # STAGE COUNTS
         # =========================================
 
-        tickets_new_count = self.search_count([
-            ('assigned_user_id', '=', user_id),
-            ('stage_id.name', 'in', ['Inbox', 'Draft', 'New'])
-        ])
+        tickets_new_count = self.search_count(
+            domain + [('stage_id.name', 'in', ['Inbox', 'Draft', 'New'])]
+        )
 
-        tickets_in_progress_count = self.search_count([
-            ('assigned_user_id', '=', user_id),
-            ('stage_id.name', '=', 'In Progress')
-        ])
+        tickets_in_progress_count = self.search_count(
+            domain + [('stage_id.name', '=', 'In Progress')]
+        )
 
-        tickets_device_recieved_count = self.search_count([
-            ('assigned_user_id', '=', user_id),
-            ('stage_id.name', '=', 'Device Received')
-        ])
+        tickets_device_recieved_count = self.search_count(
+            domain + [('stage_id.name', '=', 'Device Received')]
+        )
 
-        tickets_assign_engineer_count = self.search_count([
-            ('assigned_user_id', '=', user_id),
-            ('stage_id.name', '=', 'Assign to Engineer')
-        ])
+        tickets_assign_engineer_count = self.search_count(
+            domain + [('stage_id.name', '=', 'Assign to Engineer')]
+        )
 
-        tickets_pending_count = self.search_count([
-            ('assigned_user_id', '=', user_id),
-            ('stage_id.name', '=', 'Pending for Approval')
-        ])
+        tickets_pending_count = self.search_count(
+            domain + [('stage_id.name', '=', 'Pending for Approval')]
+        )
 
-        tickets_dispatch_count = self.search_count([
-            ('assigned_user_id', '=', user_id),
-            ('stage_id.name', '=', 'Dispatch')
-        ])
+        tickets_dispatch_count = self.search_count(
+            domain + [('stage_id.name', '=', 'Dispatch')]
+        )
 
-        tickets_cancelled_count = self.search_count([
-            ('assigned_user_id', '=', user_id),
-            ('stage_id.name', '=', 'Cancelled')
-        ])
+        tickets_cancelled_count = self.search_count(
+            domain + [('stage_id.name', '=', 'Cancelled')]
+        )
 
+        tickets_done_count = self.search_count(
+            domain + [('stage_id.name', '=', 'Done')]
+        )
 
-
-        tickets_done_count = self.search_count([
-            ('assigned_user_id', '=', user_id),
-            ('stage_id.name', '=', 'Done')
-        ])
-
-        tickets_closed_count = self.search_count([
-            ('assigned_user_id', '=', user_id),
-            ('stage_id.name', '=', 'Closed')
-        ])
-
-
+        tickets_closed_count = self.search_count(
+            domain + [('stage_id.name', '=', 'Closed')]
+        )
 
         # =========================================
         # PRIORITY COUNTS
         # =========================================
 
-        very_low_count = self.search_count([
-            ('assigned_user_id', '=', user_id),
-            ('priority', '=', '0')
-        ])
+        very_low_count = self.search_count(
+            domain + [('priority', '=', '0')]
+        )
 
-        low_count = self.search_count([
-            ('assigned_user_id', '=', user_id),
-            ('priority', '=', '1')
-        ])
+        low_count = self.search_count(
+            domain + [('priority', '=', '1')]
+        )
 
-        normal_count = self.search_count([
-            ('assigned_user_id', '=', user_id),
-            ('priority', '=', '2')
-        ])
+        normal_count = self.search_count(
+            domain + [('priority', '=', '2')]
+        )
 
-        high_count = self.search_count([
-            ('assigned_user_id', '=', user_id),
-            ('priority', '=', '3')
-        ])
+        high_count = self.search_count(
+            domain + [('priority', '=', '3')]
+        )
 
-        very_high_count = self.search_count([
-            ('assigned_user_id', '=', user_id),
-            ('priority', '=', '4')
-        ])
+        very_high_count = self.search_count(
+            domain + [('priority', '=', '4')]
+        )
 
         # =========================================
         # PROGRESS VALUES
         # =========================================
-        total_count = very_low_count + low_count + normal_count + high_count + very_high_count
+
+        total_count = ( very_low_count + low_count + normal_count + high_count + very_high_count)
 
         if total_count > 0:
             very_low_count1 = (very_low_count / total_count) * 100
@@ -220,19 +357,17 @@ class TicketHelpdesk(models.Model):
         # CUSTOMER RESPONSE
         # =========================================
 
-        response = self.search_count([
-            ('assigned_user_id', '=', user_id),
-            ('review', '!=', False)
-        ])
+        response = self.search_count(
+            domain + [('review', '!=', False)]
+        )
 
         # =========================================
         # TEAM COUNT
         # =========================================
 
-        teams = self.search([
-            ('assigned_user_id', '=', user_id),
-            ('team_id', '!=', False)
-        ]).mapped('team_id')
+        teams = self.search(
+            domain + [('team_id', '!=', False)]
+        ).mapped('team_id')
 
         teams_count = len(teams)
 
@@ -240,10 +375,9 @@ class TicketHelpdesk(models.Model):
         # PENDING TICKETS
         # =========================================
 
-        tickets = self.search([
-            ('assigned_user_id', '=', user_id),
-            ('stage_id.name', 'in', ['Inbox', 'Draft', 'New'])
-        ])
+        tickets = self.search(
+            domain + [('stage_id.name', 'in', ['Inbox', 'Draft', 'New'])]
+        )
 
         p_tickets = [ticket.name for ticket in tickets]
 
@@ -264,31 +398,45 @@ class TicketHelpdesk(models.Model):
             'very_high_count1': very_high_count1,
             'response': response,
             'ticket_details': ticket_data,
-            'device_received_count':tickets_device_recieved_count,
+            'device_received_count': tickets_device_recieved_count,
             'assign_engineer_count': tickets_assign_engineer_count,
             'pending_approval_count': tickets_pending_count,
             'dispatch_count': tickets_dispatch_count,
             'cancelled_count': tickets_cancelled_count,
-            'closed_count' : tickets_closed_count,
+            'closed_count': tickets_closed_count,
         }
+
         return values
-    
+
+
     @api.model
     def action_open_stage(self, stage_name):
+
+        user = self.env.user
+
+        # =========================================
+        # DOMAIN BASED ON GROUP
+        # =========================================
+
+        domain = [
+            ('stage_id.name', '=', stage_name)
+        ]
+
+        if not user.has_group('odoo_website_helpdesk.helpdesk_manager'):
+            domain.append(
+                ('assigned_user_id', '=', user.id)
+            )
 
         return {
             'name': stage_name,
             'type': 'ir.actions.act_window',
             'res_model': 'ticket.helpdesk',
-            'view_mode': 'tree,form',
+            'view_mode': 'list,form',
             'views': [
                 [False, 'list'],
                 [False, 'form']
             ],
-            'domain': [
-                ('stage_id.name', '=', stage_name),
-                ('assigned_user_id', '=', self.env.user.id)
-            ],
+            'domain': domain,
             'context': {
                 'create': False
             },
@@ -355,41 +503,79 @@ class TicketHelpdesk(models.Model):
         month = [count, name]
         return month
 
+    
+
+#  ==================================================================
+
     # @api.model
     # def get_team_ticket_count_pie(self):
-    #     """For bar chart"""
+    #     """Bar chart - Only current user's assigned tickets"""
+
     #     ticket_count = []
     #     team_list = []
-    #     tickets = self.search([])
+
+    #     # ONLY CURRENT USER ASSIGNED TICKETS
+    #     tickets = self.search([
+    #         ('assigned_user_id', '=', self.env.user.id)
+    #     ])
+
     #     for rec in tickets:
+
     #         if rec.team_id:
+
     #             team = rec.team_id.name
+
     #             if team not in team_list:
     #                 team_list.append(team)
+
     #             ticket_count.append(team)
+
     #     team_val = []
+
     #     for index in range(len(team_list)):
+
     #         value = ticket_count.count(team_list[index])
+
     #         team_name = team_list[index]
-    #         team_val.append({'label': team_name, 'value': value})
+
+    #         team_val.append({
+    #             'label': team_name,
+    #             'value': value
+    #         })
+
     #     name = [record.get('label') for record in team_val]
+
     #     count = [record.get('value') for record in team_val]
-    #     team = [count, name]
-    #     return team
 
-
+    #     return [count, name]
+    
+    # def get_stage_domain(self, stage_name):
+    #     return [
+    #         ('stage_id.name', '=', stage_name),
+    #         ('assigned_user_id', '=', self.env.user.id)
+    #     ]
 
     @api.model
     def get_team_ticket_count_pie(self):
-        """Bar chart - Only current user's assigned tickets"""
+        """Pie chart - Team wise ticket count"""
+
+        user = self.env.user
+
+        # =========================================
+        # DOMAIN BASED ON GROUP
+        # =========================================
+
+        domain = []
+
+        if not user.has_group('odoo_website_helpdesk.helpdesk_manager'):
+            domain.append(
+                ('assigned_user_id', '=', user.id)
+            )
 
         ticket_count = []
         team_list = []
 
-        # ONLY CURRENT USER ASSIGNED TICKETS
-        tickets = self.search([
-            ('assigned_user_id', '=', self.env.user.id)
-        ])
+        tickets = self.search(domain)
 
         for rec in tickets:
 
@@ -420,9 +606,21 @@ class TicketHelpdesk(models.Model):
         count = [record.get('value') for record in team_val]
 
         return [count, name]
-    
+
+
     def get_stage_domain(self, stage_name):
-        return [
-            ('stage_id.name', '=', stage_name),
-            ('assigned_user_id', '=', self.env.user.id)
+
+        domain = [
+            ('stage_id.name', '=', stage_name)
         ]
+
+        # =========================================
+        # MANAGER CAN SEE ALL TICKETS
+        # =========================================
+
+        if not self.env.user.has_group('odoo_website_helpdesk.helpdesk_manager'):
+            domain.append(
+                ('assigned_user_id', '=', self.env.user.id)
+            )
+
+        return domain

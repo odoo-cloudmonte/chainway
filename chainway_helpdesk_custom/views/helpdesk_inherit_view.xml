@@ -64,10 +64,12 @@
 
         <!-- Add fields (required for decoration) -->
         <xpath expr="//list" position="inside">
-            <field name="is_overdue" optional="True"/>
+            <field name="sr_device_sn" optional="True"/>
+            <field name="sr_device_model" optional="True"/>
+            <!-- <field name="is_overdue" optional="True"/>
             <field name="is_closed" optional="True"/>
             <field name="is_on_time" optional="True"/>
-            <field name="is_super_overdue" optional="True"/>
+            <field name="is_super_overdue" optional="True"/> -->
         </xpath>
 
         <!-- Apply colors -->

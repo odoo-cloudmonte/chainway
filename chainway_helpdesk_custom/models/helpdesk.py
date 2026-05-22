@@ -21,6 +21,18 @@ class TicketHelpdesk(models.Model):
         string="Service Requests"
     )
 
+    sr_device_sn = fields.Char(
+        string="Device SN",
+        compute="_compute_sr_device_sn",
+        store=True
+    )
+
+    sr_device_model = fields.Char(
+        string="Model No",
+        compute="_compute_sr_device_model",
+        store=True
+    )
+
     company_name = fields.Char(string="Company Name")
     company_address = fields.Char(string="Company Address")
     contact = fields.Char(string="Contact")
@@ -57,6 +69,27 @@ class TicketHelpdesk(models.Model):
     #             rec.is_overdue = True
     #         else:
     #             rec.is_on_time = True
+
+    @api.depends('sr_ids.device_sn')
+    def _compute_sr_device_sn(self):
+        for rec in self:
+            serials = rec.sr_ids.mapped('device_sn')
+
+            # Remove False/empty values
+            serials = [sn for sn in serials if sn]
+
+            rec.sr_device_sn = ', '.join(serials)
+
+    @api.depends('sr_ids.model_mo')
+    def _compute_sr_device_model(self):
+        for rec in self:
+            serials = rec.sr_ids.mapped('model_mo')
+
+            # Remove False/empty values
+            serials = [sn for sn in serials if sn]
+
+            rec.sr_device_model = ', '.join(serials)
+
 
     def cron_update_ticket_states(self):
         now = fields.Datetime.now()

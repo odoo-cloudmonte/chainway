@@ -3,6 +3,7 @@ from odoo.exceptions import ValidationError
 
 class HelpdeskSr(models.Model):
     _name = "helpdesk.sr"
+    _rec_name ='device_sn'
 
     device_sn = fields.Char(string="Device SN")
     description = fields.Char(string="Description")
