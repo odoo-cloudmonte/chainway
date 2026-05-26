@@ -114,7 +114,7 @@ class DeviceInventory(models.Model):
     def action_download_template(self):
         return {
             'type': 'ir.actions.act_url',
-            'url': '/chainway_helpdesk_custom/static/files/device_import_template.xlsx',
+            'url': '/chainway_helpdesk_custom/static/files/import_template.xlsx',
             'target': 'self',
         }
     
@@ -243,7 +243,8 @@ class DeviceInventory(models.Model):
             "Delivery Location",
             "Courier Name", "Tracking ID",
             "Delivery Date",
-            "Chainway Reference",
+            "Chainway Tax Invoice No",
+            "Chainway PI No",
             "Remark",
             "POD Image"
         ]

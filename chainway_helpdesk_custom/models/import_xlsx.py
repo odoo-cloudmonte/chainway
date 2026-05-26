@@ -534,7 +534,10 @@ class DeviceImportWizard(models.TransientModel):
                     ),
 
                     'chainway_reference': row_dict.get(
-                        'Chainway Reference'
+                        'Chainway Tax Invoice No'
+                    ),
+                    'Chainway_pi_no': row_dict.get(
+                        'Chainway PI No'
                     ),
 
                     'remark': row_dict.get('Remark'),
