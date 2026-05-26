@@ -26,7 +26,7 @@
                 <field name="imei1"/>
                 <field name="model"/>
                 <field name="end_user_name"/>
-                
+                <field name="pod_copy" widget="image" options="{'size': [80, 80]}"/>
                 <field name="description" optional="true"/>
                 <field name="chainway_reference" optional="true"/>
                 <field name="remark" optional="true"/>

@@ -288,6 +288,7 @@ class DeviceInventory(models.Model):
             sheet.write(row, col, rec.tracking_id or ''); col += 1
             sheet.write(row, col, str(rec.delivery_date or '')); col += 1
             sheet.write(row, col, rec.chainway_reference or ''); col += 1
+            sheet.write(row, col, rec.Chainway_pi_no or ''); col += 1
             sheet.write(row, col, rec.remark or ''); col += 1
             sheet.write(row,col, rec.pod_url or ''); col += 1
 
