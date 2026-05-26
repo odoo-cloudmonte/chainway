@@ -137,6 +137,7 @@
                         <page string="Other">
                             <group>
                                 <field name="chainway_reference"/>
+                                <field name="Chainway_pi_no"/>
                                 <field name="remark"/>
                             </group>
                         </page>

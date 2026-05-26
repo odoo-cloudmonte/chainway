@@ -2,6 +2,7 @@ import base64
 import io
 
 import xlsxwriter
+from PIL import Image
 
 from odoo import models, fields, api
 from odoo.exceptions import ValidationError
@@ -75,8 +76,11 @@ class DeviceInventory(models.Model):
     delivery_date = fields.Date(string="Delivery Date", tracking=True)
 
     pod_copy = fields.Binary(string="POD Copy", attachment=True)
+    pod_url = fields.Char(string="Pod URL")
 
-    chainway_reference = fields.Char(string="Reference ", tracking=True)
+    chainway_reference = fields.Char(string=" Chainway Tax Invoice No", tracking=True)
+
+    Chainway_pi_no = fields.Char(string="Chainway PI No", tracking = True)
 
     remark = fields.Text(string="Remark", tracking=True)
 
@@ -284,22 +288,23 @@ class DeviceInventory(models.Model):
             sheet.write(row, col, str(rec.delivery_date or '')); col += 1
             sheet.write(row, col, rec.chainway_reference or ''); col += 1
             sheet.write(row, col, rec.remark or ''); col += 1
+            sheet.write(row,col, rec.pod_url or ''); col += 1
 
             # ✅ Image (POD)
-            if rec.pod_copy:
-                try:
-                    image_data = base64.b64decode(rec.pod_copy)
-                    image_stream = io.BytesIO(image_data)
+            # if rec.pod_copy:
+            #     try:
+            #         image_data = base64.b64decode(rec.pod_copy)
+            #         image_stream = io.BytesIO(image_data)
 
-                    sheet.insert_image(row, col, "pod.png", {
-                        'image_data': image_stream,
-                        'x_scale': 0.4,
-                        'y_scale': 0.4,
-                    })
-                except Exception:
-                    sheet.write(row, col, "Invalid Image")
-            else:
-                sheet.write(row, col, '')
+            #         sheet.insert_image(row, col, "pod.png", {
+            #             'image_data': image_stream,
+            #             'x_scale': 0.4,
+            #             'y_scale': 0.4,
+            #         })
+            #     except Exception:
+            #         sheet.write(row, col, "Invalid Image")
+            # else:
+            #     sheet.write(row, col, '')
 
             row += 1
 
@@ -323,3 +328,176 @@ class DeviceInventory(models.Model):
             'url': f'/web/content/{attachment.id}?download=true',
             'target': 'self',
         }
+
+    # def action_export_devices(self):
+
+    #     output = io.BytesIO()
+
+    #     workbook = xlsxwriter.Workbook(output, {'in_memory': True})
+    #     sheet = workbook.add_worksheet('Devices')
+
+    #     # =========================
+    #     # Formats
+    #     # =========================
+    #     header_format = workbook.add_format({
+    #         'bold': True,
+    #         'bg_color': '#D9E1F2',
+    #         'border': 1,
+    #         'align': 'center',
+    #         'valign': 'vcenter'
+    #     })
+
+    #     text_format = workbook.add_format({
+    #         'border': 1,
+    #         'valign': 'top'
+    #     })
+
+    #     # =========================
+    #     # Headers
+    #     # =========================
+    #     headers = [
+    #         "Device SN", "Type",
+    #         "BT MAC", "IMEI1", "IMEI2", "WiFi MAC",
+    #         "Model", "Description", "SW Version",
+    #         "Configuration IN", "Configuration OUT",
+    #         "Warranty WEF", "Warranty Category", "Warranty Upto",
+    #         "End User",
+    #         "PO Date", "PO No",
+    #         "Invoice No", "Invoice Date",
+    #         "Location", "Location Code",
+    #         "Shipping Address PO", "Shipping Address Invoice",
+    #         "Delivery Location",
+    #         "Courier Name", "Tracking ID",
+    #         "Delivery Date",
+    #         "Chainway Reference",
+    #         "Remark",
+    #         "POD Image"
+    #     ]
+
+    #     # Write Header
+    #     for col, header in enumerate(headers):
+    #         sheet.write(0, col, header, header_format)
+
+    #     # Freeze Header Row
+    #     sheet.freeze_panes(1, 0)
+
+    #     # Default column width
+    #     sheet.set_column(0, len(headers) - 2, 20)
+
+    #     # POD Image column width
+    #     image_col = len(headers) - 1
+    #     sheet.set_column(image_col, image_col, 35)
+
+    #     row = 1
+
+    #     for rec in self:
+
+    #         col = 0
+
+    #         # =========================
+    #         # Text Data
+    #         # =========================
+    #         values = [
+    #             rec.device_sn or '',
+    #             rec.type or '',
+    #             rec.bt_mac or '',
+    #             rec.imei1 or '',
+    #             rec.imei2 or '',
+    #             rec.wifi_mac or '',
+    #             rec.model or '',
+    #             rec.description or '',
+    #             rec.sw_version or '',
+    #             rec.configuration_in or '',
+    #             rec.configuration_out or '',
+    #             str(rec.warranty_wef or ''),
+    #             rec.warranty_category or '',
+    #             str(rec.warranty_upto or ''),
+    #             rec.end_user_name.name if rec.end_user_name else '',
+    #             str(rec.po_date or ''),
+    #             rec.po_no or '',
+    #             rec.invoice_no or '',
+    #             str(rec.invoice_date or ''),
+    #             rec.location or '',
+    #             rec.location_code or '',
+    #             rec.shipping_address_po or '',
+    #             rec.shipping_address_invoice or '',
+    #             rec.delivery_location or '',
+    #             rec.courier_name or '',
+    #             rec.tracking_id or '',
+    #             str(rec.delivery_date or ''),
+    #             rec.chainway_reference or '',
+    #             rec.remark or '',
+    #         ]
+
+    #         for value in values:
+    #             sheet.write(row, col, value, text_format)
+    #             col += 1
+
+    #         # =========================
+    #         # POD Image
+    #         # =========================
+    #         if rec.pod_copy:
+    #             try:
+    #                 image_data = base64.b64decode(rec.pod_copy)
+
+    #                 image_stream = io.BytesIO(image_data)
+
+    #                 # Read image dimensions
+    #                 img = Image.open(image_stream)
+    #                 width, height = img.size
+
+    #                 # Reset stream
+    #                 image_stream.seek(0)
+
+    #                 # Scale image
+    #                 x_scale = 0.5
+    #                 y_scale = 0.5
+
+    #                 scaled_width = width * x_scale
+    #                 scaled_height = height * y_scale
+
+    #                 # Adjust row height dynamically
+    #                 row_height = max(80, scaled_height)
+
+    #                 # Adjust column width dynamically
+    #                 column_width = max(35, scaled_width / 7)
+
+    #                 sheet.set_row(row, row_height)
+    #                 sheet.set_column(col, col, column_width)
+
+    #                 # Insert image
+    #                 sheet.insert_image(row, col, "pod.png", {
+    #                     'image_data': image_stream,
+    #                     'x_scale': x_scale,
+    #                     'y_scale': y_scale,
+    #                     'x_offset': 5,
+    #                     'y_offset': 5,
+    #                     'object_position': 1,
+    #                 })
+
+    #             except Exception:
+    #                 sheet.write(row, col, "Invalid Image", text_format)
+
+    #         else:
+    #             sheet.write(row, col, '', text_format)
+
+    #         row += 1
+
+    #     workbook.close()
+
+    #     output.seek(0)
+
+    #     file_data = base64.b64encode(output.read())
+
+    #     attachment = self.env['ir.attachment'].create({
+    #         'name': 'Device_Export.xlsx',
+    #         'type': 'binary',
+    #         'datas': file_data,
+    #         'res_model': 'device.inventory',
+    #     })
+
+    #     return {
+    #         'type': 'ir.actions.act_url',
+    #         'url': f'/web/content/{attachment.id}?download=true',
+    #         'target': 'self',
+    #     }

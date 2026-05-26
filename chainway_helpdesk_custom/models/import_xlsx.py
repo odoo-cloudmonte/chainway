@@ -540,6 +540,7 @@ class DeviceImportWizard(models.TransientModel):
                     'remark': row_dict.get('Remark'),
 
                     'pod_copy': pod_copy,
+                    'pod_url': row_dict.get('POD Image'),
                 }
 
                 # -------------------------------------------------
