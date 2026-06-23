@@ -737,7 +737,7 @@
 
             .sr-table {
                 width: 100%;
-                min-width: 780px;
+                min-width: 900px;
 
                 border-collapse: collapse;
                 table-layout: fixed;
@@ -765,25 +765,13 @@
                 text-align: left;
             }
 
-            .sr-table thead th:nth-child(1) {
-                width: 60px;
-            }
-
-            .sr-table thead th:nth-child(2) {
-                width: 18%;
-            }
-
-            .sr-table thead th:nth-child(3) {
-                width: 18%;
-            }
-
-            .sr-table thead th:nth-child(4) {
-                width: 18%;
-            }
-
-            .sr-table thead th:nth-child(5) {
-                width: 46%;
-            }
+            /* Column widths — 6 columns, total = 100% */
+            .sr-table thead th:nth-child(1) { width: 50px;  }  /* #              */
+            .sr-table thead th:nth-child(2) { width: 16%;   }  /* Model No.      */
+            .sr-table thead th:nth-child(3) { width: 16%;   }  /* Device S/N     */
+            .sr-table thead th:nth-child(4) { width: 14%;   }  /* Device Cond.   */
+            .sr-table thead th:nth-child(5) { width: 30%;   }  /* Description    */
+            .sr-table thead th:nth-child(6) { width: 24%;   }  /* Remarks        */
 
             .sr-table tbody tr:hover {
                 background: #f8fbff;
@@ -857,6 +845,17 @@
                 display: block;
 
                 max-width: 100%;
+            }
+
+            /* Remarks cell */
+            .sr-remark {
+                display: block;
+                color: #475569;
+                font-size: 13px;
+                line-height: 1.7;
+                white-space: normal;
+                word-break: break-word;
+                overflow-wrap: anywhere;
             }
 
             /* =========================================================
@@ -1146,8 +1145,7 @@
                         </div>
 
                         <div class="tk-cb">
-                            <p class="tk-desc"
-                               t-esc="details['description']"/>
+                            <p class="tk-desc" t-esc="details['description']"/>
                         </div>
 
                     </div>
@@ -1172,26 +1170,22 @@
 
                                     <thead>
                                         <tr>
-
                                             <th>#</th>
                                             <th>Model No.</th>
                                             <th>Device S/N</th>
                                             <th>Device Condition</th>
                                             <th>Description</th>
-
+                                            <th>Remarks</th>
                                         </tr>
                                     </thead>
 
                                     <tbody>
 
-                                        <!-- <t t-set="sr_index" t-value="1"/> -->
-
-                                        <t t-foreach="details.sr_ids"
-                                           t-as="sr">
+                                        <t t-foreach="details.sr_ids" t-as="sr">
 
                                             <tr>
                                                 <td>
-                                                     <span class="sr-num">
+                                                    <span class="sr-num">
                                                         <t t-esc="sr_index + 1"/>
                                                     </span>
                                                 </td>
@@ -1208,38 +1202,25 @@
                                                     </span>
                                                 </td>
 
-                                                <!-- <td>
-                                                    <span class="sr-sn">
-                                                        <t t-esc="sr.device_condition or '—'"/>
-                                                    </span>
-                                                </td> -->
-
                                                 <td>
-                                                    <span t-attf-class="
-                                                            badge rounded-pill
-                                                            #{'bg-danger' if sr.device_condition == 'poor' else ''}
-                                                            #{'bg-warning text-dark' if sr.device_condition == 'moderate' else ''}
-                                                            #{'bg-success' if sr.device_condition == 'good' else ''}
-                                                        ">
+                                                    <span t-attf-class="badge rounded-pill                                                         #{'bg-danger' if sr.device_condition == 'poor' else ''}                                                         #{'bg-warning text-dark' if sr.device_condition == 'moderate' else ''}                                                         #{'bg-success' if sr.device_condition == 'good' else ''}                                                     ">
                                                         <t t-esc="sr.device_condition or '—'"/>
                                                     </span>
                                                 </td>
 
                                                 <td>
-
-                                                    <span class="sr-desc"
-                                                          t-att-title="sr.description or ''">
-
+                                                    <span class="sr-desc" t-att-title="sr.description or ''">
                                                         <t t-esc="sr.description or '—'"/>
-
                                                     </span>
+                                                </td>
 
+                                                <td>
+                                                    <span class="sr-remark">
+                                                        <t t-esc="sr.remark or '—'"/>
+                                                    </span>
                                                 </td>
 
                                             </tr>
-
-                                            <!-- <t t-set="sr_index"
-                                               t-value="sr_index + 1"/> -->
 
                                         </t>
 
@@ -1267,39 +1248,36 @@
 
                         <t t-if="details.attachment_ids">
 
-    <t t-set="att" t-value="details.attachment_ids[-1]"/>
+                            <t t-set="att" t-value="details.attachment_ids[-1]"/>
 
-    <div class="att-list">
+                            <div class="att-list">
 
-        <div class="att-item">
+                                <div class="att-item">
 
-            <div class="att-icon">
-                <i class="fa fa-file-o"/>
-            </div>
+                                    <div class="att-icon">
+                                        <i class="fa fa-file-o"/>
+                                    </div>
 
-            <div class="att-info">
+                                    <div class="att-info">
 
-                <div class="att-name"
-                     t-esc="att.name"/>
+                                        <div class="att-name" t-esc="att.name"/>
 
-                <div class="att-meta"
-                     t-esc="att.mimetype"/>
+                                        <div class="att-meta" t-esc="att.mimetype"/>
 
-            </div>
+                                    </div>
 
-            <a t-att-href="'/web/content/%s?download=true' % att.id"
-               class="att-dl">
+                                    <a t-att-href="'/web/content/%s?download=true' % att.id" class="att-dl">
 
-                <i class="fa fa-download"/>
-                Download
+                                        <i class="fa fa-download"/>
+                                        Download
 
-            </a>
+                                    </a>
 
-        </div>
+                                </div>
 
-    </div>
+                            </div>
 
-</t>
+                        </t>
 
                     </div>
 
@@ -1323,11 +1301,9 @@
 
                             <div>
 
-                                <div class="tk-cn"
-                                     t-esc="details['customer_id'].name"/>
+                                <div class="tk-cn" t-esc="details['customer_id'].name"/>
 
-                                <div class="tk-ce"
-                                     t-esc="details['customer_id'].email"/>
+                                <div class="tk-ce" t-esc="details['customer_id'].email"/>
 
                             </div>
 
@@ -1354,15 +1330,13 @@
 
                                 <t t-if="details['assigned_user_id']">
 
-                                    <div class="tk-cn"
-                                         t-esc="details['assigned_user_id'].name"/>
+                                    <div class="tk-cn" t-esc="details['assigned_user_id'].name"/>
 
                                 </t>
 
                                 <t t-else="">
 
-                                    <div class="tk-cn"
-                                         style="color:#94a3b8;">
+                                    <div class="tk-cn" style="color:#94a3b8;">
 
                                         Unassigned
 
@@ -1383,22 +1357,22 @@
             <!-- COMMUNICATION -->
             <div class="tk-comms">
 
-    <div class="tk-comms-top">
-        <div class="sr-header-left">
-            <span class="tk-ch-dot"/>
-            Communication
-        </div>
-    </div>
+                <div class="tk-comms-top">
+                    <div class="sr-header-left">
+                        <span class="tk-ch-dot"/>
+                        Communication
+                    </div>
+                </div>
 
-    <div class="tk-cb">
+                <div class="tk-cb">
 
-        <t t-call="portal.message_thread">
-            <t t-set="object" t-value="details"/>
-        </t>
+                    <t t-call="portal.message_thread">
+                        <t t-set="object" t-value="details"/>
+                    </t>
 
-    </div>
+                </div>
 
-</div>
+            </div>
 
         </div>
 

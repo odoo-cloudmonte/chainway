@@ -9,10 +9,12 @@
                 <page string="Devices">
                     <field name="sr_ids">
                         <list editable="bottom">
+                            <field name="sequence" readonly="1"/>
                             <field name="device_sn"/>
                             <field name="model_mo"/>
-                            <field name="device_condition"/>
+                            <field name="device_condition"/>        
                             <field name="description"/>
+                            <field name="remark"/>
                         </list>
                     </field>
                 </page>
@@ -21,10 +23,13 @@
                         <group>
                             <field name="company_name"/>
                             <field name="company_address"/>
+                            <field name="store"/>
+                            
                         </group>
                         <group>
                             <field name="contact"/>
-                            <field name="store"/>
+                            <field name="phone"/>
+                            <field name="email"/>
                         </group>
 
                     </group>

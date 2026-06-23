@@ -324,10 +324,23 @@
                                            placeholder="Enter city" required="True"/>
                                 </div>
 
-                                <div class="input-row">
+                                <!-- <div class="input-row">
                                     <label class="form-label">Pin Code</label>
                                     <input type="number" name="store_location" class="form-control" 
                                            placeholder="Pin Code"/>
+                                </div> -->
+
+                                <div class="input-row">
+                                    <label class="form-label">Pin Code</label>
+                                    <input type="text"
+                                        name="store_location"
+                                        class="form-control"
+                                        placeholder="Pin Code"
+                                        maxlength="6"
+                                        pattern="[0-9]{6}"
+                                        inputmode="numeric"
+                                        oninput="this.value=this.value.replace(/[^0-9]/g,'').slice(0,6)"
+                                        required="True" />
                                 </div>
 
                                 <div style="grid-column: 1 / -1;" class="input-row">
@@ -383,7 +396,12 @@
                             </div>
                         </div>
                     </div>
-
+<div style="grid-column: 1 / -1;" class="input-row">
+                                    <label class="form-label">Problem Description *</label>
+                                    <textarea name="description" class="form-control" 
+                                              placeholder="Describe the issue in detail. Include any error messages, when the problem started, and steps you've already tried..."
+                                              required="True"></textarea>
+                                </div>
                     <!-- Issue Details Section -->
                     <div class="section-card">
                         <div class="section-card-header">
@@ -409,12 +427,12 @@
                                            accept=".pdf,.doc,.docx,.jpg,.png,.txt"/>
                                 </div>
 
-                                <div style="grid-column: 1 / -1;" class="input-row">
+                                <!-- <div style="grid-column: 1 / -1;" class="input-row">
                                     <label class="form-label">Problem Description *</label>
                                     <textarea name="description" class="form-control" 
                                               placeholder="Describe the issue in detail. Include any error messages, when the problem started, and steps you've already tried..."
                                               required="True"></textarea>
-                                </div>
+                                </div> -->
 
                             </div>
                         </div>
@@ -437,9 +455,25 @@
                                 </thead>
                                 <tbody>
                                     <tr class="device_row">
-                                        <td><input name="model_number[]" class="form-control" placeholder="e.g., MODEL-001"/></td>
+                                        <!-- <td><input name="model_number[]" class="form-control" placeholder="e.g., MODEL-001"/></td>
                                         <td><input name="serial_number[]" class="form-control" placeholder="e.g., SN-12345678"/></td>
                                         <td><input name="description[]" class="form-control" placeholder="Device description"/></td>
+                                        <td style="text-align: center;">
+                                            <button type="button" class="btn btn-sm btn-outline-danger remove_row" title="Remove this device">
+                                                ✕
+                                            </button>
+                                        </td> -->
+                                        <td>
+                                            <input type="text" name="model_number[]" class="form-control" placeholder="e.g., MODEL001" maxlength="8"/>
+                                        </td>
+                                        
+                                        <td>
+                                            <input type="text" name="serial_number[]" class="form-control" placeholder="e.g., SN123456789012345" maxlength="18"/>
+                                        </td>
+                                        
+                                        <td>
+                                            <input type="text" name="description[]" class="form-control" placeholder="Device description" maxlength="100"/>
+                                        </td>
                                         <td style="text-align: center;">
                                             <button type="button" class="btn btn-sm btn-outline-danger remove_row" title="Remove this device">
                                                 ✕
