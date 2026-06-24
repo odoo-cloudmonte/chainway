@@ -253,6 +253,11 @@ class TicketHelpdesk(models.Model):
 
         if user.has_group('odoo_website_helpdesk.helpdesk_manager'):
             domain = []
+        elif user.has_group('odoo_website_helpdesk.helpdesk_team_leader'):
+            teams = self.env['team.helpdesk'].search([
+                ('team_lead_id', '=', user.id)
+            ])
+            domain = [('team_id', 'in', teams.ids)]
         else:
             domain = [('assigned_user_id', '=', user.id)]
 
@@ -422,10 +427,28 @@ class TicketHelpdesk(models.Model):
             ('stage_id.name', '=', stage_name)
         ]
 
-        if not user.has_group('odoo_website_helpdesk.helpdesk_manager'):
-            domain.append(
-                ('assigned_user_id', '=', user.id)
-            )
+        # if not user.has_group('odoo_website_helpdesk.helpdesk_manager'):
+        #     domain.append(
+        #         ('assigned_user_id', '=', user.id)
+        #     )
+        
+        if user.has_group('odoo_website_helpdesk.helpdesk_manager'):
+            pass
+
+        elif user.has_group('odoo_website_helpdesk.helpdesk_team_leader'):
+            teams = self.env['team.helpdesk'].search([
+                ('team_lead_id', '=', user.id)
+            ])
+
+            # Option 1: Show all tickets belonging to the leader's teams
+            domain.append(('team_id', 'in', teams.ids))
+
+            # OR Option 2: Show tickets assigned to the leader and team members
+            # users = teams.member_ids | teams.team_lead_id
+            # domain.append(('assigned_user_id', 'in', users.ids))
+
+        else:
+            domain.append(('assigned_user_id', '=', user.id))
 
         return {
             'name': stage_name,
