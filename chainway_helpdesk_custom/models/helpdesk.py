@@ -176,12 +176,12 @@ class TicketHelpdesk(models.Model):
         })
 
         headers = [
-            'Ticket',
-            'Device SN',
-            'Description',
-            'Model No',
-            'Device Condition',
-            'Remarks',
+            'Service Requests/Tickets',
+            'Service Requests/Device SN',
+            'Service Requests/Description',
+            'Service Requests/Model No',
+            'Service Requests/Device Condition',
+            'Service Requests/Remarks',
             'Assigned User',
             'Team Leader',
             'Stage',

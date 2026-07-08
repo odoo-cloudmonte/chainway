@@ -496,13 +496,13 @@
                             <t t-if="request.env['ir.config_parameter'].sudo().get_param('chainway_helpdesk_custom.show_import_button') == 'True'">
 
                                 <a href="/chainway_helpdesk_custom/static/files/import_format_ticket.xls"
-                                class="btn btn-outline-info"
-                                download="import_format_ticket.xls">
-                                    Download Format
+                                    class="btn btn-outline-info border border-2 me-2"
+                                    download="import_format_ticket.xls">
+                                        Download Format
                                 </a>
 
                                 <button type="button"
-                                        class="btn btn-outline-success"
+                                        class="btn btn-outline-success border border-2"
                                         id="import_devices_btn">
                                     Import Devices
                                 </button>
