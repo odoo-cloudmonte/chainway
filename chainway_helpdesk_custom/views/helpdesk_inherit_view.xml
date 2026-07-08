@@ -5,6 +5,12 @@
         <field name="model">ticket.helpdesk</field>
         <field name="inherit_id" ref="odoo_website_helpdesk.ticket_helpdesk_view_form"/>
         <field name="arch" type="xml">
+            <xpath expr="//header" position="inside">
+                <button name="action_export_sr"
+                        type="object"
+                        string="Export SR"
+                        class="oe_highlight"/>
+            </xpath>
             <xpath expr="//field[@name='description']/ancestor::page" position="after">
                 <page string="Devices">
                     <field name="sr_ids">

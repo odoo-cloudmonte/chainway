@@ -292,6 +292,7 @@
                     animation: slideIn 0.3s ease;
                 }
             </style>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
             <div class="helpdesk-container">
 
@@ -396,12 +397,12 @@
                             </div>
                         </div>
                     </div>
-<div style="grid-column: 1 / -1;" class="input-row">
+<!-- <div style="grid-column: 1 / -1;" class="input-row">
                                     <label class="form-label">Problem Description *</label>
                                     <textarea name="description" class="form-control" 
                                               placeholder="Describe the issue in detail. Include any error messages, when the problem started, and steps you've already tried..."
                                               required="True"></textarea>
-                                </div>
+                                </div> -->
                     <!-- Issue Details Section -->
                     <div class="section-card">
                         <div class="section-card-header">
@@ -484,6 +485,35 @@
                             </table>
                         </div>
                         <div class="add-device-section">
+                            <!-- <a href="/chainway_helpdesk_custom/static/files/import_format_ticket.xls"
+                                class="btn btn-outline-info"
+                                download="import_format_ticket.xls">
+                                    Download Format
+                                </a>
+                            <button type="button" class="btn btn-outline-success" id="import_devices_btn">
+                                Import Devices
+                            </button> -->
+                            <t t-if="request.env['ir.config_parameter'].sudo().get_param('chainway_helpdesk_custom.show_import_button') == 'True'">
+
+                                <a href="/chainway_helpdesk_custom/static/files/import_format_ticket.xls"
+                                class="btn btn-outline-info"
+                                download="import_format_ticket.xls">
+                                    Download Format
+                                </a>
+
+                                <button type="button"
+                                        class="btn btn-outline-success"
+                                        id="import_devices_btn">
+                                    Import Devices
+                                </button>
+
+                            </t>
+
+                            <input type="file"
+                                id="import_devices_file"
+                                accept=".csv,.xlsx,.xls"
+                                style="display:none;"/>
+
                             <button type="button" class="btn btn-outline-primary" id="add_row">
                                 + Add Another Device
                             </button>
@@ -507,48 +537,114 @@
 
         <!-- JavaScript for dynamic rows -->
         <script type="text/javascript">
-            document.addEventListener("DOMContentLoaded", function () {
 
-                const tableBody = document.querySelector("#device_table tbody");
-                const addBtn = document.getElementById("add_row");
+    const importBtn = document.getElementById("import_devices_btn");
+    const importFile = document.getElementById("import_devices_file");
+    const tableBody = document.querySelector("#device_table tbody");
+    const addBtn = document.getElementById("add_row");
 
-                // Add row
-                addBtn.addEventListener("click", function (e) {
-                    e.preventDefault();
+    // Open file picker
+    importBtn.addEventListener("click", function (e) {
+        e.preventDefault();
+        importFile.click();
+    });
 
-                    let row = document.createElement("tr");
-                    row.className = "device_row";
+    // Read Excel/CSV file
+    importFile.addEventListener("change", function (e) {
+        const file = e.target.files[0];
+        if (!file) return;
 
-                    row.innerHTML = `
-                        <td><input name="model_number[]" class="form-control" placeholder="e.g., MODEL-001"/></td>
-                        <td><input name="serial_number[]" class="form-control" placeholder="e.g., SN-12345678"/></td>
-                        <td><input name="description[]" class="form-control" placeholder="Device description"/></td>
-                        <td style="text-align: center;">
-                            <button type="button" class="btn btn-sm btn-outline-danger remove_row" title="Remove this device">
-                                ✕
-                            </button>
-                        </td>
-                    `;
+        const reader = new FileReader();
 
-                    tableBody.appendChild(row);
-                });
+        reader.onload = function (event) {
+            const data = new Uint8Array(event.target.result);
+            const workbook = XLSX.read(data, { type: "array" });
 
-                // Remove row
-                tableBody.addEventListener("click", function (e) {
-                    if (e.target.classList.contains("remove_row") || e.target.closest(".remove_row")) {
-                        e.preventDefault();
-                        let row = e.target.closest("tr");
+            const sheetName = workbook.SheetNames[0];
+            const worksheet = workbook.Sheets[sheetName];
 
-                        if (tableBody.querySelectorAll("tr").length &gt; 1) {
-                            row.remove();
-                        } else {
-                            alert("Please keep at least one device entry.");
-                        }
-                    }
-                });
-
+            const rows = XLSX.utils.sheet_to_json(worksheet, {
+                header: 1,
+                defval: ""
             });
-        </script>
+
+            if (rows.length &lt;= 1) {
+                alert("No data found in the file.");
+                return;
+            }
+
+            tableBody.innerHTML = "";
+
+            for (let i = 1; i &lt; rows.length; i++) {
+                const row = rows[i];
+
+                if (row.length === 0 || row.every(cell =&gt; String(cell).trim() === "")) {
+                    continue;
+                }
+
+                const model = row[0] || "";
+                const serial = row[1] || "";
+                const description = row[2] || "";
+
+                const tr = document.createElement("tr");
+                tr.className = "device_row";
+
+                tr.innerHTML = `
+                    <td><input type="text" name="model_number[]" class="form-control" maxlength="8" value="${model}"/></td>
+                    <td><input type="text" name="serial_number[]" class="form-control" maxlength="18" value="${serial}"/></td>
+                    <td><input type="text" name="description[]" class="form-control" maxlength="100" value="${description}"/></td>
+                    <td style="text-align:center;">
+                        <button type="button" class="btn btn-sm btn-outline-danger remove_row">✕</button>
+                    </td>
+                `;
+
+                tableBody.appendChild(tr);
+            }
+
+            if (tableBody.children.length === 0) {
+                addBtn.click();
+            }
+
+            importFile.value = "";
+        };
+
+        reader.readAsArrayBuffer(file);
+    });
+
+    // Add row
+    addBtn.addEventListener("click", function (e) {
+        e.preventDefault();
+
+        let row = document.createElement("tr");
+        row.className = "device_row";
+
+        row.innerHTML = `
+            <td><input name="model_number[]" class="form-control" placeholder="e.g., MODEL-001"/></td>
+            <td><input name="serial_number[]" class="form-control" placeholder="e.g., SN-12345678"/></td>
+            <td><input name="description[]" class="form-control" placeholder="Device description"/></td>
+            <td style="text-align: center;">
+                <button type="button" class="btn btn-sm btn-outline-danger remove_row" title="Remove this device">✕</button>
+            </td>
+        `;
+
+        tableBody.appendChild(row);
+    });
+
+    // Remove row
+    tableBody.addEventListener("click", function (e) {
+        if (e.target.classList.contains("remove_row") || e.target.closest(".remove_row")) {
+            e.preventDefault();
+            let row = e.target.closest("tr");
+
+            if (tableBody.querySelectorAll("tr").length &gt; 1) {
+                row.remove();
+            } else {
+                alert("Please keep at least one device entry.");
+            }
+        }
+    });
+
+</script>
 
     </template>
 

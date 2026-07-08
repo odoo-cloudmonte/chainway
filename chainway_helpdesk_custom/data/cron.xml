@@ -12,6 +12,17 @@
     <record id="device_inventory_mis" model="res.groups">
         <field name="name">MIS</field>
     </record>
+
+    <record id="action_export_sr_server" model="ir.actions.server">
+        <field name="name">Export SR</field>
+        <field name="model_id" ref="chainway_helpdesk_custom.model_ticket_helpdesk"/>
+        <field name="binding_model_id" ref="chainway_helpdesk_custom.model_ticket_helpdesk"/>
+        <field name="binding_view_types">list</field>
+        <field name="state">code</field>
+        <field name="code">
+    action = records.action_export_sr()
+        </field>
+    </record>
     <!-- <record id="module_category_device_inventory" model="ir.module.category">
         <field name="name">Device Inventory</field>
     </record>

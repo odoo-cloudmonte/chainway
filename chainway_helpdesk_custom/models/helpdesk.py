@@ -1,5 +1,8 @@
 from datetime import timedelta
 import re
+import base64
+from io import BytesIO
+import xlsxwriter
 
 from odoo import api, models, fields
 from odoo.exceptions import ValidationError
@@ -20,6 +23,8 @@ class TicketHelpdesk(models.Model):
         'ticket_id',     # inverse field
         string="Service Requests"
     )
+    export_file = fields.Binary(string="Export File")
+    export_filename = fields.Char(string="File Name")
 
     sr_device_sn = fields.Char(
         string="Device SN",
@@ -69,6 +74,214 @@ class TicketHelpdesk(models.Model):
     #             rec.is_overdue = True
     #         else:
     #             rec.is_on_time = True
+    
+    # def action_export_sr(self):
+    #     self.ensure_one()
+
+    #     output = BytesIO()
+    #     workbook = xlsxwriter.Workbook(output)
+    #     sheet = workbook.add_worksheet('Service Requests')
+
+    #     # Header format
+    #     header_format = workbook.add_format({
+    #         'bold': True,
+    #         'bg_color': '#D3D3D3',
+    #         'border': 1
+    #     })
+
+    #     # Data format
+    #     data_format = workbook.add_format({
+    #         'border': 1
+    #     })
+
+    #     headers = [
+    #         'Device SN',
+    #         'Description',
+    #         'Model No',
+    #         'Device Condition',
+    #         'Remarks'
+    #     ]
+
+    #     # Write headers
+    #     for col, header in enumerate(headers):
+    #         sheet.write(0, col, header, header_format)
+
+    #     row = 1
+
+    #     for line in self.sr_ids:
+    #         sheet.write(row, 0, line.device_sn or '', data_format)
+    #         sheet.write(row, 1, line.description or '', data_format)
+    #         sheet.write(row, 2, line.model_mo or '', data_format)
+    #         sheet.write(
+    #             row,
+    #             3,
+    #             dict(line._fields['device_condition'].selection).get(
+    #                 line.device_condition,
+    #                 ''
+    #             ),
+    #             data_format
+    #         )
+    #         sheet.write(row, 4, line.remark or '', data_format)
+
+    #         row += 1
+
+    #     workbook.close()
+    #     output.seek(0)
+
+    #     file_data = base64.b64encode(output.read())
+
+    #     self.write({
+    #         'export_file': file_data,
+    #         'export_filename': f'Service_Request_{self.id}.xlsx'
+    #     })
+
+    #     return {
+    #         'type': 'ir.actions.act_url',
+    #         'url': (
+    #             '/web/content?model=ticket.helpdesk'
+    #             '&id=%s'
+    #             '&field=export_file'
+    #             '&filename_field=export_filename'
+    #             '&download=true'
+    #         ) % self.id,
+    #         'target': 'self',
+    #     }
+    
+    def action_export_sr(self):
+        output = BytesIO()
+        workbook = xlsxwriter.Workbook(output)
+        sheet = workbook.add_worksheet('Service Requests')
+
+        # Formats
+        header_format = workbook.add_format({
+            'bold': True,
+            'align': 'center',
+            'valign': 'vcenter',
+            'border': 1,
+            'bg_color': '#D9EAD3',
+        })
+
+        cell_format = workbook.add_format({
+            'align': 'left',
+            'valign': 'vcenter',
+            'border': 1,
+            'text_wrap': True,
+        })
+
+        date_format = workbook.add_format({
+            'align': 'center',
+            'valign': 'vcenter',
+            'border': 1,
+            'num_format': 'yyyy-mm-dd hh:mm:ss',
+        })
+
+        headers = [
+            'Ticket',
+            'Device SN',
+            'Description',
+            'Model No',
+            'Device Condition',
+            'Remarks',
+            'Assigned User',
+            'Team Leader',
+            'Stage',
+            'Creation Date',
+            'Last Update Date',
+        ]
+
+        # Write headers
+        for col, header in enumerate(headers):
+            sheet.write(0, col, header, header_format)
+
+        # Set column widths
+        sheet.set_column('A:A', 25)  # Ticket
+        sheet.set_column('B:B', 25)  # Device SN
+        sheet.set_column('C:C', 40)  # Description
+        sheet.set_column('D:D', 25)  # Model No
+        sheet.set_column('E:E', 20)  # Device Condition
+        sheet.set_column('F:F', 40)  # Remarks
+        sheet.set_column('G:G', 25)  # Assigned User
+        sheet.set_column('H:H', 25)  # Team Leader
+        sheet.set_column('I:I', 25)  # Stage
+        sheet.set_column('J:J', 25)  # Creation Date
+        sheet.set_column('K:K', 25)  # Last Updated Date
+
+        row = 1
+
+        for ticket in self:
+            for line in ticket.sr_ids:
+                sheet.write(row, 0, ticket.display_name or '', cell_format)
+                sheet.write(row, 1, line.device_sn or '', cell_format)
+                sheet.write(row, 2, line.description or '', cell_format)
+                sheet.write(row, 3, line.model_mo or '', cell_format)
+
+                sheet.write(
+                    row,
+                    4,
+                    dict(line._fields['device_condition'].selection).get(
+                        line.device_condition, ''
+                    ),
+                    cell_format,
+                )
+
+                sheet.write(row, 5, line.remark or '', cell_format)
+                sheet.write(
+                    row,
+                    6,
+                    ticket.assigned_user_id.name if ticket.assigned_user_id else '',
+                    cell_format,
+                )
+                sheet.write(
+                    row,
+                    7,
+                    ticket.team_head_id.name if ticket.team_head_id else '',
+                    cell_format,
+                )
+                sheet.write(row, 8, ticket.stage_id.name or '', cell_format)
+                
+
+                if ticket.create_date:
+                    sheet.write_datetime(
+                        row,
+                        9,
+                        ticket.create_date,
+                        date_format,
+                    )
+                else:
+                    sheet.write(row, 9, '', cell_format)
+                    
+                if ticket.last_update_date:
+                    sheet.write_datetime(
+                        row,
+                        10,
+                        ticket.last_update_date,
+                        date_format,
+                    )
+                else:
+                    sheet.write(row, 10, '', cell_format)
+
+                row += 1
+
+        # Freeze header row
+        sheet.freeze_panes(1, 0)
+
+        workbook.close()
+        output.seek(0)
+
+        file_data = base64.b64encode(output.read())
+
+        attachment = self.env['ir.attachment'].create({
+            'name': 'service_requests.xlsx',
+            'type': 'binary',
+            'datas': file_data,
+            'mimetype': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        })
+
+        return {
+            'type': 'ir.actions.act_url',
+            'url': '/web/content/%s?download=true' % attachment.id,
+            'target': 'self',
+        }
 
     @api.depends('sr_ids.device_sn')
     def _compute_sr_device_sn(self):
