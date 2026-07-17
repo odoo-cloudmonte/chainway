@@ -10,6 +10,10 @@
                         type="object"
                         string="Export SR"
                         class="oe_highlight"/>
+                <button name="action_import_sr"
+                        type="object"
+                        string="Import SR"
+                        class="btn-primary"/>
             </xpath>
             <xpath expr="//field[@name='description']/ancestor::page" position="after">
                 <page string="Devices">
@@ -112,6 +116,37 @@
             </style>
         </xpath>
     </template>
+
+    <record id="view_helpdesk_sr_import_wizard" model="ir.ui.view">
+        <field name="name">helpdesk.sr.import.wizard.form</field>
+        <field name="model">helpdesk.sr.import.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Import Service Requests">
+
+                <group>
+                    <field name="file" filename="filename"/>
+                    <field name="filename" invisible="1"/>
+                </group>
+
+                <footer>
+                    <a href="/chainway_helpdesk_custom/static/files/helpdesk_sr_import_format.xlsx"
+                        class="btn btn-outline-info"
+                        download="helpdesk_sr_import_format.xlsx">
+                            <i class="fa fa-download"/>
+                            Download Format
+                        </a>
+                    <button name="action_sr_import"
+                            type="object"
+                            string="Import"
+                            class="btn-primary"/>
+
+                    <button string="Cancel"
+                            special="cancel"/>
+                </footer>
+
+            </form>
+        </field>
+    </record>
 
    
 </odoo>

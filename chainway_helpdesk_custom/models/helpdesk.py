@@ -2,10 +2,11 @@ from datetime import timedelta
 import re
 import base64
 from io import BytesIO
+from openpyxl import load_workbook
 import xlsxwriter
 
 from odoo import api, models, fields
-from odoo.exceptions import ValidationError
+from odoo.exceptions import UserError, ValidationError
 
 class TicketHelpdesk(models.Model):
     _inherit = 'ticket.helpdesk'
@@ -390,3 +391,19 @@ class TicketHelpdesk(models.Model):
                     raise ValidationError(
                         "Phone number must be 10–15 digits and can optionally start with '+'."
                     )
+                    
+    
+    
+    def action_import_sr(self):
+        self.ensure_one()
+
+        return {
+            "type": "ir.actions.act_window",
+            "name": "Import Service Requests",
+            "res_model": "helpdesk.sr.import.wizard",
+            "view_mode": "form",
+            "target": "new",
+            "context": {
+                "default_ticket_id": self.id,
+            },
+        }
