@@ -296,8 +296,20 @@ class WarrantyController(http.Controller):
         
         # Get devices for current user
         device_env = request.env['device.inventory']
+        # devices = device_env.sudo().search([
+        #     ('end_user_name', '=', request.env.user.partner_id.id)
+        # ])
+        partner = request.env.user.partner_id
+
+        company = partner if partner.is_company else partner.parent_id
+
+        if company:
+            partner_ids = (company | company.child_ids).ids
+        else:
+            partner_ids = [partner.id]
+
         devices = device_env.sudo().search([
-            ('end_user_name', '=', request.env.user.partner_id.id)
+            ('end_user_name', 'in', partner_ids)
         ])
         
         # Create workbook

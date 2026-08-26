@@ -543,106 +543,114 @@
     const tableBody = document.querySelector("#device_table tbody");
     const addBtn = document.getElementById("add_row");
 
-    // Open file picker
-    importBtn.addEventListener("click", function (e) {
-        e.preventDefault();
-        importFile.click();
-    });
+    // Open file picker (only if import button exists in DOM)
+    if (importBtn &amp;&amp; importFile) {
+        importBtn.addEventListener("click", function (e) {
+            e.preventDefault();
+            importFile.click();
+        });
+    }
 
-    // Read Excel/CSV file
-    importFile.addEventListener("change", function (e) {
-        const file = e.target.files[0];
-        if (!file) return;
+    // Read Excel/CSV file (only if file input exists)
+    if (importFile &amp;&amp; tableBody) {
+        importFile.addEventListener("change", function (e) {
+            const file = e.target.files[0];
+            if (!file) return;
 
-        const reader = new FileReader();
+            const reader = new FileReader();
 
-        reader.onload = function (event) {
-            const data = new Uint8Array(event.target.result);
-            const workbook = XLSX.read(data, { type: "array" });
+            reader.onload = function (event) {
+                const data = new Uint8Array(event.target.result);
+                const workbook = XLSX.read(data, { type: "array" });
 
-            const sheetName = workbook.SheetNames[0];
-            const worksheet = workbook.Sheets[sheetName];
+                const sheetName = workbook.SheetNames[0];
+                const worksheet = workbook.Sheets[sheetName];
 
-            const rows = XLSX.utils.sheet_to_json(worksheet, {
-                header: 1,
-                defval: ""
-            });
+                const rows = XLSX.utils.sheet_to_json(worksheet, {
+                    header: 1,
+                    defval: ""
+                });
 
-            if (rows.length &lt;= 1) {
-                alert("No data found in the file.");
-                return;
-            }
-
-            tableBody.innerHTML = "";
-
-            for (let i = 1; i &lt; rows.length; i++) {
-                const row = rows[i];
-
-                if (row.length === 0 || row.every(cell =&gt; String(cell).trim() === "")) {
-                    continue;
+                if (rows.length &lt;= 1) {
+                    alert("No data found in the file.");
+                    return;
                 }
 
-                const model = row[0] || "";
-                const serial = row[1] || "";
-                const description = row[2] || "";
+                tableBody.innerHTML = "";
 
-                const tr = document.createElement("tr");
-                tr.className = "device_row";
+                for (let i = 1; i &lt; rows.length; i++) {
+                    const row = rows[i];
 
-                tr.innerHTML = `
-                    <td><input type="text" name="model_number[]" class="form-control" maxlength="8" value="${model}"/></td>
-                    <td><input type="text" name="serial_number[]" class="form-control" maxlength="18" value="${serial}"/></td>
-                    <td><input type="text" name="description[]" class="form-control" maxlength="100" value="${description}"/></td>
-                    <td style="text-align:center;">
-                        <button type="button" class="btn btn-sm btn-outline-danger remove_row">✕</button>
-                    </td>
-                `;
+                    if (row.length === 0 || row.every(cell =&gt; String(cell).trim() === "")) {
+                        continue;
+                    }
 
-                tableBody.appendChild(tr);
-            }
+                    const model = row[0] || "";
+                    const serial = row[1] || "";
+                    const description = row[2] || "";
 
-            if (tableBody.children.length === 0) {
-                addBtn.click();
-            }
+                    const tr = document.createElement("tr");
+                    tr.className = "device_row";
 
-            importFile.value = "";
-        };
+                    tr.innerHTML = `
+                        <td><input type="text" name="model_number[]" class="form-control" maxlength="8" value="${model}"/></td>
+                        <td><input type="text" name="serial_number[]" class="form-control" maxlength="18" value="${serial}"/></td>
+                        <td><input type="text" name="description[]" class="form-control" maxlength="100" value="${description}"/></td>
+                        <td style="text-align:center;">
+                            <button type="button" class="btn btn-sm btn-outline-danger remove_row">✕</button>
+                        </td>
+                    `;
 
-        reader.readAsArrayBuffer(file);
-    });
+                    tableBody.appendChild(tr);
+                }
 
-    // Add row
-    addBtn.addEventListener("click", function (e) {
-        e.preventDefault();
+                if (tableBody.children.length === 0 &amp;&amp; addBtn) {
+                    addBtn.click();
+                }
 
-        let row = document.createElement("tr");
-        row.className = "device_row";
+                importFile.value = "";
+            };
 
-        row.innerHTML = `
-            <td><input name="model_number[]" class="form-control" placeholder="e.g., MODEL-001"/></td>
-            <td><input name="serial_number[]" class="form-control" placeholder="e.g., SN-12345678"/></td>
-            <td><input name="description[]" class="form-control" placeholder="Device description"/></td>
-            <td style="text-align: center;">
-                <button type="button" class="btn btn-sm btn-outline-danger remove_row" title="Remove this device">✕</button>
-            </td>
-        `;
+            reader.readAsArrayBuffer(file);
+        });
+    }
 
-        tableBody.appendChild(row);
-    });
-
-    // Remove row
-    tableBody.addEventListener("click", function (e) {
-        if (e.target.classList.contains("remove_row") || e.target.closest(".remove_row")) {
+    // Add row (only if add button exists)
+    if (addBtn &amp;&amp; tableBody) {
+        addBtn.addEventListener("click", function (e) {
             e.preventDefault();
-            let row = e.target.closest("tr");
 
-            if (tableBody.querySelectorAll("tr").length &gt; 1) {
-                row.remove();
-            } else {
-                alert("Please keep at least one device entry.");
+            let row = document.createElement("tr");
+            row.className = "device_row";
+
+            row.innerHTML = `
+                <td><input type="text" name="model_number[]" class="form-control" placeholder="e.g., MODEL001" maxlength="8"/></td>
+                <td><input type="text" name="serial_number[]" class="form-control" placeholder="e.g., SN123456789012345" maxlength="18"/></td>
+                <td><input type="text" name="description[]" class="form-control" placeholder="Device description" maxlength="100"/></td>
+                <td style="text-align: center;">
+                    <button type="button" class="btn btn-sm btn-outline-danger remove_row" title="Remove this device">✕</button>
+                </td>
+            `;
+
+            tableBody.appendChild(row);
+        });
+    }
+
+    // Remove row (only if table body exists)
+    if (tableBody) {
+        tableBody.addEventListener("click", function (e) {
+            if (e.target.classList.contains("remove_row") || e.target.closest(".remove_row")) {
+                e.preventDefault();
+                let row = e.target.closest("tr");
+
+                if (tableBody.querySelectorAll("tr").length &gt; 1) {
+                    row.remove();
+                } else {
+                    alert("Please keep at least one device entry.");
+                }
             }
-        }
-    });
+        });
+    }
 
 </script>
 
