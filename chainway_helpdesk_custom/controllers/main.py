@@ -1,10 +1,10 @@
 import base64
 import io
-
 from odoo import http
 from odoo.exceptions import ValidationError
 from odoo.http import request
 from datetime import date, datetime
+from odoo.addons.portal.controllers.portal import pager as portal_pager
 
 class WarrantyController(http.Controller):
 
@@ -186,31 +186,88 @@ class WarrantyController(http.Controller):
     #         }
     #     )
 
-    @http.route(['/my/devices'], type='http', auth="user", website=True)
-    def my_devices(self, **kwargs):
+    # @http.route(['/my/devices'], type='http', auth="user", website=True)
+    # def my_devices(self, **kwargs):
+
+    #     user = request.env.user
+
+    #     if not user.show_device_ui:
+    #         return request.redirect('/')
+
+    #     partner = user.partner_id
+
+    #     company = partner.commercial_partner_id
+
+    #     partner_ids = request.env['res.partner'].sudo().search([
+    #         ('commercial_partner_id', '=', company.id)
+    #     ]).ids
+
+    #     devices = request.env['device.inventory'].sudo().search([
+    #         ('end_user_name', 'in', partner_ids)
+    #     ])
+
+    #     return request.render(
+    #         'chainway_helpdesk_custom.portal_device_list',
+    #         {
+    #             'devices': devices
+    #         }
+    #     )
+    
+    @http.route(['/my/devices', '/my/devices/page/<int:page>'],
+                type='http', auth="user", website=True)
+    def my_devices(self, page=1, search=None, **kwargs):
 
         user = request.env.user
 
         if not user.show_device_ui:
             return request.redirect('/')
 
-        partner = user.partner_id
-
-        company = partner.commercial_partner_id
+        company = user.partner_id.commercial_partner_id
 
         partner_ids = request.env['res.partner'].sudo().search([
             ('commercial_partner_id', '=', company.id)
         ]).ids
 
-        devices = request.env['device.inventory'].sudo().search([
-            ('end_user_name', 'in', partner_ids)
-        ])
+        domain = [('end_user_name', 'in', partner_ids)]
+
+        if search:
+            domain += [
+                '|', '|', '|', '|', '|',
+                ('device_sn', 'ilike', search),
+                ('po_no', 'ilike', search),
+                ('invoice_no', 'ilike', search),
+                ('tracking_id', 'ilike', search),
+                ('location', 'ilike', search),
+                ('end_user_name.name', 'ilike', search),
+            ]
+
+        Device = request.env['device.inventory'].sudo()
+        total = Device.search_count(domain)
+        step = 20
+
+        pager = portal_pager(
+            url='/my/devices',
+            url_args={'search': search} if search else {},
+            total=total,
+            page=page,
+            step=step,
+        )
+
+        devices = Device.search(
+            domain,
+            order='id desc',
+            limit=step,
+            offset=pager['offset'],
+        )
 
         return request.render(
             'chainway_helpdesk_custom.portal_device_list',
             {
-                'devices': devices
-            }
+                'devices': devices,
+                'pager': pager,
+                'search': search or '',
+                'total': total,
+            },
         )
     
 
@@ -293,45 +350,43 @@ class WarrantyController(http.Controller):
             from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
         except ImportError:
             return request.not_found()
-        
-        # Get devices for current user
-        device_env = request.env['device.inventory']
-        # devices = device_env.sudo().search([
-        #     ('end_user_name', '=', request.env.user.partner_id.id)
-        # ])
-        partner = request.env.user.partner_id
 
-        company = partner if partner.is_company else partner.parent_id
+        user = request.env.user
+        if not user.show_device_ui:
+            return request.redirect('/')
 
-        if company:
-            partner_ids = (company | company.child_ids).ids
-        else:
-            partner_ids = [partner.id]
+        company = user.partner_id.commercial_partner_id
+        partner_ids = request.env['res.partner'].sudo().search([
+            ('commercial_partner_id', '=', company.id)
+        ]).ids
 
-        devices = device_env.sudo().search([
+        devices = request.env['device.inventory'].sudo().search([
             ('end_user_name', 'in', partner_ids)
         ])
-        
+
+        # POD status without reading the binary content:
+        # check only whether an attachment exists for the field.
+        pod_attachments = request.env['ir.attachment'].sudo().search_read([
+            ('res_model', '=', 'device.inventory'),
+            ('res_field', '=', 'pod_copy'),
+            ('res_id', 'in', devices.ids),
+        ], ['res_id'])
+        devices_with_pod = {a['res_id'] for a in pod_attachments}
+
         # Create workbook
         workbook = openpyxl.Workbook()
         worksheet = workbook.active
         worksheet.title = "Devices"
-        
-        # Define styles
+
         header_fill = PatternFill(start_color="0F172A", end_color="0F172A", fill_type="solid")
         header_font = Font(bold=True, color="FFFFFF", size=11)
         header_alignment = Alignment(horizontal="center", vertical="center", wrap_text=True)
-        
         border_style = Border(
-            left=Side(style='thin'),
-            right=Side(style='thin'),
-            top=Side(style='thin'),
-            bottom=Side(style='thin')
+            left=Side(style='thin'), right=Side(style='thin'),
+            top=Side(style='thin'), bottom=Side(style='thin'),
         )
-        
         cell_alignment = Alignment(horizontal="left", vertical="center", wrap_text=True)
-        
-        # Define columns
+
         columns = [
             ('Sr. No', 8),
             ('Vendor Name', 25),
@@ -351,8 +406,7 @@ class WarrantyController(http.Controller):
             ('Delivery Date', 15),
             ('POD Status', 12),
         ]
-        
-        # Write headers
+
         for col_idx, (header_text, width) in enumerate(columns, 1):
             cell = worksheet.cell(row=1, column=col_idx)
             cell.value = header_text
@@ -361,54 +415,50 @@ class WarrantyController(http.Controller):
             cell.alignment = header_alignment
             cell.border = border_style
             worksheet.column_dimensions[openpyxl.utils.get_column_letter(col_idx)].width = width
-        
-        # Write data rows
+
         for row_idx, device in enumerate(devices, 2):
             row_data = [
-                row_idx - 1,  # Sr. No
+                row_idx - 1,
                 device.end_user_name.name if device.end_user_name else '-',
                 str(device.po_date) if device.po_date else '-',
-                device.po_no if device.po_no else '-',
-                device.invoice_no if device.invoice_no else '-',
+                device.po_no or '-',
+                device.invoice_no or '-',
                 str(device.invoice_date) if device.invoice_date else '-',
-                device.location if device.location else '-',
-                device.location_code if device.location_code else '-',
-                device.shipping_address_po if device.shipping_address_po else '-',
-                device.shipping_address_invoice if device.shipping_address_invoice else '-',
-                device.delivery_location if device.delivery_location else '-',
-                device.device_sn if device.device_sn else '-',
-                device.description if device.description else '-',
-                device.courier_name if device.courier_name else '-',
-                device.tracking_id if device.tracking_id else '-',
+                device.location or '-',
+                device.location_code or '-',
+                device.shipping_address_po or '-',
+                device.shipping_address_invoice or '-',
+                device.delivery_location or '-',
+                device.device_sn or '-',
+                device.description or '-',
+                device.courier_name or '-',
+                device.tracking_id or '-',
                 str(device.delivery_date) if device.delivery_date else '-',
-                'Yes' if device.pod_copy else 'No',
+                'Yes' if device.id in devices_with_pod else 'No',
             ]
-            
+
             for col_idx, value in enumerate(row_data, 1):
                 cell = worksheet.cell(row=row_idx, column=col_idx)
                 cell.value = value
                 cell.alignment = cell_alignment
                 cell.border = border_style
-        
-        # Freeze header row
+
         worksheet.freeze_panes = "A2"
-        
-        # Generate file
+
         output = io.BytesIO()
         workbook.save(output)
-        output.seek(0)
-        
-        # Return file
+        data = output.getvalue()
+
         timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
         filename = f"Devices_{timestamp}.xlsx"
-        
+
         return request.make_response(
-            output.getvalue(),
+            data,
             headers=[
                 ('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'),
                 ('Content-Disposition', f'attachment; filename="{filename}"'),
-                ('Content-Length', len(output.getvalue())),
-            ]
+                ('Content-Length', len(data)),
+            ],
         )
         
 

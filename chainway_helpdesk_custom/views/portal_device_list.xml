@@ -212,6 +212,7 @@
                     border: 1px solid var(--border);
                     border-radius: var(--radius);
                     padding: 0 14px;
+                    margin: 0;
                     box-shadow: 0 2px 8px rgba(15,23,42,.04);
                     transition: border-color .2s, box-shadow .2s;
                 }
@@ -252,6 +253,7 @@
                     align-items: center;
                     justify-content: center;
                     border-radius: 4px;
+                    text-decoration: none !important;
                 }
 
                 .dv-search-clear:hover {
@@ -310,116 +312,63 @@
 
             <div class="dv-page">
 
-                <div class="container-fluid"
-                     style="max-width:1600px;margin:0 auto;">
+                <div class="container-fluid" style="max-width:1600px;margin:0 auto;">
 
                     <!-- PAGE HEADER -->
                     <div class="dv-header">
 
                         <div class="dv-header-left">
-
-                            <h1>
-                                My <span>Devices</span>
-                            </h1>
-
+                            <h1>My <span>Devices</span></h1>
                             <p>
                                 Track delivery status, serial numbers, and proof of delivery
                                 for all assigned devices.
                             </p>
-
                         </div>
 
                         <div style="display:flex;align-items:center;gap:12px;">
-
                             <a href="/my/devices/download_excel"
                                class="dv-btn-export"
                                title="Download device data as Excel">
-
-                                <svg xmlns="http://www.w3.org/2000/svg"
-                                     width="14"
-                                     height="14"
-                                     viewBox="0 0 24 24"
-                                     fill="none"
-                                     stroke="currentColor"
-                                     stroke-width="2"
-                                     stroke-linecap="round"
-                                     stroke-linejoin="round">
-
+                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14"
+                                     viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                     stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                     <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
                                     <polyline points="7 10 12 15 17 10"/>
                                     <line x1="12" y1="15" x2="12" y2="3"/>
-
                                 </svg>
-
                                 Export Excel
-
                             </a>
-
                         </div>
 
                     </div>
 
 
-                    <!-- SEARCH -->
+                    <!-- SEARCH (server-side) -->
                     <div class="dv-search-container">
-
-                        <div class="dv-search-wrapper">
-
-                            <svg xmlns="http://www.w3.org/2000/svg"
-                                 width="16"
-                                 height="16"
-                                 viewBox="0 0 24 24"
-                                 fill="none"
-                                 stroke="currentColor"
-                                 stroke-width="2"
-                                 stroke-linecap="round"
-                                 stroke-linejoin="round"
+                        <form action="/my/devices" method="get" class="dv-search-wrapper">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                 viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                                  class="dv-search-icon">
-
-                                <circle cx="11"
-                                        cy="11"
-                                        r="8"/>
-
+                                <circle cx="11" cy="11" r="8"/>
                                 <path d="m21 21-4.35-4.35"/>
-
                             </svg>
 
                             <input type="text"
-                                   id="deviceSearch"
+                                   name="search"
+                                   t-att-value="search"
                                    class="dv-search-input"
                                    placeholder="Search by serial number, PO, invoice, vendor, or tracking ID..."/>
 
-                            <button type="button"
-                                    id="clearSearch"
-                                    class="dv-search-clear"
-                                    style="display:none;">
-
-                                <svg xmlns="http://www.w3.org/2000/svg"
-                                     width="14"
-                                     height="14"
-                                     viewBox="0 0 24 24"
-                                     fill="none"
-                                     stroke="currentColor"
-                                     stroke-width="2.5"
-                                     stroke-linecap="round"
-                                     stroke-linejoin="round">
-
-                                    <line x1="18"
-                                          y1="6"
-                                          x2="6"
-                                          y2="18"/>
-
-                                    <line x1="6"
-                                          y1="6"
-                                          x2="18"
-                                          y2="18"/>
-
+                            <a t-if="search" href="/my/devices" class="dv-search-clear" title="Clear">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14"
+                                     viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                     stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <line x1="18" y1="6" x2="6" y2="18"/>
+                                    <line x1="6" y1="6" x2="18" y2="18"/>
                                 </svg>
-
-                            </button>
-
-                        </div>
-
+                            </a>
+                        </form>
                     </div>
 
 
@@ -431,7 +380,6 @@
                             <table class="dv-table">
 
                                 <thead>
-
                                     <tr>
                                         <th>#</th>
                                         <th>Vendor Name</th>
@@ -451,185 +399,110 @@
                                         <th>Delivery Date</th>
                                         <th>POD</th>
                                     </tr>
-
                                 </thead>
-
 
                                 <tbody>
 
                                     <t t-if="devices">
 
-                                        <!--
-                                            IMPORTANT:
-                                            No t-foreach-index is used.
-                                            No d.pod_copy is accessed.
-                                        -->
+                                        <!-- d.pod_copy is deliberately NOT accessed (Binary field -> MemoryError) -->
                                         <t t-foreach="devices" t-as="d">
 
                                             <tr>
 
-                                                <!-- Serial Number -->
-                                                <td>
-                                                    <t t-esc="d_index + 1"/>
-                                                </td>
-
+                                                <!-- Row number (continues across pages) -->
+                                                <td><t t-esc="pager['offset'] + d_index + 1"/></td>
 
                                                 <!-- Vendor -->
                                                 <td style="font-weight:500;color:#0F172A;">
-
                                                     <t t-esc="d.end_user_name.name or '-'"/>
-
                                                 </td>
-
 
                                                 <!-- PO Date -->
-                                                <td>
-                                                    <t t-esc="d.po_date or '-'"/>
-                                                </td>
-
+                                                <td><t t-esc="d.po_date or '-'"/></td>
 
                                                 <!-- PO Number -->
                                                 <td>
-
                                                     <t t-if="d.po_no">
-
-                                                        <span class="dv-pill">
-                                                            <t t-esc="d.po_no"/>
-                                                        </span>
-
+                                                        <span class="dv-pill"><t t-esc="d.po_no"/></span>
                                                     </t>
-
                                                     <t t-else="">
                                                         <span class="dv-dash">—</span>
                                                     </t>
-
                                                 </td>
-
 
                                                 <!-- Invoice Number -->
                                                 <td>
-
                                                     <t t-if="d.invoice_no">
-
-                                                        <span class="dv-pill">
-                                                            <t t-esc="d.invoice_no"/>
-                                                        </span>
-
+                                                        <span class="dv-pill"><t t-esc="d.invoice_no"/></span>
                                                     </t>
-
                                                     <t t-else="">
                                                         <span class="dv-dash">—</span>
                                                     </t>
-
                                                 </td>
-
 
                                                 <!-- Invoice Date -->
-                                                <td>
-                                                    <t t-esc="d.invoice_date or '-'"/>
-                                                </td>
-
+                                                <td><t t-esc="d.invoice_date or '-'"/></td>
 
                                                 <!-- Store Name -->
                                                 <td style="font-weight:500;">
                                                     <t t-esc="d.location or '-'"/>
                                                 </td>
 
-
                                                 <!-- Store Code -->
-                                                <td>
-                                                    <t t-esc="d.location_code or '-'"/>
-                                                </td>
-
+                                                <td><t t-esc="d.location_code or '-'"/></td>
 
                                                 <!-- Shipping Address PO -->
                                                 <td style="white-space:normal;max-width:160px;line-height:1.45;">
                                                     <t t-esc="d.shipping_address_po or '-'"/>
                                                 </td>
 
-
                                                 <!-- Shipping Address Invoice -->
                                                 <td style="white-space:normal;max-width:160px;line-height:1.45;">
                                                     <t t-esc="d.shipping_address_invoice or '-'"/>
                                                 </td>
 
-
                                                 <!-- Delivery Location -->
-                                                <td>
-                                                    <t t-esc="d.delivery_location or '-'"/>
-                                                </td>
-
+                                                <td><t t-esc="d.delivery_location or '-'"/></td>
 
                                                 <!-- Serial Number -->
                                                 <td style="font-family:monospace;font-size:.8rem;letter-spacing:.3px;">
                                                     <t t-esc="d.device_sn or '-'"/>
                                                 </td>
 
-
                                                 <!-- Description -->
                                                 <td style="white-space:normal;max-width:180px;line-height:1.45;">
                                                     <t t-esc="d.description or '-'"/>
                                                 </td>
 
-
                                                 <!-- Courier -->
-                                                <td>
-                                                    <t t-esc="d.courier_name or '-'"/>
-                                                </td>
-
+                                                <td><t t-esc="d.courier_name or '-'"/></td>
 
                                                 <!-- Tracking ID -->
                                                 <td style="font-family:monospace;font-size:.8rem;">
                                                     <t t-esc="d.tracking_id or '-'"/>
                                                 </td>
 
-
                                                 <!-- Delivery Date -->
                                                 <td style="font-weight:500;color:#16A34A;">
                                                     <t t-esc="d.delivery_date or '-'"/>
                                                 </td>
 
-
                                                 <!-- POD -->
-                                                <!--
-                                                    IMPORTANT:
-                                                    We deliberately DO NOT use:
-
-                                                        d.pod_copy
-
-                                                    because pod_copy is Binary and reading it
-                                                    here caused the MemoryError.
-
-                                                    The button is generated without reading
-                                                    the binary field.
-                                                -->
                                                 <td>
-
                                                     <a t-att-href="'/my/device/pod/%s' % d.id"
                                                        class="dv-pod-btn"
                                                        target="_blank"
                                                        title="View POD">
-
                                                         <svg xmlns="http://www.w3.org/2000/svg"
-                                                             viewBox="0 0 24 24"
-                                                             fill="none"
-                                                             stroke="currentColor"
-                                                             stroke-width="2"
-                                                             stroke-linecap="round"
-                                                             stroke-linejoin="round">
-
+                                                             viewBox="0 0 24 24" fill="none"
+                                                             stroke="currentColor" stroke-width="2"
+                                                             stroke-linecap="round" stroke-linejoin="round">
                                                             <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12z"/>
-
-                                                            <circle cx="12"
-                                                                    cy="12"
-                                                                    r="3"/>
-
+                                                            <circle cx="12" cy="12" r="3"/>
                                                         </svg>
-
                                                         View POD
-
                                                     </a>
-
                                                 </td>
 
                                             </tr>
@@ -641,63 +514,34 @@
 
                                     <!-- EMPTY STATE -->
                                     <t t-else="">
-
                                         <tr>
-
-                                            <td colspan="17"
-                                                style="padding:0;border:none;">
-
+                                            <td colspan="17" style="padding:0;border:none;">
                                                 <div class="dv-empty">
 
                                                     <div class="dv-empty-icon">
-
-                                                        <svg xmlns="http://www.w3.org/2000/svg"
-                                                             width="26"
-                                                             height="26"
-                                                             viewBox="0 0 24 24"
-                                                             fill="none"
-                                                             stroke="#2563EB"
-                                                             stroke-width="1.8"
-                                                             stroke-linecap="round"
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26"
+                                                             viewBox="0 0 24 24" fill="none" stroke="#2563EB"
+                                                             stroke-width="1.8" stroke-linecap="round"
                                                              stroke-linejoin="round">
-
-                                                            <rect x="2"
-                                                                  y="7"
-                                                                  width="20"
-                                                                  height="14"
-                                                                  rx="2"/>
-
+                                                            <rect x="2" y="7" width="20" height="14" rx="2"/>
                                                             <path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/>
-
-                                                            <line x1="12"
-                                                                  y1="12"
-                                                                  x2="12"
-                                                                  y2="16"/>
-
-                                                            <line x1="10"
-                                                                  y1="14"
-                                                                  x2="14"
-                                                                  y2="14"/>
-
+                                                            <line x1="12" y1="12" x2="12" y2="16"/>
+                                                            <line x1="10" y1="14" x2="14" y2="14"/>
                                                         </svg>
-
                                                     </div>
 
-                                                    <strong>
-                                                        No devices found
-                                                    </strong>
+                                                    <strong>No devices found</strong>
 
-                                                    <p>
-                                                        There are currently no devices assigned
-                                                        to your account.
+                                                    <p t-if="search">
+                                                        No devices match your search.
+                                                    </p>
+                                                    <p t-else="">
+                                                        There are currently no devices assigned to your account.
                                                     </p>
 
                                                 </div>
-
                                             </td>
-
                                         </tr>
-
                                     </t>
 
                                 </tbody>
@@ -709,118 +553,24 @@
 
                         <!-- FOOTER -->
                         <t t-if="devices">
-
                             <div class="dv-footer">
-
-                                Showing
-
-                                <strong>
-                                    <t t-esc="len(devices)"/>
-                                </strong>
-
-                                device
-
-                                <t t-if="len(devices) != 1">
-                                    s
-                                </t>
-
+                                Showing <strong><t t-esc="len(devices)"/></strong>
+                                of <strong><t t-esc="total"/></strong>
+                                device<t t-if="total != 1">s</t>
                             </div>
-
                         </t>
 
+                    </div>
+
+
+                    <!-- PAGER -->
+                    <div class="d-flex justify-content-center mt-4">
+                        <t t-call="portal.pager"/>
                     </div>
 
                 </div>
 
             </div>
-
-
-            <!-- SEARCH SCRIPT -->
-            <script type="text/javascript">
-
-                document.addEventListener('DOMContentLoaded', function () {
-
-                    const searchInput =
-                        document.getElementById('deviceSearch');
-
-                    const clearBtn =
-                        document.getElementById('clearSearch');
-
-                    const tableRows =
-                        document.querySelectorAll(
-                            '.dv-table tbody tr'
-                        );
-
-                    if (!searchInput) {
-                        return;
-                    }
-
-
-                    searchInput.addEventListener('input', function () {
-
-                        const query =
-                            this.value.toLowerCase().trim();
-
-                        if (clearBtn) {
-                            clearBtn.style.display =
-                                query ? 'flex' : 'none';
-                        }
-
-
-                        tableRows.forEach(function (row) {
-
-                            const isEmptyRow =
-                                row.querySelector('.dv-empty');
-
-                            if (isEmptyRow) {
-                                return;
-                            }
-
-
-                            const rowText =
-                                row.textContent.toLowerCase();
-
-
-                            row.style.display =
-                                (!query || rowText.includes(query))
-                                    ? ''
-                                    : 'none';
-
-                        });
-
-                    });
-
-
-                    if (clearBtn) {
-
-                        clearBtn.addEventListener('click', function () {
-
-                            searchInput.value = '';
-
-                            clearBtn.style.display = 'none';
-
-
-                            tableRows.forEach(function (row) {
-
-                                const isEmptyRow =
-                                    row.querySelector('.dv-empty');
-
-                                if (!isEmptyRow) {
-                                    row.style.display = '';
-                                }
-
-                            });
-
-
-                            searchInput.focus();
-
-                        });
-
-                    }
-
-                });
-
-            </script>
 
         </t>
 
@@ -829,11 +579,7 @@
 
     <!-- Device User Group -->
     <record id="group_device_user" model="res.groups">
-
-        <field name="name">
-            Device User
-        </field>
-
+        <field name="name">Device User</field>
     </record>
 
 </odoo>
