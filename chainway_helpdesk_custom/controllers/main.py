@@ -5,6 +5,7 @@ from odoo.exceptions import ValidationError
 from odoo.http import request
 from datetime import date, datetime
 from odoo.addons.portal.controllers.portal import pager as portal_pager
+from odoo.exceptions import UserError
 
 class WarrantyController(http.Controller):
 
@@ -284,14 +285,29 @@ class WarrantyController(http.Controller):
         # Record exists
         if not device.exists():
             return request.not_found()
-
+            # raise UserError("Device not found.")
+            # return request.render(
+            #     'chainway_helpdesk_custom.device_not_found_template',
+            #     {
+            #         'message': 'The requested device does not exist.',
+            #     },
+            #     status=404
+            # )
+        
         # Security check
         # if device.end_user_name.id != request.env.user.partner_id.id:
         #     return request.not_found()
 
         # File exists
         if not device.pod_copy:
-            return request.not_found()
+            # return request.not_found()
+            return request.render(
+                'chainway_helpdesk_custom.device_not_found_template',
+                {
+                    'message': 'The requested device does not exist.',
+                },
+                status=404
+            )
 
         file_content = base64.b64decode(device.pod_copy)
 
