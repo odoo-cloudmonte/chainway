@@ -561,15 +561,252 @@
 #                 raise ValidationError(
 #                     f"Error on Excel row {index}\n{str(e)}"
 #                 )
+# 
+
+
+
+
+
+# ================================ comment on oct 13 ==============================
+
+# import base64
+# import io
+# import openpyxl
+# import requests
+
+# from odoo import models, fields
+# from odoo.exceptions import ValidationError
+# from datetime import datetime
+
+# BATCH_SIZE = 200
+
+
+# class DeviceImportWizard(models.TransientModel):
+#     _name = 'device.import.wizard'
+#     _description = 'Import Devices'
+
+#     file = fields.Binary(string="Upload Excel", required=True)
+#     file_name = fields.Char()
+
+#     # ------------------------
+#     # HELPERS
+#     # ------------------------
+
+#     def _parse_date(self, value, field_name, row_index):
+#         if not value:
+#             return False
+
+#         if isinstance(value, datetime):
+#             return value.date()
+
+#         if isinstance(value, str):
+#             value = value.strip()
+
+#             if value.startswith('='):
+#                 raise ValidationError(
+#                     f"Row {row_index}\n"
+#                     f"Column: {field_name}\n"
+#                     f"Issue: Excel formula detected ({value}). Use actual date."
+#                 )
+
+#             for fmt in ['%Y-%m-%d', '%d-%m-%Y', '%d/%m/%Y']:
+#                 try:
+#                     return datetime.strptime(value, fmt).date()
+#                 except Exception:
+#                     continue
+
+#         raise ValidationError(
+#             f"Row {row_index}\n"
+#             f"Column: {field_name}\n"
+#             f"Issue: Invalid date '{value}'"
+#         )
+
+#     def _validate_selection(self, value, allowed, field_name, row_index):
+#         if not value:
+#             return False
+
+#         value = str(value).strip().lower()
+
+#         if value not in allowed:
+#             raise ValidationError(
+#                 f"Row {row_index}\n"
+#                 f"Column: {field_name}\n"
+#                 f"Issue: Invalid value '{value}'\n"
+#                 f"Allowed: {', '.join(allowed)}"
+#             )
+
+#         return value
+
+#     def _get_pod_image(self, image_data):
+#         if not image_data:
+#             return False
+#         try:
+#             if isinstance(image_data, str) and image_data.startswith('http'):
+#                 response = requests.get(image_data, timeout=5)
+#                 if response.status_code == 200:
+#                     return base64.b64encode(response.content)
+#                 return False
+#             if isinstance(image_data, bytes):
+#                 return image_data
+#             return base64.b64decode(image_data)
+#         except Exception:
+#             return False
+
+#     def _prepare_vals(self, row_dict, index):
+#         """Sirf validation + dict banata hai, DB ko touch nahi karta."""
+#         TYPE_VALUES = ['device', 'accessory', 'accessories']
+#         WARRANTY_VALUES = ['standard', 'extended', 'comprehensive', 'none']
+
+#         return {
+#             'device_sn': row_dict.get('Device SN'),
+#             'type': self._validate_selection(
+#                 row_dict.get('Type'), TYPE_VALUES, 'Type', index),
+#             'bt_mac': row_dict.get('BT MAC'),
+#             'imei1': row_dict.get('IMEI1'),
+#             'imei2': row_dict.get('IMEI2'),
+#             'wifi_mac': row_dict.get('WiFi MAC'),
+#             'model': row_dict.get('Model'),
+#             'description': row_dict.get('Description'),
+#             'sw_version': row_dict.get('SW Version'),
+#             'configuration_in': row_dict.get('Configuration IN'),
+#             'configuration_out': row_dict.get('Configuration OUT'),
+#             'warranty_wef': self._parse_date(
+#                 row_dict.get('Warranty WEF'), 'Warranty WEF', index),
+#             'warranty_category': self._validate_selection(
+#                 row_dict.get('Warranty Category'), WARRANTY_VALUES,
+#                 'Warranty Category', index),
+#             'warranty_upto': self._parse_date(
+#                 row_dict.get('Warranty Upto'), 'Warranty Upto', index),
+#             'po_date': self._parse_date(
+#                 row_dict.get('PO Date'), 'PO Date', index),
+#             'po_no': row_dict.get('PO No'),
+#             'invoice_no': row_dict.get('Invoice No'),
+#             'invoice_date': self._parse_date(
+#                 row_dict.get('Invoice Date'), 'Invoice Date', index),
+#             'location': row_dict.get('Location'),
+#             'location_code': row_dict.get('Location Code'),
+#             'shipping_address_po': row_dict.get('Shipping Address PO'),
+#             'shipping_address_invoice': row_dict.get('Shipping Address Invoice'),
+#             'delivery_location': row_dict.get('Confirm Delivery Location'),
+#             'courier_name': row_dict.get('Courier Name'),
+#             'tracking_id': row_dict.get('Tracking ID'),
+#             'delivery_date': self._parse_date(
+#                 row_dict.get('Delivery Date'), 'Delivery Date', index),
+#             'chainway_reference': row_dict.get('Chainway Tax Invoice No'),
+#             'Chainway_pi_no': row_dict.get('Chainway PI No'),
+#             'remark': row_dict.get('Remark'),
+#             'pod_url': row_dict.get('POD Image'),
+#         }
+
+#     # ------------------------
+#     # MAIN IMPORT
+#     # ------------------------
+
+#     def action_import(self):
+#         wb = openpyxl.load_workbook(
+#             io.BytesIO(base64.b64decode(self.file)),
+#             data_only=True,
+#             read_only=True,
+#         )
+#         sheet = wb.active
+#         rows_iter = sheet.iter_rows(values_only=True)
+#         headers = next(rows_iter)
+
+#         # ---------- PASS 1: parse + validate (no DB write) ----------
+#         parsed = []   # (index, vals, partner_name, image_data)
+#         for index, row in enumerate(rows_iter, start=2):
+#             if not any(row):
+#                 continue
+
+#             row_dict = dict(zip(headers, row))
+
+#             try:
+#                 if not row_dict.get('Device SN'):
+#                     raise ValidationError(
+#                         f"Row {index}\n"
+#                         f"Column: Device SN\n"
+#                         f"Issue: Value is required"
+#                     )
+#                 vals = self._prepare_vals(row_dict, index)
+#             except ValidationError:
+#                 raise
+#             except Exception as e:
+#                 raise ValidationError(f"Error on Excel row {index}\n{str(e)}")
+
+#             parsed.append((
+#                 index,
+#                 vals,
+#                 row_dict.get('End User'),
+#                 row_dict.get('POD Image'),
+#             ))
+
+#         wb.close()
+
+#         # ---------- PASS 2: batch me write ----------
+#         Inventory = self.env['device.inventory']
+#         Partner = self.env['res.partner']
+
+#         # ek hi baar saare existing serials (case-insensitive map)
+#         existing_map = {
+#             rec.device_sn.lower(): rec.id
+#             for rec in Inventory.search_fetch([], ['device_sn'])
+#             if rec.device_sn
+#         }
+#         partner_cache = {}
+
+#         for start in range(0, len(parsed), BATCH_SIZE):
+#             batch = parsed[start:start + BATCH_SIZE]
+
+#             for index, vals, partner_name, image_data in batch:
+#                 try:
+#                     # partner (cache ke saath)
+#                     partner_id = False
+#                     if partner_name:
+#                         key = str(partner_name).strip()
+#                         if key not in partner_cache:
+#                             partner = Partner.search(
+#                                 [('name', '=', key)], limit=1
+#                             ) or Partner.create({'name': key})
+#                             partner_cache[key] = partner.id
+#                         partner_id = partner_cache[key]
+
+#                     vals['end_user_name'] = partner_id
+#                     vals['pod_copy'] = self._get_pod_image(image_data)
+
+#                     sn_key = str(vals['device_sn']).lower()  
+#                     rec_id = existing_map.get(sn_key)
+
+#                     if rec_id:
+#                         Inventory.browse(rec_id).write(vals)
+#                     else:
+#                         new_rec = Inventory.create(vals)
+#                         existing_map[sn_key] = new_rec.id
+
+#                 except ValidationError:
+#                     raise
+#                 except Exception as e:
+#                     raise ValidationError(
+#                         f"Error on Excel row {index}\n{str(e)}"
+#                     )
+
+#             # batch complete: commit + memory/cache free
+#             self.env.cr.commit()
+#             self.env.invalidate_all()
+
+
 
 import base64
 import io
+import logging
+
 import openpyxl
 import requests
 
 from odoo import models, fields
 from odoo.exceptions import ValidationError
 from datetime import datetime
+
+_logger = logging.getLogger(__name__)
 
 BATCH_SIZE = 200
 
@@ -630,20 +867,34 @@ class DeviceImportWizard(models.TransientModel):
 
         return value
 
-    def _get_pod_image(self, image_data):
+    def _get_pod_image(self, image_data, cache=None):
+        """Return base64 image. Same URL is fetched only once per import."""
         if not image_data:
             return False
+        if cache is not None and image_data in cache:
+            return cache[image_data]
+
+        result = False
         try:
             if isinstance(image_data, str) and image_data.startswith('http'):
                 response = requests.get(image_data, timeout=5)
                 if response.status_code == 200:
-                    return base64.b64encode(response.content)
-                return False
-            if isinstance(image_data, bytes):
-                return image_data
-            return base64.b64decode(image_data)
+                    result = base64.b64encode(response.content)
+                else:
+                    _logger.warning(
+                        "POD image %r returned HTTP %s",
+                        image_data, response.status_code)
+            elif isinstance(image_data, bytes):
+                result = image_data
+            else:
+                result = base64.b64decode(image_data)
         except Exception:
-            return False
+            _logger.warning(
+                "POD image failed for %r", image_data, exc_info=True)
+
+        if cache is not None:
+            cache[image_data] = result
+        return result
 
     def _prepare_vals(self, row_dict, index):
         """Sirf validation + dict banata hai, DB ko touch nahi karta."""
@@ -724,7 +975,12 @@ class DeviceImportWizard(models.TransientModel):
             except ValidationError:
                 raise
             except Exception as e:
-                raise ValidationError(f"Error on Excel row {index}\n{str(e)}")
+                _logger.exception(
+                    "Device import: parse failed on row %s", index)
+                raise ValidationError(
+                    f"Error on Excel row {index}\n"
+                    f"{type(e).__name__}: {e}"
+                )
 
             parsed.append((
                 index,
@@ -746,6 +1002,7 @@ class DeviceImportWizard(models.TransientModel):
             if rec.device_sn
         }
         partner_cache = {}
+        image_cache = {}
 
         for start in range(0, len(parsed), BATCH_SIZE):
             batch = parsed[start:start + BATCH_SIZE]
@@ -764,7 +1021,8 @@ class DeviceImportWizard(models.TransientModel):
                         partner_id = partner_cache[key]
 
                     vals['end_user_name'] = partner_id
-                    vals['pod_copy'] = self._get_pod_image(image_data)
+                    vals['pod_copy'] = self._get_pod_image(
+                        image_data, image_cache)
 
                     sn_key = str(vals['device_sn']).lower()
                     rec_id = existing_map.get(sn_key)
@@ -778,8 +1036,13 @@ class DeviceImportWizard(models.TransientModel):
                 except ValidationError:
                     raise
                 except Exception as e:
+                    _logger.exception(
+                        "Device import failed on row %s (SN=%s)",
+                        index, vals.get('device_sn'))
                     raise ValidationError(
-                        f"Error on Excel row {index}\n{str(e)}"
+                        f"Error on Excel row {index} "
+                        f"(SN: {vals.get('device_sn')})\n"
+                        f"{type(e).__name__}: {e}"
                     )
 
             # batch complete: commit + memory/cache free
